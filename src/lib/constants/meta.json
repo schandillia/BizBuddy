@@ -1,0 +1,26 @@
+{
+  "HOME": {
+    "TITLE": "SaaSBro: Real-Time SaaS Monitoring, Simplified",
+    "DESCRIPTION": "Stay on top of your SaaS with real-time event alerts delivered directly to your Discord. Track sales, user sign-ups, and more—effortlessly. Pay once, enjoy forever."
+  },
+  "TERMS": {
+    "TITLE": "Terms of Service | SaaSBro",
+    "DESCRIPTION": "Read SaaSBro’s Terms of Service to understand the rules governing your access of all Pico services."
+  },
+  "PRIVACY": {
+    "TITLE": "Privacy Policy | SaaSBro",
+    "DESCRIPTION": "Read SaaSBro’s Privacy Policy to learn about the information we collect, how it’s used, and the control you have over it."
+  },
+  "ABOUT": {
+    "TITLE": "About | SaaSBro",
+    "DESCRIPTION": "About SaaSBro."
+  },
+  "DISCOVER": {
+    "TITLE": "Discover | SaaSBro",
+    "DESCRIPTION": "About SaaSBro."
+  },
+  "PRICING": {
+    "TITLE": "Pricing | SaaSBro",
+    "DESCRIPTION": "About SaaSBro."
+  }
+}
