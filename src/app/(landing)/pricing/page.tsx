@@ -9,6 +9,7 @@ import { useUser } from "@clerk/nextjs"
 import { useMutation } from "@tanstack/react-query"
 import { CheckIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
+import brand from "@/lib/constants/brand.json"
 
 const Page = () => {
   const { user } = useUser()
@@ -46,7 +47,7 @@ const Page = () => {
           <Heading className="text-center">Simple no-tricks pricing</Heading>
           <p className="mt-6 text-base/7 text-gray-600 max-w-prose text-center text-pretty">
             We hate subscriptions. And chances are, you do too. That's why we
-            offer lifetime access to PingPanda for a one-time payment.
+            offer lifetime access to {brand.BRAND} for a one-time payment.
           </p>
         </div>
 
@@ -57,9 +58,9 @@ const Page = () => {
             </h3>
 
             <p className="mt-6 text-base/7 text-gray-600">
-              Invest once in PingPanda and transform how you monitor your SaaS
-              forever. Get instant alerts, track critical metrics and never miss
-              a beat in your business growth.
+              Invest once in {brand.BRAND} and transform how you monitor your
+              SaaS forever. Get instant alerts, track critical metrics and never
+              miss a beat in your business growth.
             </p>
             <div className="mt-10 flex items-center gap-x-4">
               <h4 className="flex-none text-sm font-semibold leading-6 text-brand-600">
@@ -94,7 +95,7 @@ const Page = () => {
                 </p>
 
                 <Button onClick={handleGetAccess} className="mt-6 px-20">
-                  Get PingPanda
+                  Get {brand.BRAND}
                 </Button>
                 <p className="mt-6 text-xs leading-5 text-gray-600">
                   Secure payment. Start monitoring in minutes.
