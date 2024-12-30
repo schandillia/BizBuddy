@@ -21,7 +21,7 @@ export const projectRouter = router({
 
     const eventCount = quota?.count ?? 0
 
-    const categoryCount = await db.eventCategory.count({
+    const typeCount = await db.EventType.count({
       where: { userId: user.id },
     })
 
@@ -30,8 +30,8 @@ export const projectRouter = router({
     const resetDate = addMonths(currentDate, 1)
 
     return c.superjson({
-      categoriesUsed: categoryCount,
-      categoriesLimit: limits.maxEventCategories,
+      typesUsed: typeCount,
+      typesLimit: limits.maxEventTypes,
       eventsUsed: eventCount,
       eventsLimit: limits.maxEventsPerMonth,
       resetDate,

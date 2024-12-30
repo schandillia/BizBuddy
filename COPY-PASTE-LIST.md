@@ -44,7 +44,7 @@ brand: {
 `await fetch("http://localhost:3000/api/v1/events", {
   method: "POST",
   body: JSON.stringify({
-    category: "sale",
+    type: "sale",
     fields: {
       plan: "PRO",
       email: "zoe.martinez2001@email.com",
@@ -213,7 +213,7 @@ brand: {
     'Authorization': 'Bearer YOUR_API_KEY'
   },
   body: JSON.stringify({
-    category: '${categoryName}',
+    type: '${typeName}',
     fields: {
       field1: 'value1', // for example: user id
       field2: 'value2' // for example: user email

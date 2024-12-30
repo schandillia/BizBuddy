@@ -15,7 +15,7 @@ const Page = () => {
   const codeSnippet = `await fetch("http://localhost:3000/api/v1/events", {
   method: "POST",
   body: JSON.stringify({
-    category: "sale",
+    type: "sale",
     fields: {
       plan: "PRO",
       email: "zoe.martinez2001@email.com",

@@ -6,18 +6,14 @@ import { useEffect } from "react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism"
 
-export const EmptyCategoryState = ({
-  categoryName,
-}: {
-  categoryName: string
-}) => {
+export const EmptyTypeState = ({ typeName }: { typeName: string }) => {
   const router = useRouter()
 
   const { data } = useQuery({
-    queryKey: ["category", categoryName, "hasEvents"],
+    queryKey: ["type", typeName, "hasEvents"],
     queryFn: async () => {
-      const res = await client.category.pollCategory.$get({
-        name: categoryName,
+      const res = await client.type.pollType.$get({
+        name: typeName,
       })
 
       return await res.json()
@@ -39,7 +35,7 @@ export const EmptyCategoryState = ({
     'Authorization': 'Bearer YOUR_API_KEY'
   },
   body: JSON.stringify({
-    category: '${categoryName}',
+    type: '${typeName}',
     fields: {
       field1: 'value1', // for example: user id
       field2: 'value2' // for example: user email
@@ -53,7 +49,7 @@ export const EmptyCategoryState = ({
       className="flex-1 flex items-center justify-center"
     >
       <h2 className="text-xl/8 font-medium text-center tracking-tight text-gray-950">
-        Create your first {categoryName} event
+        Create your first {typeName} event
       </h2>
       <p className="text-sm/6 text-gray-600 mb-8 max-w-md text-center text-pretty">
         Get started by sending a request to our tracking API:

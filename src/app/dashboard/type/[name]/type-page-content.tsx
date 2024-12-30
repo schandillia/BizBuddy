@@ -1,8 +1,7 @@
 "use client"
 
-import { Event, EventCategory } from "@prisma/client"
+import { Event, EventType } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
-import { EmptyCategoryState } from "./empty-category-state"
 import { useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { client } from "@/lib/client"
@@ -34,23 +33,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { EmptyTypeState } from "@/app/dashboard/type/[name]/empty-type-state"
 
-interface CategoryPageContentProps {
+interface TypePageContentProps {
   hasEvents: boolean
-  category: EventCategory
+  type: EventType
 }
 
-export const CategoryPageContent = ({
+export const TypePageContent = ({
   hasEvents: initialHasEvents,
-  category,
-}: CategoryPageContentProps) => {
+  type,
+}: TypePageContentProps) => {
   const searchParams = useSearchParams()
 
   const [activeTab, setActiveTab] = useState<"today" | "week" | "month">(
     "today"
   )
 
-  // https://localhost:3000/dashboard/category/sale?page=5&limit=30
+  // https://localhost:3000/dashboard/type/sale?page=5&limit=30
   const page = parseInt(searchParams.get("page") || "1", 10)
   const limit = parseInt(searchParams.get("limit") || "30", 10)
 
@@ -60,21 +60,21 @@ export const CategoryPageContent = ({
   })
 
   const { data: pollingData } = useQuery({
-    queryKey: ["category", category.name, "hasEvents"],
+    queryKey: ["type", type.name, "hasEvents"],
     initialData: { hasEvents: initialHasEvents },
   })
 
   const { data, isFetching } = useQuery({
     queryKey: [
       "events",
-      category.name,
+      type.name,
       pagination.pageIndex,
       pagination.pageSize,
       activeTab,
     ],
     queryFn: async () => {
-      const res = await client.category.getEventsByCategoryName.$get({
-        name: category.name,
+      const res = await client.type.getEventsByTypeName.$get({
+        name: type.name,
         page: pagination.pageIndex + 1,
         limit: pagination.pageSize,
         timeRange: activeTab,
@@ -89,9 +89,9 @@ export const CategoryPageContent = ({
   const columns: ColumnDef<Event>[] = useMemo(
     () => [
       {
-        accessorKey: "category",
-        header: "Category",
-        cell: () => <span>{category.name || "Uncategorized"}</span>,
+        accessorKey: "type",
+        header: "Type",
+        cell: () => <span>{type.name || "Uncategorized"}</span>,
       },
       {
         accessorKey: "createdAt",
@@ -141,7 +141,7 @@ export const CategoryPageContent = ({
       },
     ],
 
-    [category.name, data?.events]
+    [type.name, data?.events]
   )
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -178,7 +178,7 @@ export const CategoryPageContent = ({
     searchParams.set("limit", pagination.pageSize.toString())
     router.push(`?${searchParams.toString()}`, { scroll: false })
   }, [pagination, router])
-  
+
   /**
    * END OF WHAT I FORGOT IN THE VIDEO
    */
@@ -271,7 +271,7 @@ export const CategoryPageContent = ({
   }
 
   if (!pollingData.hasEvents) {
-    return <EmptyCategoryState categoryName={category.name} />
+    return <EmptyTypeState typeName={type.name} />
   }
 
   return (

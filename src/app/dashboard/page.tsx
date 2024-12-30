@@ -3,7 +3,7 @@ import { db } from "@/db"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { DashboardPageContent } from "./dashboard-page-content"
-import { CreateEventCategoryModal } from "@/components/create-event-category-modal"
+import { CreateEventTypeModal } from "@/components/create-event-type-modal"
 import { Button } from "@/components/ui/button"
 import { PlusIcon } from "lucide-react"
 import { createCheckoutSession } from "@/lib/stripe"
@@ -49,12 +49,12 @@ const Page = async ({ searchParams }: PageProps) => {
 
       <DashboardPage
         cta={
-          <CreateEventCategoryModal>
+          <CreateEventTypeModal>
             <Button className="w-full sm:w-fit">
               <PlusIcon className="size-4 mr-2" />
-              Add Category
+              Add Type
             </Button>
-          </CreateEventCategoryModal>
+          </CreateEventTypeModal>
         }
         title="Dashboard"
       >

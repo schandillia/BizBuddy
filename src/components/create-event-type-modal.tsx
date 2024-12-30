@@ -5,7 +5,7 @@ import { PropsWithChildren, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator"
+import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { Modal } from "./ui/modal"
 import { Label } from "./ui/label"
 import { Input } from "./ui/input"
@@ -13,8 +13,8 @@ import { cn } from "@/utils"
 import { Button } from "./ui/button"
 import { client } from "@/lib/client"
 
-const EVENT_CATEGORY_VALIDATOR = z.object({
-  name: CATEGORY_NAME_VALIDATOR,
+const EVENT_TYPE_VALIDATOR = z.object({
+  name: TYPE_NAME_VALIDATOR,
   color: z
     .string()
     .min(1, "Color is required")
@@ -22,7 +22,7 @@ const EVENT_CATEGORY_VALIDATOR = z.object({
   emoji: z.string().emoji("Invalid emoji").optional(),
 })
 
-type EventCategoryForm = z.infer<typeof EVENT_CATEGORY_VALIDATOR>
+type EventTypeForm = z.infer<typeof EVENT_TYPE_VALIDATOR>
 
 const COLOR_OPTIONS = [
   "#FF6B6B", // bg-[#FF6B6B] ring-[#FF6B6B] Bright Red
@@ -51,23 +51,23 @@ const EMOJI_OPTIONS = [
   { emoji: "🐞", label: "Bug" },
 ]
 
-interface CreateEventCategoryModel extends PropsWithChildren {
+interface CreateEventTypeModel extends PropsWithChildren {
   containerClassName?: string
 }
 
-export const CreateEventCategoryModal = ({
+export const CreateEventTypeModal = ({
   children,
   containerClassName,
-}: CreateEventCategoryModel) => {
+}: CreateEventTypeModel) => {
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
 
-  const { mutate: createEventCategory, isPending } = useMutation({
-    mutationFn: async (data: EventCategoryForm) => {
-      await client.category.createEventCategory.$post(data)
+  const { mutate: createEventType, isPending } = useMutation({
+    mutationFn: async (data: EventTypeForm) => {
+      await client.type.createEventType.$post(data)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-event-categories"] })
+      queryClient.invalidateQueries({ queryKey: ["user-event-types"] })
       setIsOpen(false)
     },
   })
@@ -78,15 +78,15 @@ export const CreateEventCategoryModal = ({
     watch,
     setValue,
     formState: { errors },
-  } = useForm<EventCategoryForm>({
-    resolver: zodResolver(EVENT_CATEGORY_VALIDATOR),
+  } = useForm<EventTypeForm>({
+    resolver: zodResolver(EVENT_TYPE_VALIDATOR),
   })
 
   const color = watch("color")
   const selectedEmoji = watch("emoji")
 
-  const onSubmit = (data: EventCategoryForm) => {
-    createEventCategory(data)
+  const onSubmit = (data: EventTypeForm) => {
+    createEventType(data)
   }
 
   return (
@@ -103,10 +103,10 @@ export const CreateEventCategoryModal = ({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <h2 className="text-lg/7 font-medium tracking-tight text-gray-950">
-              New Event Category
+              New Event Type
             </h2>
             <p className="text-sm/6 text-gray-600">
-              Create a new category to organize your events.
+              Create a new type to organize your events.
             </p>
           </div>
 
@@ -190,7 +190,7 @@ export const CreateEventCategoryModal = ({
               Cancel
             </Button>
             <Button disabled={isPending} type="submit">
-              {isPending ? "Creating..." : "Create Category"}{" "}
+              {isPending ? "Creating..." : "Create Type"}{" "}
             </Button>
           </div>
         </form>

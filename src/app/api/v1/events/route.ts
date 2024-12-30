@@ -1,13 +1,13 @@
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { db } from "@/db"
 import { DiscordClient } from "@/lib/discord-client"
-import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator"
+import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 
 const REQUEST_VALIDATOR = z
   .object({
-    category: CATEGORY_NAME_VALIDATOR,
+    type: TYPE_NAME_VALIDATOR,
     fields: z.record(z.string().or(z.number()).or(z.boolean())).optional(),
     description: z.string().optional(),
   })
@@ -38,7 +38,7 @@ export const POST = async (req: NextRequest) => {
 
     const user = await db.user.findUnique({
       where: { apiKey },
-      include: { EventCategories: true },
+      include: { EventTypes: true },
     })
 
     if (!user) {
@@ -101,27 +101,27 @@ export const POST = async (req: NextRequest) => {
 
     const validationResult = REQUEST_VALIDATOR.parse(requestData)
 
-    const category = user.EventCategories.find(
-      (cat) => cat.name === validationResult.category
+    const type = user.EventTypes.find(
+      (cat) => cat.name === validationResult.type
     )
 
-    if (!category) {
+    if (!type) {
       return NextResponse.json(
         {
-          message: `You dont have a category named "${validationResult.category}"`,
+          message: `You dont have a type named "${validationResult.type}"`,
         },
         { status: 404 }
       )
     }
 
     const eventData = {
-      title: `${category.emoji || "🔔"} ${
-        category.name.charAt(0).toUpperCase() + category.name.slice(1)
+      title: `${type.emoji || "🔔"} ${
+        type.name.charAt(0).toUpperCase() + type.name.slice(1)
       }`,
       description:
         validationResult.description ||
-        `A new ${category.name} event has occurred!`,
-      color: category.color,
+        `A new ${type.name} event has occurred!`,
+      color: type.color,
       timestamp: new Date().toISOString(),
       fields: Object.entries(validationResult.fields || {}).map(
         ([key, value]) => {
@@ -136,11 +136,11 @@ export const POST = async (req: NextRequest) => {
 
     const event = await db.event.create({
       data: {
-        name: category.name,
+        name: type.name,
         formattedMessage: `${eventData.title}\n\n${eventData.description}`,
         userId: user.id,
         fields: validationResult.fields || {},
-        eventCategoryId: category.id,
+        EventTypeId: type.id,
       },
     })
 

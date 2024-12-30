@@ -12,31 +12,29 @@ import { useState } from "react"
 import { DashboardEmptyState } from "./dashboard-empty-state"
 
 export const DashboardPageContent = () => {
-  const [deletingCategory, setDeletingCategory] = useState<string | null>(null)
+  const [deletingType, setDeletingType] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
-  const { data: categories, isPending: isEventCategoriesLoading } = useQuery({
-    queryKey: ["user-event-categories"],
+  const { data: types, isPending: isEventTypesLoading } = useQuery({
+    queryKey: ["user-event-types"],
     queryFn: async () => {
-      const res = await client.category.getEventCategories.$get()
-      const { categories } = await res.json()
-      return categories
+      const res = await client.type.getEventTypes.$get()
+      const { types } = await res.json()
+      return types
     },
   })
 
-  const { mutate: deleteCategory, isPending: isDeletingCategory } = useMutation(
-    {
-      mutationFn: async (name: string) => {
-        await client.category.deleteCategory.$post({ name })
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["user-event-categories"] })
-        setDeletingCategory(null)
-      },
-    }
-  )
+  const { mutate: deleteType, isPending: isDeletingType } = useMutation({
+    mutationFn: async (name: string) => {
+      await client.type.deleteType.$post({ name })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-event-types"] })
+      setDeletingType(null)
+    },
+  })
 
-  if (isEventCategoriesLoading) {
+  if (isEventTypesLoading) {
     return (
       <div className="flex items-center justify-center flex-1 h-full w-full">
         <LoadingSpinner />
@@ -44,16 +42,16 @@ export const DashboardPageContent = () => {
     )
   }
 
-  if (!categories || categories.length === 0) {
+  if (!types || types.length === 0) {
     return <DashboardEmptyState />
   }
 
   return (
     <>
       <ul className="grid max-w-6xl grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {categories.map((category) => (
+        {types.map((type) => (
           <li
-            key={category.id}
+            key={type.id}
             className="relative group z-10 transition-all duration-200"
           >
             <div className="absolute z-0 inset-px rounded-lg bg-white" />
@@ -65,18 +63,18 @@ export const DashboardPageContent = () => {
                 <div
                   className="size-10 rounded-full"
                   style={{
-                    backgroundColor: category.color
-                      ? `#${category.color.toString(16).padStart(6, "0")}`
+                    backgroundColor: type.color
+                      ? `#${type.color.toString(16).padStart(6, "0")}`
                       : "#f3f4f6",
                   }}
                 />
 
                 <div>
                   <h3 className="text-lg/7 font-medium tracking-tight text-gray-950">
-                    {category.emoji || "📂"} {category.name}
+                    {type.emoji || "📂"} {type.name}
                   </h3>
                   <p className="text-sm/6 text-gray-600">
-                    {format(category.createdAt, "MMM d, yyyy")}
+                    {format(type.createdAt, "MMM d, yyyy")}
                   </p>
                 </div>
               </div>
@@ -86,26 +84,26 @@ export const DashboardPageContent = () => {
                   <Clock className="size-4 mr-2 text-brand-500" />
                   <span className="font-medium">Last ping:</span>
                   <span className="ml-1">
-                    {category.lastPing
-                      ? formatDistanceToNow(category.lastPing) + " ago"
+                    {type.lastPing
+                      ? formatDistanceToNow(type.lastPing) + " ago"
                       : "Never"}
                   </span>
                 </div>
                 <div className="flex items-center text-sm/5 text-gray-600">
                   <Database className="size-4 mr-2 text-brand-500" />
                   <span className="font-medium">Unique fields:</span>
-                  <span className="ml-1">{category.uniqueFieldCount || 0}</span>
+                  <span className="ml-1">{type.uniqueFieldCount || 0}</span>
                 </div>
                 <div className="flex items-center text-sm/5 text-gray-600">
                   <BarChart2 className="size-4 mr-2 text-brand-500" />
                   <span className="font-medium">Events this month:</span>
-                  <span className="ml-1">{category.eventsCount || 0}</span>
+                  <span className="ml-1">{type.eventsCount || 0}</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between mt-4">
                 <Link
-                  href={`/dashboard/category/${category.name}`}
+                  href={`/dashboard/type/${type.name}`}
                   className={buttonVariants({
                     variant: "outline",
                     size: "sm",
@@ -118,8 +116,8 @@ export const DashboardPageContent = () => {
                   variant="ghost"
                   size="sm"
                   className="text-gray-500 hover:text-red-600 transition-colors"
-                  aria-label={`Delete ${category.name} category`}
-                  onClick={() => setDeletingCategory(category.name)}
+                  aria-label={`Delete ${type.name} type`}
+                  onClick={() => setDeletingType(type.name)}
                 >
                   <Trash2 className="size-5" />
                 </Button>
@@ -130,33 +128,31 @@ export const DashboardPageContent = () => {
       </ul>
 
       <Modal
-        showModal={!!deletingCategory}
-        setShowModal={() => setDeletingCategory(null)}
+        showModal={!!deletingType}
+        setShowModal={() => setDeletingType(null)}
         className="max-w-md p-8"
       >
         <div className="space-y-6">
           <div>
             <h2 className="text-lg/7 font-medium tracking-tight text-gray-950">
-              Delete Category
+              Delete Type
             </h2>
             <p className="text-sm/6 text-gray-600">
-              Are you sure you want to delete the category “{deletingCategory}”?
-              This action cannot be undone.
+              Are you sure you want to delete the type “{deletingType}”? This
+              action cannot be undone.
             </p>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button variant="outline" onClick={() => setDeletingCategory(null)}>
+            <Button variant="outline" onClick={() => setDeletingType(null)}>
               Cancel
             </Button>
             <Button
               variant="destructive"
-              onClick={() =>
-                deletingCategory && deleteCategory(deletingCategory)
-              }
-              disabled={isDeletingCategory}
+              onClick={() => deletingType && deleteType(deletingType)}
+              disabled={isDeletingType}
             >
-              {isDeletingCategory ? "Deleting..." : "Delete"}
+              {isDeletingType ? "Deleting..." : "Delete"}
             </Button>
           </div>
         </div>

@@ -3,16 +3,37 @@ import { router } from "../__internals/router"
 import { privateProcedure } from "../procedures"
 import { startOfDay, startOfMonth, startOfWeek } from "date-fns"
 import { z } from "zod"
-import { CATEGORY_NAME_VALIDATOR } from "@/lib/validators/category-validator"
+import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { parseColor } from "@/utils"
 import { HTTPException } from "hono/http-exception"
 
-export const categoryRouter = router({
-  getEventCategories: privateProcedure.query(async ({ c, ctx }) => {
+// First, let's define interfaces for our types
+interface EventType {
+  id: string
+  name: string
+  emoji: string | null
+  color: number
+  updatedAt: Date
+  createdAt: Date
+  events: {
+    fields: object
+    createdAt: Date
+  }[]
+  _count: {
+    events: number
+  }
+}
+
+interface Event {
+  fields: object
+}
+
+export const typeRouter = router({
+  getEventTypes: privateProcedure.query(async ({ c, ctx }) => {
     const now = new Date()
     const firstDayOfMonth = startOfMonth(now)
 
-    const categories = await db.eventCategory.findMany({
+    const types = await db.EventType.findMany({
       where: { userId: ctx.user.id },
       select: {
         id: true,
@@ -39,11 +60,11 @@ export const categoryRouter = router({
       orderBy: { updatedAt: "desc" },
     })
 
-    const categoriesWithCounts = categories.map((category) => {
+    const typesWithCounts = types.map((type: EventType) => {
       const uniqueFieldNames = new Set<string>()
       let lastPing: Date | null = null
 
-      category.events.forEach((event) => {
+      type.events.forEach((event) => {
         Object.keys(event.fields as object).forEach((fieldName) => {
           uniqueFieldNames.add(fieldName)
         })
@@ -53,37 +74,37 @@ export const categoryRouter = router({
       })
 
       return {
-        id: category.id,
-        name: category.name,
-        emoji: category.emoji,
-        color: category.color,
-        updatedAt: category.updatedAt,
-        createdAt: category.createdAt,
+        id: type.id,
+        name: type.name,
+        emoji: type.emoji,
+        color: type.color,
+        updatedAt: type.updatedAt,
+        createdAt: type.createdAt,
         uniqueFieldCount: uniqueFieldNames.size,
-        eventsCount: category._count.events,
+        eventsCount: type._count.events,
         lastPing,
       }
     })
 
-    return c.superjson({ categories: categoriesWithCounts })
+    return c.superjson({ types: typesWithCounts })
   }),
 
-  deleteCategory: privateProcedure
+  deleteType: privateProcedure
     .input(z.object({ name: z.string() }))
     .mutation(async ({ c, input, ctx }) => {
       const { name } = input
 
-      await db.eventCategory.delete({
+      await db.EventType.delete({
         where: { name_userId: { name, userId: ctx.user.id } },
       })
 
       return c.json({ success: true })
     }),
 
-  createEventCategory: privateProcedure
+  createEventType: privateProcedure
     .input(
       z.object({
-        name: CATEGORY_NAME_VALIDATOR,
+        name: TYPE_NAME_VALIDATOR,
         color: z
           .string()
           .min(1, "Color is required")
@@ -97,7 +118,7 @@ export const categoryRouter = router({
 
       // TODO: ADD PAID PLAN LOGIC
 
-      const eventCategory = await db.eventCategory.create({
+      const EventType = await db.EventType.create({
         data: {
           name: name.toLowerCase(),
           color: parseColor(color),
@@ -106,30 +127,30 @@ export const categoryRouter = router({
         },
       })
 
-      return c.json({ eventCategory })
+      return c.json({ EventType })
     }),
 
-  insertQuickstartCategories: privateProcedure.mutation(async ({ ctx, c }) => {
-    const categories = await db.eventCategory.createMany({
+  insertQuickstartTypes: privateProcedure.mutation(async ({ ctx, c }) => {
+    const types = await db.EventType.createMany({
       data: [
         { name: "bug", emoji: "🐞", color: 0xff6b6b },
         { name: "sale", emoji: "💰", color: 0xffeb3b },
         { name: "question", emoji: "🤔", color: 0x6c5ce7 },
-      ].map((category) => ({
-        ...category,
+      ].map((type) => ({
+        ...type,
         userId: ctx.user.id,
       })),
     })
 
-    return c.json({ success: true, count: categories.count })
+    return c.json({ success: true, count: types.count })
   }),
 
-  pollCategory: privateProcedure
-    .input(z.object({ name: CATEGORY_NAME_VALIDATOR }))
+  pollType: privateProcedure
+    .input(z.object({ name: TYPE_NAME_VALIDATOR }))
     .query(async ({ c, ctx, input }) => {
       const { name } = input
 
-      const category = await db.eventCategory.findUnique({
+      const type = await db.EventType.findUnique({
         where: { name_userId: { name, userId: ctx.user.id } },
         include: {
           _count: {
@@ -140,21 +161,21 @@ export const categoryRouter = router({
         },
       })
 
-      if (!category) {
+      if (!type) {
         throw new HTTPException(404, {
-          message: `Category "${name}" not found`,
+          message: `Type "${name}" not found`,
         })
       }
 
-      const hasEvents = category._count.events > 0
+      const hasEvents = type._count.events > 0
 
       return c.json({ hasEvents })
     }),
 
-  getEventsByCategoryName: privateProcedure
+  getEventsByTypeName: privateProcedure
     .input(
       z.object({
-        name: CATEGORY_NAME_VALIDATOR,
+        name: TYPE_NAME_VALIDATOR,
         page: z.number(),
         limit: z.number().max(50),
         timeRange: z.enum(["today", "week", "month"]),
@@ -181,7 +202,7 @@ export const categoryRouter = router({
       const [events, eventsCount, uniqueFieldCount] = await Promise.all([
         db.event.findMany({
           where: {
-            EventCategory: { name, userId: ctx.user.id },
+            EventType: { name, userId: ctx.user.id },
             createdAt: { gte: startDate },
           },
           skip: (page - 1) * limit,
@@ -190,14 +211,14 @@ export const categoryRouter = router({
         }),
         db.event.count({
           where: {
-            EventCategory: { name, userId: ctx.user.id },
+            EventType: { name, userId: ctx.user.id },
             createdAt: { gte: startDate },
           },
         }),
         db.event
           .findMany({
             where: {
-              EventCategory: { name, userId: ctx.user.id },
+              EventType: { name, userId: ctx.user.id },
               createdAt: { gte: startDate },
             },
             select: {
@@ -205,7 +226,7 @@ export const categoryRouter = router({
             },
             distinct: ["fields"],
           })
-          .then((events) => {
+          .then((events: Event[]) => {
             const fieldNames = new Set<string>()
             events.forEach((event) => {
               Object.keys(event.fields as object).forEach((fieldName) => {

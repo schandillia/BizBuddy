@@ -38,7 +38,7 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
         <p className="text-sm/6 text-gray-600 max-w-prose">
           {plan === "PRO"
             ? "Thank you for supporting PingPanda. Find your increased usage limits below."
-            : "Get access to more events, categories and premium support."}
+            : "Get access to more events, types and premium support."}
         </p>
       </div>
 
@@ -61,16 +61,16 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
         </Card>
         <Card>
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <p className="text-sm/6 font-medium">Event Categories</p>
+            <p className="text-sm/6 font-medium">Event Types</p>
             <BarChart className="size-4 text-muted-foreground" />
           </div>
 
           <div>
             <p className="text-2xl font-bold">
-              {usageData?.categoriesUsed || 0} of{" "}
-              {usageData?.categoriesLimit.toLocaleString() || 10}
+              {usageData?.typesUsed || 0} of{" "}
+              {usageData?.typesLimit.toLocaleString() || 10}
             </p>
-            <p className="text-xs/5 text-muted-foreground">Active categories</p>
+            <p className="text-xs/5 text-muted-foreground">Active types</p>
           </div>
         </Card>
       </div>

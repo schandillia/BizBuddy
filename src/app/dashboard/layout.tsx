@@ -17,22 +17,22 @@ interface SidebarItem {
   text: string
 }
 
-interface SidebarCategory {
-  category: string
+interface SidebarType {
+  type: string
   items: SidebarItem[]
 }
 
-const SIDEBAR_ITEMS: SidebarCategory[] = [
+const SIDEBAR_ITEMS: SidebarType[] = [
   {
-    category: "Overview",
+    type: "Overview",
     items: [{ href: "/dashboard", icon: Home, text: "Dashboard" }],
   },
   {
-    category: "Account",
+    type: "Account",
     items: [{ href: "/dashboard/upgrade", icon: Gem, text: "Upgrade" }],
   },
   {
-    category: "Settings",
+    type: "Settings",
     items: [
       { href: "/dashboard/api-key", icon: Key, text: "API Key" },
       {
@@ -55,10 +55,10 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
       {/* navigation items */}
       <div className="flex-grow">
         <ul>
-          {SIDEBAR_ITEMS.map(({ category, items }) => (
-            <li key={category} className="mb-4 md:mb-8">
+          {SIDEBAR_ITEMS.map(({ type, items }) => (
+            <li key={type} className="mb-4 md:mb-8">
               <p className="text-xs font-medium leading-6 text-zinc-500">
-                {category}
+                {type}
               </p>
               <div className="-mx-2 flex flex-1 flex-col">
                 {items.map((item, i) => (

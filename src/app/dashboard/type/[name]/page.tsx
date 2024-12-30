@@ -2,7 +2,7 @@ import { DashboardPage } from "@/components/dashboard-page"
 import { db } from "@/db"
 import { currentUser } from "@clerk/nextjs/server"
 import { notFound } from "next/navigation"
-import { CategoryPageContent } from "./category-page-content"
+import { TypePageContent } from "./type-page-content"
 
 interface PageProps {
   params: {
@@ -25,7 +25,7 @@ const Page = async ({ params }: PageProps) => {
 
   if (!user) return notFound()
 
-  const category = await db.eventCategory.findUnique({
+  const type = await db.eventType.findUnique({
     where: {
       name_userId: {
         name: params.name,
@@ -41,13 +41,13 @@ const Page = async ({ params }: PageProps) => {
     },
   })
 
-  if (!category) return notFound()
+  if (!type) return notFound()
 
-  const hasEvents = category._count.events > 0
+  const hasEvents = type._count.events > 0
 
   return (
-    <DashboardPage title={`${category.emoji} ${category.name} events`}>
-      <CategoryPageContent hasEvents={hasEvents} category={category} />
+    <DashboardPage title={`${type.emoji} ${type.name} events`}>
+      <TypePageContent hasEvents={hasEvents} type={type} />
     </DashboardPage>
   )
 }
