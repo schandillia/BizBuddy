@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { BarChart } from "lucide-react"
 import { useRouter } from "next/navigation"
+import brand from "@/lib/constants/brand.json"
 
 export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
   const router = useRouter()
@@ -37,7 +38,7 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
         </h1>
         <p className="text-sm/6 text-gray-600 max-w-prose">
           {plan === "PRO"
-            ? "Thank you for supporting PingPanda. Find your increased usage limits below."
+            ? `Thank you for supporting ${brand.BRAND}. Find your increased usage limits below.`
             : "Get access to more events, types and premium support."}
         </p>
       </div>

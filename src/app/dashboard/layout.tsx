@@ -7,8 +7,6 @@ import { UserButton } from "@clerk/nextjs"
 import { Gem, Home, Key, LucideIcon, Menu, Settings, X } from "lucide-react"
 import Link from "next/link"
 import { PropsWithChildren, useState } from "react"
-import { Drawer } from "vaul"
-import brand from "@/lib/constants/brand.json"
 import { BrandLogo } from "@/components/brand-logo"
 
 interface SidebarItem {
@@ -147,7 +145,7 @@ const Layout = ({ children }: PropsWithChildren) => {
             </button>
           </div>
 
-          <Sidebar />
+          <Sidebar onClose={() => setIsDrawerOpen(false)} />
         </Modal>
       </div>
     </div>

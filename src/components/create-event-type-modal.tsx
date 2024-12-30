@@ -77,6 +77,7 @@ export const CreateEventTypeModal = ({
     handleSubmit,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<EventTypeForm>({
     resolver: zodResolver(EVENT_TYPE_VALIDATOR),
@@ -87,6 +88,7 @@ export const CreateEventTypeModal = ({
 
   const onSubmit = (data: EventTypeForm) => {
     createEventType(data)
+    reset() // Reset all form fields
   }
 
   return (
@@ -98,7 +100,13 @@ export const CreateEventTypeModal = ({
       <Modal
         className="max-w-xl p-8"
         showModal={isOpen}
-        setShowModal={setIsOpen}
+        setShowModal={(open) => {
+          setIsOpen(open)
+          if (!open) {
+            // When modal is closing
+            reset() // Reset all form fields
+          }
+        }}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
@@ -185,12 +193,15 @@ export const CreateEventTypeModal = ({
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false)
+                reset()
+              }}
             >
               Cancel
             </Button>
             <Button disabled={isPending} type="submit">
-              {isPending ? "Creating..." : "Create Type"}{" "}
+              {isPending ? "Creating..." : "Create Type"}
             </Button>
           </div>
         </form>
