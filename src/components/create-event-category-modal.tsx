@@ -48,6 +48,7 @@ const EMOJI_OPTIONS = [
   { emoji: "🏆", label: "Achievement" },
   { emoji: "💡", label: "Idea" },
   { emoji: "🔔", label: "Notification" },
+  { emoji: "🐞", label: "Bug" },
 ]
 
 interface CreateEventCategoryModel extends PropsWithChildren {

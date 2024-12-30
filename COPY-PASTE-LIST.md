@@ -1,8 +1,9 @@
-# COPYPASTE LIST 
+# COPYPASTE LIST
 
 because there is no point in literally typing out svg icons lol
 
 ### Tailwind brand colors
+
 ```
 brand: {
     "25": "#F8F9FD",
@@ -24,6 +25,7 @@ brand: {
 ```
 
 ### DISCORD ICON
+
 ```
 <svg
   xmlns="http://www.w3.org/2000/svg"
@@ -37,6 +39,7 @@ brand: {
 ```
 
 ### CODE SNIPPET
+
 ```
 `await fetch("http://localhost:3000/api/v1/events", {
   method: "POST",
@@ -55,6 +58,7 @@ brand: {
 ```
 
 ### VERIFICATION BADGE
+
 ```
 <svg
   width="18"
@@ -72,6 +76,7 @@ brand: {
 ```
 
 ### BACKGROUND PATTERN
+
 ```
 <svg
   width="768"
@@ -169,6 +174,7 @@ brand: {
 ```
 
 ### COLOR CODES
+
 ```
 "#FF6B6B", // bg-[#FF6B6B] ring-[#FF6B6B] Bright Red
 "#4ECDC4", // bg-[#4ECDC4] ring-[#4ECDC4] Teal
@@ -183,6 +189,7 @@ brand: {
 ```
 
 ### EMOJI LIST
+
 ```
 { emoji: "💰", label: "Money (Sale)" },
 { emoji: "👤", label: "User (Sign-up)" },
@@ -194,9 +201,11 @@ brand: {
 { emoji: "🏆", label: "Achievement" },
 { emoji: "💡", label: "Idea" },
 { emoji: "🔔", label: "Notification" },
+{ emoji: "🐞", label: "Bug" },
 ```
 
 ### DASHBOARD CODE SNIPPET
+
 ```
 `await fetch('https://pingpanda.io/api/events', {
   method: 'POST',
