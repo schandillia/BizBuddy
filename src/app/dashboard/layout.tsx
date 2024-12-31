@@ -8,6 +8,7 @@ import { Gem, Home, Key, LucideIcon, Menu, Settings, X } from "lucide-react"
 import Link from "next/link"
 import { PropsWithChildren, useState } from "react"
 import { BrandLogo } from "@/components/brand-logo"
+import ThemeToggle from "@/components/theme/theme-toggle"
 
 interface SidebarItem {
   href: string
@@ -81,15 +82,17 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
 
       <div className="flex flex-col">
         <hr className="my-4 md:my-6 w-full h-px bg-gray-100 dark:bg-gray-400" />
-
-        <UserButton
-          showName
-          appearance={{
-            elements: {
-              userButtonBox: "flex-row-reverse dark:text-gray-400",
-            },
-          }}
-        />
+        <div className="flex justify-between items-center">
+          <UserButton
+            showName
+            appearance={{
+              elements: {
+                userButtonBox: "flex-row-reverse dark:text-gray-400",
+              },
+            }}
+          />
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   )
