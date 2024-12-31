@@ -87,7 +87,7 @@ dependencies:
     specifier: ^15.5.0
     version: 15.6.1(react@18.3.1)
   stripe:
-    specifier: ^17.2.0
+    specifier: ^17.5.0
     version: 17.5.0
   superjson:
     specifier: ^2.2.1
