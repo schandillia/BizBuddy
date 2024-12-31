@@ -1,16 +1,18 @@
 import Link from "next/link"
 import { MaxWidthWrapper } from "./max-width-wrapper"
-import { SignOutButton } from "@clerk/nextjs"
+// import { SignOutButton } from "@clerk/nextjs"
 import { Button, buttonVariants } from "./ui/button"
 import { ArrowRight } from "lucide-react"
 import { currentUser } from "@clerk/nextjs/server"
 import { BrandLogo } from "@/components/brand-logo"
+import { UserButton } from "@clerk/nextjs"
+import ThemeToggle from "@/components/theme/theme-toggle"
 
 export const Navbar = async () => {
   const user = await currentUser()
 
   return (
-    <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 bg-white/80 backdrop-blur-lg transition-all">
+    <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-brand-950/70 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex z-40 font-semibold">
@@ -20,21 +22,23 @@ export const Navbar = async () => {
           <div className="h-full flex items-center space-x-4">
             {user ? (
               <>
-                <SignOutButton>
+                {/* <SignOutButton>
                   <Button size="sm" variant="ghost">
                     Sign out
                   </Button>
-                </SignOutButton>
+                </SignOutButton> */}
 
                 <Link
                   href="/dashboard"
                   className={buttonVariants({
                     size: "sm",
-                    className: "flex items-center gap-1",
+                    className: "flex items-center gap-1 mr-4",
                   })}
                 >
-                  Dashboard <ArrowRight className="ml-1.5 size-4" />
+                  Dashboard
                 </Link>
+                <ThemeToggle />
+                <UserButton />
               </>
             ) : (
               <>
@@ -66,7 +70,7 @@ export const Navbar = async () => {
                     className: "flex items-center gap-1.5",
                   })}
                 >
-                  Sign up <ArrowRight className="size-4" />
+                  Sign up
                 </Link>
               </>
             )}
