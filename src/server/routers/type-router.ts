@@ -6,6 +6,7 @@ import { z } from "zod"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { parseColor } from "@/utils"
 import { HTTPException } from "hono/http-exception"
+import { Prisma } from "@prisma/client"
 
 // First, let's define interfaces for our types
 interface EventType {
@@ -16,7 +17,7 @@ interface EventType {
   updatedAt: Date
   createdAt: Date
   events: {
-    fields: object
+    fields: Prisma.JsonValue
     createdAt: Date
   }[]
   _count: {
@@ -25,7 +26,7 @@ interface EventType {
 }
 
 interface Event {
-  fields: object
+  fields: Prisma.JsonValue
 }
 
 export const typeRouter = router({
@@ -33,7 +34,7 @@ export const typeRouter = router({
     const now = new Date()
     const firstDayOfMonth = startOfMonth(now)
 
-    const types = await db.EventType.findMany({
+    const types = await db.eventType.findMany({
       where: { userId: ctx.user.id },
       select: {
         id: true,
@@ -94,7 +95,7 @@ export const typeRouter = router({
     .mutation(async ({ c, input, ctx }) => {
       const { name } = input
 
-      await db.EventType.delete({
+      await db.eventType.delete({
         where: { name_userId: { name, userId: ctx.user.id } },
       })
 
@@ -118,7 +119,7 @@ export const typeRouter = router({
 
       // TODO: ADD PAID PLAN LOGIC
 
-      const EventType = await db.EventType.create({
+      const EventType = await db.eventType.create({
         data: {
           name: name.toLowerCase(),
           color: parseColor(color),
@@ -131,7 +132,7 @@ export const typeRouter = router({
     }),
 
   insertQuickstartTypes: privateProcedure.mutation(async ({ ctx, c }) => {
-    const types = await db.EventType.createMany({
+    const types = await db.eventType.createMany({
       data: [
         { name: "bug", emoji: "🐞", color: 0xff6b6b },
         { name: "sale", emoji: "💰", color: 0xffeb3b },
@@ -150,7 +151,7 @@ export const typeRouter = router({
     .query(async ({ c, ctx, input }) => {
       const { name } = input
 
-      const type = await db.EventType.findUnique({
+      const type = await db.eventType.findUnique({
         where: { name_userId: { name, userId: ctx.user.id } },
         include: {
           _count: {
