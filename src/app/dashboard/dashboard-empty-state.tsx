@@ -17,7 +17,7 @@ export const DashboardEmptyState = () => {
   })
 
   return (
-    <Card className="flex flex-col items-center justify-center rounded-2xl flex-1 text-center p-6">
+    <Card className="flex flex-col items-center justify-center rounded-2xl flex-1 text-center p-6 dark:bg-brand-950">
       <div className="flex justify-center w-full">
         <img
           src="/brand-asset-wave.png"
@@ -26,11 +26,11 @@ export const DashboardEmptyState = () => {
         />
       </div>
 
-      <h1 className="mt-2 text-xl/8 font-medium tracking-tight text-gray-900">
+      <h1 className="mt-2 text-xl/8 font-medium tracking-tight text-gray-900 dark:text-gray-400">
         No Event Types Yet
       </h1>
 
-      <p className="text-sm/6 text-gray-600 max-w-prose mt-2 mb-8">
+      <p className="text-sm/6 text-gray-600 dark:text-gray-300 max-w-prose mt-2 mb-8">
         Start tracking events by creating your first type.
       </p>
 

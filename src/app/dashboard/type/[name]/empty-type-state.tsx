@@ -48,14 +48,14 @@ export const EmptyTypeState = ({ typeName }: { typeName: string }) => {
       contentClassName="max-w-2xl w-full flex flex-col items-center p-6"
       className="flex-1 flex items-center justify-center"
     >
-      <h2 className="text-xl/8 font-medium text-center tracking-tight text-gray-950">
+      <h2 className="text-xl/8 font-medium text-center tracking-tight text-gray-950 dark:text-gray-200">
         Create your first {typeName} event
       </h2>
-      <p className="text-sm/6 text-gray-600 mb-8 max-w-md text-center text-pretty">
+      <p className="text-sm/6 text-gray-600 dark:text-gray-300 mb-8 max-w-md text-center text-pretty">
         Get started by sending a request to our tracking API:
       </p>
 
-      <div className="w-full max-w-3xl bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="w-full max-w-3xl bg-white dark:bg-transparent rounded-lg shadow-lg overflow-hidden">
         <div className="bg-gray-800 px-4 py-2 flex justify-between items-center">
           <div className="flex space-x-2">
             <div className="size-3 rounded-full bg-red-500" />
@@ -84,12 +84,12 @@ export const EmptyTypeState = ({ typeName }: { typeName: string }) => {
       <div className="mt-8 flex flex-col items-center space-x-2">
         <div className="flex gap-2 items-center">
           <div className="size-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
             Listening to incoming events...
           </span>
         </div>
 
-        <p className="text-sm/6 text-gray-600 mt-2">
+        <p className="text-sm/6 text-gray-600 dark:text-gray-400 mt-2">
           Need help? Check out our{" "}
           <a href="#" className="text-blue-600 hover:underline">
             documentation

@@ -33,10 +33,10 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
   return (
     <div className="max-w-3xl flex flex-col gap-8">
       <div>
-        <h1 className="mt-2 text-xl/8 font-medium tracking-tight text-gray-900">
+        <h1 className="mt-2 text-xl/8 font-medium tracking-tight text-gray-900 dark:text-gray-400">
           {plan === "PRO" ? "Plan: Pro" : "Plan: Free"}
         </h1>
-        <p className="text-sm/6 text-gray-600 max-w-prose">
+        <p className="text-sm/6 text-gray-600 dark:text-gray-300 max-w-prose">
           {plan === "PRO"
             ? `Thank you for supporting ${brand.BRAND}. Find your increased usage limits below.`
             : "Get access to more events, types and premium support."}
@@ -76,10 +76,10 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
         </Card>
       </div>
 
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-gray-500 dark:text-gray-400">
         Usage will reset{" "}
         {usageData?.resetDate ? (
-          format(usageData.resetDate, "MMM d, yyyy")
+          <>{format(usageData.resetDate, "MMM d, yyyy")} </>
         ) : (
           <span className="animate-pulse w-8 h-4 bg-gray-200"></span>
         )}
@@ -88,7 +88,6 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
             onClick={() => createCheckoutSession()}
             className="inline cursor-pointer underline text-brand-600"
           >
-            {" "}
             or upgrade now to increase your limit &rarr;
           </span>
         ) : null}

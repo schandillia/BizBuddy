@@ -2,7 +2,7 @@ import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/utils"
 import { Dispatch, ReactNode, SetStateAction } from "react"
 import { Drawer } from "vaul"
-import { Dialog, DialogContent, DialogTitle } from "./dialog"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 interface ModalProps {
   children?: ReactNode
@@ -51,7 +51,7 @@ export const Modal = ({
         <Drawer.Portal>
           <Drawer.Content
             className={cn(
-              "fixed !max-w-none bottom-0 left-0 right-0 z-50 mt-24 rounded-t-[10px] border-t border-gray-200 bg-white",
+              "fixed !max-w-none bottom-0 left-0 right-0 z-50 mt-24 rounded-t-[10px] border-t border-gray-200 dark:border-brand-800 bg-white dark:bg-brand-950",
               className
             )}
           >

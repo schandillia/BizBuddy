@@ -110,17 +110,19 @@ export const CreateEventTypeModal = ({
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <h2 className="text-lg/7 font-medium tracking-tight text-gray-950">
+            <h2 className="text-lg/7 font-medium tracking-tight text-gray-950 dark:text-gray-200">
               New Event Type
             </h2>
-            <p className="text-sm/6 text-gray-600">
+            <p className="text-sm/6 text-gray-600 dark:text-gray-300">
               Create a new type to organize your events.
             </p>
           </div>
 
           <div className="space-y-5">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name" className="dark:text-gray-400">
+                Name
+              </Label>
               <Input
                 autoFocus
                 id="name"
@@ -136,7 +138,7 @@ export const CreateEventTypeModal = ({
             </div>
 
             <div>
-              <Label>Color</Label>
+              <Label className="dark:text-gray-400">Color</Label>
               <div className="flex flex-wrap gap-3">
                 {COLOR_OPTIONS.map((premadeColor) => (
                   <button
@@ -162,7 +164,7 @@ export const CreateEventTypeModal = ({
             </div>
 
             <div>
-              <Label>Emoji</Label>
+              <Label className="dark:text-gray-400">Emoji</Label>
               <div className="flex flex-wrap gap-3">
                 {EMOJI_OPTIONS.map(({ emoji, label }) => (
                   <button
@@ -193,6 +195,7 @@ export const CreateEventTypeModal = ({
             <Button
               type="button"
               variant="outline"
+              className="dark:text-gray-400"
               onClick={() => {
                 setIsOpen(false)
                 reset()

@@ -24,19 +24,19 @@ export const AccountSettings = ({
   })
 
   return (
-    <Card className="max-w-xl w-full space-y-4">
-      <div className="pt-2">
-        <Label>Discord ID</Label>
+    <Card className="max-w-xl w-full">
+      <div>
+        <Label className="dark:text-gray-400">Discord ID</Label>
         <Input
-          className="mt-1"
+          className="mt-1 dark:border-gray-700"
           value={discordId}
           onChange={(e) => setDiscordId(e.target.value)}
           placeholder="Enter your Discord ID"
         />
       </div>
 
-      <p className="mt-2 text-sm/6 text-gray-600">
-        Don't know how to find your Discord ID?{" "}
+      <p className="mt-2 text-sm/6 text-gray-600 dark:text-gray-300">
+        Don’t know how to find your Discord ID?{" "}
         <Link href="#" className="text-brand-600 hover:text-brand-500">
           Learn how to obtain it here
         </Link>
@@ -45,7 +45,7 @@ export const AccountSettings = ({
 
       <div className="pt-4">
         <Button onClick={() => mutate(discordId)} disabled={isPending}>
-            {isPending ? "Saving..." : "Save Changes"}
+          {isPending ? "Saving..." : "Save Changes"}
         </Button>
       </div>
     </Card>

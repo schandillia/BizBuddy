@@ -55,7 +55,7 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
         <ul>
           {SIDEBAR_ITEMS.map(({ type, items }) => (
             <li key={type} className="mb-4 md:mb-8">
-              <p className="text-xs font-medium leading-6 text-zinc-500">
+              <p className="text-xs font-medium leading-6 text-zinc-500 dark:text-zinc-400">
                 {type}
               </p>
               <div className="-mx-2 flex flex-1 flex-col">
@@ -65,11 +65,11 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
                     href={item.href}
                     className={cn(
                       buttonVariants({ variant: "ghost" }),
-                      "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-700 hover:bg-gray-50 transition"
+                      "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-brand-900 transition"
                     )}
                     onClick={onClose}
                   >
-                    <item.icon className="size-4 text-zinc-500 group-hover:text-zinc-700" />
+                    <item.icon className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200" />
                     {item.text}
                   </Link>
                 ))}
@@ -80,13 +80,13 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
       </div>
 
       <div className="flex flex-col">
-        <hr className="my-4 md:my-6 w-full h-px bg-gray-100" />
+        <hr className="my-4 md:my-6 w-full h-px bg-gray-100 dark:bg-gray-400" />
 
         <UserButton
           showName
           appearance={{
             elements: {
-              userButtonBox: "flex-row-reverse",
+              userButtonBox: "flex-row-reverse dark:text-gray-400",
             },
           }}
         />
@@ -99,9 +99,9 @@ const Layout = ({ children }: PropsWithChildren) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   return (
-    <div className="relative h-screen flex flex-col md:flex-row bg-white overflow-hidden">
+    <div className="relative h-screen flex flex-col md:flex-row bg-white dark:bg-brand-950 overflow-hidden">
       {/* sidebar for desktop */}
-      <div className="hidden md:block w-64 lg:w-80 border-r border-gray-100 p-6 h-full text-brand-900 relative z-10">
+      <div className="hidden md:block w-64 lg:w-80 border-r border-gray-100 dark:border-gray-600 p-6 h-full text-brand-900 relative z-10">
         <Sidebar />
       </div>
 
@@ -113,14 +113,14 @@ const Layout = ({ children }: PropsWithChildren) => {
           </Link>
           <button
             onClick={() => setIsDrawerOpen(true)}
-            className="text-gray-500 hover:text-gray-600"
+            className="text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-400"
           >
             <Menu className="size-6" />
           </button>
         </div>
 
         {/* main content area */}
-        <div className="flex-1 overflow-y-auto bg-gray-50 shadow-md p-4 md:p-6 relative z-10">
+        <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-black shadow-md p-4 md:p-6 relative z-10">
           <div className="relative min-h-full flex flex-col">
             <div className="h-full flex flex-col flex-1 space-y-4">
               {children}
