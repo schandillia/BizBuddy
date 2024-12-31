@@ -21,7 +21,7 @@ export const projectRouter = router({
 
     const eventCount = quota?.count ?? 0
 
-    const typeCount = await db.EventType.count({
+    const typeCount = await db.eventType.count({
       where: { userId: user.id },
     })
 
