@@ -109,7 +109,17 @@ export const TypePageContent = ({
           )
         },
         cell: ({ row }) => {
-          return new Date(row.getValue("createdAt")).toLocaleString()
+          return new Date(row.getValue("createdAt")).toLocaleDateString(
+            "en-US",
+            {
+              year: "numeric", // full year (e.g., 2024)
+              month: "short", // full month name (e.g., December)
+              day: "numeric", // day of the month (e.g., 31)
+              hour: "numeric", // hour (e.g., 12)
+              minute: "numeric", // minute (e.g., 34)
+              second: "numeric", // second (e.g., 21)
+            }
+          )
         },
       },
       ...(data?.events[0]
