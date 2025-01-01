@@ -5,7 +5,6 @@ import withBundleAnalyzer from "@next/bundle-analyzer"
 const nextConfig = {
   swcMinify: true, // Use the SWC compiler for faster builds and smaller bundles
   experimental: {
-    optimizeCss: true, // Inline critical CSS
     scrollRestoration: true, // Improves UX for page reloads/navigation
   },
   distDir: "build", // Custom build output folder
