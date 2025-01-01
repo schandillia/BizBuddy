@@ -3,17 +3,12 @@ import { Inter } from "next/font/google"
 import { Providers } from "@/components/providers"
 import { EB_Garamond } from "next/font/google"
 import { cn } from "@/utils"
+import { bodyFont, accentFont } from "@/lib/style/fonts"
 
 import "./globals.css"
 import { ClerkProvider } from "@clerk/nextjs"
 import meta from "@/lib/constants/meta.json"
 import { ThemeProvider } from "@/components/theme/theme-provider"
-
-const bodyFont = Inter({ subsets: ["latin"], variable: "--font-sans" })
-const accentFont = EB_Garamond({
-  subsets: ["latin"],
-  variable: "--font-heading",
-})
 
 export const metadata: Metadata = {
   title: meta.HOME.TITLE,
