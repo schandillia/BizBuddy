@@ -9,8 +9,8 @@ import { ClerkProvider } from "@clerk/nextjs"
 import meta from "@/lib/constants/meta.json"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
-const eb_garamond = EB_Garamond({
+const bodyFont = Inter({ subsets: ["latin"], variable: "--font-sans" })
+const accentFont = EB_Garamond({
   subsets: ["latin"],
   variable: "--font-heading",
 })
@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={cn(inter.variable, eb_garamond.variable)}>
+      <html lang="en" className={cn(bodyFont.variable, accentFont.variable)}>
         <body className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-brand-50 dark:bg-brand-950 text-brand-950 antialiased">
           <ThemeProvider
             attribute="class"
