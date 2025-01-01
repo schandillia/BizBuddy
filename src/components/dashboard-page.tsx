@@ -29,7 +29,7 @@ export const DashboardPage = ({
             {hideBackButton ? null : (
               <Button
                 onClick={() => router.push("/dashboard")}
-                className="w-fit bg-white dark:bg-brand-950 dark:text-white"
+                className="w-fit bg-white dark:bg-brand-950 dark:hover:bg-brand-900 dark:text-white"
                 variant="outline"
               >
                 <ArrowLeft className="size-4" />
