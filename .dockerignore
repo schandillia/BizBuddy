@@ -1,0 +1,44 @@
+# Node modules and Next.js build files
+node_modules
+.next
+
+# Git and version control
+.git
+
+# Local environment and sensitive files
+.env*
+.dockerignore
+Dockerfile
+docker-compose*.yml
+
+# Documentation and editor files
+README.md
+.vscode
+.github
+.idea/
+*.sublime-workspace
+
+# Test and coverage files
+coverage
+.husky
+test
+*.log
+
+# Build and distribution files
+/build
+/dist
+
+# Temporary and cache files
+.eslintcache
+.cache
+
+# Wrangler configuration (if applicable)
+.wrangler
+
+# TypeScript artifacts
+*.tsbuildinfo
+next-env.d.ts
+
+# Miscellaneous
+.DS_Store
+*.pem
