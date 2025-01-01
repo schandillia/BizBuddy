@@ -5,7 +5,6 @@ import { Star } from "lucide-react"
 import { ShinyButton } from "@/components/shiny-button"
 import Image from "next/image"
 import { Icons } from "@/components/icons"
-import brand from "@/lib/constants/brand.json"
 import testimonialsData from "@/lib/constants/testimonials.json" // Import testimonial data
 
 interface Testimonial {
