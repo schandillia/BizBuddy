@@ -7,7 +7,7 @@ const nextConfig = {
   experimental: {
     scrollRestoration: true, // Improves UX for page reloads/navigation
   },
-  distDir: "build", // Custom build output folder
+  distDir: ".build", // Custom build output folder
 
   // Your other Next.js config options here, if any
 }

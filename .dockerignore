@@ -26,6 +26,7 @@ test
 
 # Build and distribution files
 /build
+/.build
 /dist
 
 # Temporary and cache files
