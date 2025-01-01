@@ -23,7 +23,7 @@ export const DashboardPage = ({
 
   return (
     <section className="flex-1 h-full w-full flex flex-col">
-      <div className="w-full p-6 sm:p-8 flex justify-between border-b border-gray-200 dark:border-gray-600">
+      <div className="w-full p-6 sm:p-8 flex justify-between border-b border-gray-200 dark:border-brand-900">
         <div className="w-full flex flex-col sm:flex-row items-start sm:items-center gap-6">
           <div className="flex items-center gap-8">
             {hideBackButton ? null : (
