@@ -128,8 +128,7 @@ export const DashboardPageContent = () => {
                   className={buttonVariants({
                     variant: "outline",
                     size: "sm",
-                    className:
-                      "flex items-center gap-2 text-sm dark:text-gray-400",
+                    className: "flex items-center gap-2 text-sm",
                   })}
                 >
                   View all <ArrowRight className="size-4" />

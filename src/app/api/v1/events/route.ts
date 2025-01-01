@@ -1,3 +1,4 @@
+// Import required dependencies and configurations
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { db } from "@/db"
 import { DiscordClient } from "@/lib/discord-client"
@@ -5,16 +6,21 @@ import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 
+// Define the shape of valid requests using Zod schema
+// This ensures that incoming requests match our expected format
 const REQUEST_VALIDATOR = z
   .object({
-    type: TYPE_NAME_VALIDATOR,
-    fields: z.record(z.string().or(z.number()).or(z.boolean())).optional(),
-    description: z.string().optional(),
+    type: TYPE_NAME_VALIDATOR, // The event type (must match predefined types)
+    fields: z.record(z.string().or(z.number()).or(z.boolean())).optional(), // Optional key-value pairs
+    description: z.string().optional(), // Optional event description
   })
-  .strict()
+  .strict() // Ensures no additional fields are present
 
+// POST endpoint handler for processing events
 export const POST = async (req: NextRequest) => {
   try {
+    // Authentication check section
+    // Verify that the request includes a valid Bearer token
     const authHeader = req.headers.get("Authorization")
 
     if (!authHeader) {
@@ -36,6 +42,8 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 })
     }
 
+    // User validation section
+    // Look up the user associated with the API key and their event types
     const user = await db.user.findUnique({
       where: { apiKey },
       include: { EventTypes: true },
@@ -45,6 +53,7 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 })
     }
 
+    // Ensure user has connected their Discord account
     if (!user.discordId) {
       return NextResponse.json(
         {
@@ -54,11 +63,13 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    // ACTUAL LOGIC
+    // Quota management section
+    // Check if user has exceeded their monthly event quota
     const currentData = new Date()
     const currentMonth = currentData.getMonth() + 1
     const currentYear = currentData.getFullYear()
 
+    // Find existing quota record for current month
     const quota = await db.quota.findUnique({
       where: {
         userId: user.id,
@@ -67,11 +78,13 @@ export const POST = async (req: NextRequest) => {
       },
     })
 
+    // Determine quota limit based on user's plan
     const quotaLimit =
       user.plan === "FREE"
         ? FREE_QUOTA.maxEventsPerMonth
         : PRO_QUOTA.maxEventsPerMonth
 
+    // Check if quota has been exceeded
     if (quota && quota.count >= quotaLimit) {
       return NextResponse.json(
         {
@@ -82,12 +95,14 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
+    // Discord integration section
+    // Initialize Discord client and create DM channel
     const discord = new DiscordClient(process.env.DISCORD_BOT_TOKEN)
-
     const dmChannel = await discord.createDM(user.discordId)
 
+    // Request processing section
+    // Parse and validate the incoming JSON request
     let requestData: unknown
-
     try {
       requestData = await req.json()
     } catch (err) {
@@ -101,6 +116,7 @@ export const POST = async (req: NextRequest) => {
 
     const validationResult = REQUEST_VALIDATOR.parse(requestData)
 
+    // Verify the event type exists for this user
     const type = user.EventTypes.find(
       (cat) => cat.name === validationResult.type
     )
@@ -114,6 +130,8 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
+    // Event preparation section
+    // Format the event data for Discord embed message
     const eventData = {
       title: `${type.emoji || "🔔"} ${
         type.name.charAt(0).toUpperCase() + type.name.slice(1)
@@ -134,6 +152,8 @@ export const POST = async (req: NextRequest) => {
       ),
     }
 
+    // Database operations section
+    // Create event record in database
     const event = await db.event.create({
       data: {
         name: type.name,
@@ -145,13 +165,16 @@ export const POST = async (req: NextRequest) => {
     })
 
     try {
+      // Attempt to send the event to Discord
       await discord.sendEmbed(dmChannel.id, eventData)
 
+      // Update event status to delivered
       await db.event.update({
         where: { id: event.id },
         data: { deliveryStatus: "DELIVERED" },
       })
 
+      // Update user's quota
       await db.quota.upsert({
         where: { userId: user.id, month: currentMonth, year: currentYear },
         update: { count: { increment: 1 } },
@@ -163,6 +186,7 @@ export const POST = async (req: NextRequest) => {
         },
       })
     } catch (err) {
+      // Handle Discord delivery failure
       await db.event.update({
         where: { id: event.id },
         data: { deliveryStatus: "FAILED" },
@@ -179,11 +203,13 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
+    // Return success response
     return NextResponse.json({
       message: "Event processed successfully",
       eventId: event.id,
     })
   } catch (err) {
+    // Global error handling section
     console.error(err)
 
     if (err instanceof z.ZodError) {

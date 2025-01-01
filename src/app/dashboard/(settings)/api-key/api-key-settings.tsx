@@ -21,12 +21,7 @@ export const ApiKeySettings = ({ apiKey }: { apiKey: string }) => {
       <div>
         <Label className="dark:text-gray-400">Your API Key</Label>
         <div className="mt-1 relative">
-          <Input
-            type="password"
-            value={apiKey}
-            readOnly
-            className="dark:border-gray-700"
-          />
+          <Input type="password" value={apiKey} readOnly />
           <div className="absolute space-x-0.5 inset-y-0 right-0 flex items-center">
             <Button
               variant="ghost"

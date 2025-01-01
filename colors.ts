@@ -153,7 +153,21 @@ const colors = {
     "900": "#134800",
     "950": "#0A3600",
   },
+  gold: {
+    "25": "#FFFBF0",
+    "50": "#FFF9E5",
+    "100": "#FFF2CC",
+    "200": "#FFE699",
+    "300": "#FFD966",
+    "400": "#FFCC33",
+    "500": "#FFBF00",
+    "600": "#D6A100",
+    "700": "#A87E00",
+    "800": "#806000",
+    "900": "#523D00",
+    "950": "#291F00",
+  },
 }
 
 // Directly export the `yellow` color palette.
-export const brandColors = colors.cyan
+export const brandColors = colors.gold

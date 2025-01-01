@@ -28,7 +28,7 @@ export const AccountSettings = ({
       <div>
         <Label className="dark:text-gray-400">Discord ID</Label>
         <Input
-          className="mt-1 dark:border-gray-700"
+          className="mt-1"
           value={discordId}
           onChange={(e) => setDiscordId(e.target.value)}
           placeholder="Enter your Discord ID"
@@ -38,7 +38,7 @@ export const AccountSettings = ({
       <p className="mt-2 text-sm/6 text-gray-600 dark:text-gray-300">
         Don’t know how to find your Discord ID?{" "}
         <Link href="#" className="text-brand-600 hover:text-brand-500">
-          Learn how to obtain it here
+          Learn how to obtain one here
         </Link>
         .
       </p>
