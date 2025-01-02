@@ -1,67 +1,96 @@
-# Base image
-FROM node:20-alpine AS base
+#--------------------------------------------------------------------------
+# STAGE 1: DEPS
+#--------------------------------------------------------------------------
+FROM node:current-alpine AS base
+
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
 
 # Install OpenSSL
 RUN apk add --no-cache openssl
+# Install glibc compatibility for alpine
+RUN apk add --no-cache libc6-compat
 
 # Enable corepack and verify pnpm installation
-RUN corepack enable
-RUN pnpm --version
+RUN corepack enable pnpm
 
-# Stage: Dependencies
-FROM base AS dependencies
-WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+# Copy package.json and pnpm-lock.yaml
+COPY package.json pnpm-lock.yaml* ./
 COPY prisma ./prisma
-RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# Stage: Builder
+# Install dependencies
+RUN pnpm i --frozen-lockfile
+
+#--------------------------------------------------------------------------
+# STAGE 2: BUILDER
+#--------------------------------------------------------------------------
+# Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
-COPY --from=dependencies /app/node_modules ./node_modules
+
+# Enable corepack and pnpm first
+RUN corepack enable pnpm
+
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Pass ONLY public build-time env vars
-ARG NEXT_PUBLIC_APP_URL
-ARG NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+# Install sharp
+RUN apk add --no-cache --virtual .sharp-deps ca-certificates python3 make g++ && \
+    pnpm add sharp --save --production && \
+    apk del .sharp-deps
 
-ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
-ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
-RUN pnpm prisma generate
-RUN pnpm build
+# Dummy STRIPE_SECRET_KEY value for build
+ENV STRIPE_SECRET_KEY="test_secret_key_for_build"
 
-# Stage: Runner
+# Disable NextJS telemetry during build.
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Build the application with verbose output
+RUN pnpm run build && \
+    ls -la /app/.next && \
+    echo "Build completed successfully"
+
+# Add a check to ensure the directories exist
+RUN test -d /app/.next/standalone && \
+    test -d /app/.next/static || \
+    (echo "Required .next directories are missing" && exit 1)
+
+#--------------------------------------------------------------------------
+# STAGE 3: RUNNER
+#--------------------------------------------------------------------------
+# Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
-# Set runtime environment variables (empty values for secrets)
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-ENV DATABASE_URL=
-ENV CLERK_SECRET_KEY=
-ENV DISCORD_BOT_TOKEN=
-ENV STRIPE_SECRET_KEY=
-ENV AUTH_GOOGLE_ID=
-ENV AUTH_GOOGLE_SECRET=
+ENV NODE_ENV production
+# Disable NextJS telemetry during runtime.
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# Create a non-root user
-RUN addgroup -g 1001 nodejs \
-    && adduser -u 1001 -G nodejs -S nextjs
-USER nextjs
+# Copy the public directory
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Copy necessary files from the builder stage
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+# Copy necessary files (only once)
+COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Expose port for the application
+# Set the correct permission for prerender cache
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+USER nextjs
+
 EXPOSE 3000
 
+ENV PORT 3000
+
 # Add a healthcheck
-HEALTHCHECK --interval=5s --timeout=5s --retries=3 --start-period=5s \
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
     CMD curl -f http://localhost:3000 || exit 1
 
-# Define the default command to run the application
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/next-config-js/output
 CMD ["node", "server.js"]

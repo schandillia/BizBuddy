@@ -1,15 +1,12 @@
-// next.config.mjs
 import withBundleAnalyzer from "@next/bundle-analyzer"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: true, // Use the SWC compiler for faster builds and smaller bundles
+  swcMinify: true,
   experimental: {
-    scrollRestoration: true, // Improves UX for page reloads/navigation
+    scrollRestoration: true,
   },
-  distDir: ".build", // Custom build output folder
-
-  // Your other Next.js config options here, if any
+  output: "standalone",
 }
 
 const config = withBundleAnalyzer({
