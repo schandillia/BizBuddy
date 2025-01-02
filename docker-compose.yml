@@ -5,10 +5,18 @@ services:
     build:
       context: .
       target: runner
-      args: NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
-        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      args: # Only public variables as build arguments
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+        NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     ports:
       - "3000:3000"
+    secrets: # Server-side secrets
+      - database_url
+      - clerk_secret_key
+      - discord_bot_token
+      - stripe_secret_key
+      - auth_google_id
+      - auth_google_secret
     environment:
       NODE_ENV: production
       DATABASE_URL: ${DATABASE_URL}
@@ -17,7 +25,7 @@ services:
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       AUTH_GOOGLE_ID: ${AUTH_GOOGLE_ID}
       AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET}
-    env_file:
+    env_file: # For local development convenience ONLY
       - .env
     restart: unless-stopped
     healthcheck:
@@ -30,3 +38,17 @@ services:
         limits:
           cpus: "1.0"
           memory: "512M"
+
+secrets: # Secret files
+  database_url:
+    file: ./.secrets/database_url.txt
+  clerk_secret_key:
+    file: ./.secrets/clerk_secret_key.txt
+  discord_bot_token:
+    file: ./.secrets/discord_bot_token.txt
+  stripe_secret_key:
+    file: ./.secrets/stripe_secret_key.txt
+  auth_google_id:
+    file: ./.secrets/auth_google_id.txt
+  auth_google_secret:
+    file: ./.secrets/auth_google_secret.txt

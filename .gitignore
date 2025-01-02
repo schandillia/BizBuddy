@@ -32,6 +32,10 @@ yarn-error.log*
 .env*.local
 .dev.vars
 
+# secrets
+.secrets
+
+
 # vercel
 .vercel
 

@@ -10,6 +10,7 @@ node_modules
 .dockerignore
 Dockerfile
 docker-compose*.yml
+.secrets
 
 # Documentation and editor files
 README.md

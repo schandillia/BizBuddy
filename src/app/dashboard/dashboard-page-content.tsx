@@ -93,7 +93,7 @@ export const DashboardPageContent = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex items-center text-sm/5 text-gray-600">
                   <Clock className="size-4 mr-2 text-brand-500" />
-                  <span className="font-medium dark:text-gray-500">
+                  <span className="font-medium dark:text-gray-300">
                     Last ping:
                   </span>
                   <span className="ml-1 dark:text-gray-400">
@@ -104,7 +104,7 @@ export const DashboardPageContent = () => {
                 </div>
                 <div className="flex items-center text-sm/5 text-gray-600">
                   <Database className="size-4 mr-2 text-brand-500" />
-                  <span className="font-medium dark:text-gray-500">
+                  <span className="font-medium dark:text-gray-300">
                     Unique fields:
                   </span>
                   <span className="ml-1 dark:text-gray-400">
@@ -113,7 +113,7 @@ export const DashboardPageContent = () => {
                 </div>
                 <div className="flex items-center text-sm/5 text-gray-600">
                   <BarChart2 className="size-4 mr-2 text-brand-500" />
-                  <span className="font-medium dark:text-gray-500">
+                  <span className="font-medium dark:text-gray-300">
                     Events this month:
                   </span>
                   <span className="ml-1 dark:text-gray-400">
