@@ -1,23 +1,23 @@
 "use client"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { client } from "@/lib/client"
 import { useMutation } from "@tanstack/react-query"
 import { useState } from "react"
+import clsx from "clsx"
 
 type Theme = "LIGHT" | "DARK" | "SYSTEM"
 
 interface AppearanceSettingsProps {
   preferredTheme: Theme
 }
+
+const themes: { value: Theme; label: string }[] = [
+  { value: "LIGHT", label: "Light" },
+  { value: "DARK", label: "Dark" },
+  { value: "SYSTEM", label: "System" },
+]
 
 export const AppearanceSettings = ({
   preferredTheme: initialPreferredTheme,
@@ -42,30 +42,41 @@ export const AppearanceSettings = ({
     },
   })
 
+  const handleThemeChange = (value: Theme) => {
+    setPreferredTheme(value)
+    mutate(value)
+  }
+
   return (
     <Card className="max-w-xl w-full p-6">
       <div className="space-y-4">
-        <div>
-          <Label className="dark:text-gray-400">Preferred Theme</Label>
-          <Select
-            value={preferredTheme}
-            onValueChange={(value: Theme) => setPreferredTheme(value)}
-          >
-            <SelectTrigger className="mt-1">
-              <SelectValue placeholder="Select theme" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="LIGHT">Light</SelectItem>
-              <SelectItem value="DARK">Dark</SelectItem>
-              <SelectItem value="SYSTEM">System</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Button onClick={() => mutate(preferredTheme)} disabled={isPending}>
-            {isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
+        <Label className="dark:text-gray-400">Preferred Theme</Label>
+        <RadioGroup
+          value={preferredTheme}
+          onValueChange={handleThemeChange}
+          className={clsx(
+            "mt-2 flex space-x-4",
+            isPending && "opacity-50 pointer-events-none"
+          )}
+        >
+          {themes.map(({ value, label }) => (
+            <div key={value} className="flex items-center space-x-2">
+              <RadioGroupItem
+                value={value}
+                id={value}
+                className={clsx(
+                  "relative w-5 h-5 border border-gray-400 rounded-full flex items-center justify-center",
+                  preferredTheme === value && "bg-black dark:bg-white"
+                )}
+              >
+                {preferredTheme === value && (
+                  <div className="w-3 h-3 bg-white rounded-full" />
+                )}
+              </RadioGroupItem>
+              <Label htmlFor={value}>{label}</Label>
+            </div>
+          ))}
+        </RadioGroup>
       </div>
     </Card>
   )
