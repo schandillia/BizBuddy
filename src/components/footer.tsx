@@ -30,7 +30,7 @@ export default function Footer() {
     <>
       {/* <div className="flex-grow" /> */}
       <div
-        className="inset-x-0 bottom-0 w-full border-t border-gray-200 dark:border-gray-800 bg-brand-25 dark:bg-brand-900/90 text-sm text-soft dark:text-white/70"
+        className="inset-x-0 bottom-0 w-full border-t border-gray-200 dark:border-gray-800 bg-brand-25 dark:bg-brand-900/50 text-sm text-soft dark:text-white/70"
         role="contentinfo" // Landmark role for footer
       >
         <MaxWidthWrapper>
@@ -57,7 +57,7 @@ export default function Footer() {
                     className={buttonVariants({
                       variant: "link", // Use the "link" variant for button-like links
                       size: "sm", // Set to small size
-                      className: "dark:text-primary/90", // Apply dark mode text color
+                      className: "dark:text-brand-50", // Apply dark mode text color
                     })}
                     aria-label={`Go to ${link.text} page`} // Ensure each link has a descriptive label
                   >

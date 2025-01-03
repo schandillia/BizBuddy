@@ -8,6 +8,21 @@ import { UserButton } from "@clerk/nextjs"
 export const Navbar = async () => {
   const user = await currentUser()
 
+  const guestLinks: {
+    href: string
+    label: string
+    variant:
+      | "default"
+      | "destructive"
+      | "outline"
+      | "secondary"
+      | "ghost"
+      | "link"
+  }[] = [
+    { href: "/pricing", label: "Pricing", variant: "ghost" },
+    { href: "/sign-in", label: "Sign in", variant: "ghost" },
+  ]
+
   return (
     <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-brand-900/75 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
@@ -19,12 +34,6 @@ export const Navbar = async () => {
           <div className="h-full flex items-center space-x-4">
             {user ? (
               <>
-                {/* <SignOutButton>
-                  <Button size="sm" variant="ghost">
-                    Sign out
-                  </Button>
-                </SignOutButton> */}
-
                 <Link
                   href="/dashboard"
                   className={buttonVariants({
@@ -38,25 +47,18 @@ export const Navbar = async () => {
               </>
             ) : (
               <>
-                <Link
-                  href="/pricing"
-                  className={buttonVariants({
-                    size: "sm",
-                    variant: "ghost",
-                  })}
-                >
-                  Pricing
-                </Link>
-                <Link
-                  href="/sign-in"
-                  className={buttonVariants({
-                    size: "sm",
-                    variant: "ghost",
-                  })}
-                >
-                  Sign in
-                </Link>
-
+                {guestLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`${buttonVariants({
+                      size: "sm",
+                      variant: link.variant,
+                    })} dark:text-brand-50`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
                 <div className="h-8 w-px bg-gray-200" />
 
                 <Link

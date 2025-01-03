@@ -6,6 +6,7 @@ import { client } from "@/lib/client"
 import { useMutation } from "@tanstack/react-query"
 import { useState } from "react"
 import clsx from "clsx"
+import { useTheme } from "next-themes"
 
 type Theme = "LIGHT" | "DARK" | "SYSTEM"
 
@@ -25,6 +26,7 @@ export const AppearanceSettings = ({
   const [preferredTheme, setPreferredTheme] = useState<Theme>(
     initialPreferredTheme
   )
+  const { setTheme } = useTheme() // Move useTheme hook to component level
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (theme: Theme) => {
@@ -33,7 +35,9 @@ export const AppearanceSettings = ({
       })
       return res.json()
     },
-    onSuccess: () => {
+    onSuccess: (_, theme) => {
+      // Update the theme using setTheme from useTheme hook
+      setTheme(theme.toLowerCase())
       // Optional: Show success toast/message
     },
     onError: (error) => {
