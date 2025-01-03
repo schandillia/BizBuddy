@@ -56,7 +56,7 @@ export default async function DocumentRenderer({
   return (
     <div className="w-full mx-auto py-8">
       <div
-        className="prose lg:prose-lg prose-headings:text-gray-800 dark:prose-headings:text-white/70 prose-strong:text-gray-800 dark:prose-strong:text-white/70 prose-a:text-brand-800 dark:prose-a:text-brand-300 dark:prose-invert max-w-full mx-auto bg-brand-100 dark:bg-brand-800 p-10 rounded-lg shadow-md"
+        className="prose lg:prose-lg prose-headings:text-gray-600 dark:prose-headings:text-gray-400 prose-strong:text-gray-600 dark:prose-strong:text-gray-400 prose-a:text-brand-800 dark:prose-a:text-brand-300 dark:prose-invert marker:text-brand-800 dark:marker:text-brand-200/70 max-w-full mx-auto bg-brand-25 dark:bg-brand-900/60 p-10 rounded-lg shadow-md"
         dangerouslySetInnerHTML={{
           __html: htmlContent,
         }}

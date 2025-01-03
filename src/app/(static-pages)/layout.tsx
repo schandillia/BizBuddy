@@ -4,7 +4,7 @@ import Footer from "@/components/footer"
 import { MaxWidthWrapper } from "@/components/max-width-wrapper"
 
 const Layout = ({ children }: { children: ReactNode }) => (
-  <div className="flex flex-col min-h-screen bg-brand-25 dark:bg-brand-950">
+  <div className="flex flex-col min-h-screen bg-white dark:bg-black">
     <Navbar />
     <MaxWidthWrapper className="my-8 flex-1">{children}</MaxWidthWrapper>
     <Footer />

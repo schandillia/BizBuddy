@@ -29,7 +29,7 @@ export default function Footer() {
     <>
       {/* <div className="flex-grow" /> */}
       <div
-        className="inset-x-0 bottom-0 w-full border-t border-brand-200 dark:border-brand-900 bg-brand-50 dark:bg-brand-950/90 text-sm text-soft dark:text-white/70"
+        className="inset-x-0 bottom-0 w-full border-t border-gray-200 dark:border-gray-800 bg-brand-25 dark:bg-brand-900/90 text-sm text-soft dark:text-white/70"
         role="contentinfo" // Landmark role for footer
       >
         <MaxWidthWrapper>
@@ -66,7 +66,7 @@ export default function Footer() {
                   {/* Divider - border between links */}
                   {index !== links.length - 1 && (
                     <div
-                      className="border-l border-brand-200 dark:border-brand-900 h-6"
+                      className="border-l border-gray-200 dark:border-gray-800 h-6"
                       aria-hidden="true" // Hide the divider from screen readers
                     />
                   )}
