@@ -4,7 +4,6 @@ import { buttonVariants } from "@/components/ui/button"
 import { currentUser } from "@clerk/nextjs/server"
 import { BrandLogo } from "@/components/brand-logo"
 import { UserButton } from "@clerk/nextjs"
-import ThemeToggle from "@/components/theme/theme-toggle"
 
 export const Navbar = async () => {
   const user = await currentUser()
@@ -35,7 +34,6 @@ export const Navbar = async () => {
                 >
                   Dashboard
                 </Link>
-                <ThemeToggle />
                 <UserButton />
               </>
             ) : (

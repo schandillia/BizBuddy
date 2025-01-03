@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button"
 
 // Import buttonVariants from the correct location
 import brand from "@/lib/constants/brand.json"
+import ThemeToggle from "./theme/theme-toggle"
 
 // Get the current year dynamically
 const d = new Date()
@@ -72,6 +73,7 @@ export default function Footer() {
                   )}
                 </React.Fragment>
               ))}
+              <ThemeToggle />
             </div>
           </div>
         </MaxWidthWrapper>
