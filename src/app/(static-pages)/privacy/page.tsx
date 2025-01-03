@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
 
-import { MaxWidthWrapper } from "@/components/max-width-wrapper"
+import DocumentRenderer from "@/components/document-renderer"
 
 import meta from "@/lib/constants/meta.json"
+import { Heading } from "@/components/heading"
 
 export const metadata: Metadata = {
   title: meta.PRIVACY.TITLE,
@@ -11,7 +12,8 @@ export const metadata: Metadata = {
 
 const Page = () => (
   <>
-    <p>Privacy</p>
+    <Heading>Privacy Policy</Heading>
+    <DocumentRenderer markdownDocument="PRIVACY.md" />
   </>
 )
 
