@@ -34,6 +34,9 @@ model User {
   email     String   @unique
   apiKey    String   @unique @default(cuid())
   discordId String?
+  webexId String?
+  whatsappId String?
+  slackId String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

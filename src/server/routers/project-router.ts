@@ -52,6 +52,48 @@ export const projectRouter = router({
       return c.json({ success: true })
     }),
 
+  setWebexID: privateProcedure
+    .input(z.object({ webexId: z.string().max(20) }))
+    .mutation(async ({ c, ctx, input }) => {
+      const { user } = ctx
+      const { webexId } = input
+
+      await db.user.update({
+        where: { id: user.id },
+        data: { webexId },
+      })
+
+      return c.json({ success: true })
+    }),
+
+  setWhatsappID: privateProcedure
+    .input(z.object({ whatsappId: z.string().max(20) }))
+    .mutation(async ({ c, ctx, input }) => {
+      const { user } = ctx
+      const { whatsappId } = input
+
+      await db.user.update({
+        where: { id: user.id },
+        data: { whatsappId },
+      })
+
+      return c.json({ success: true })
+    }),
+
+  setSlackID: privateProcedure
+    .input(z.object({ slackId: z.string().max(20) }))
+    .mutation(async ({ c, ctx, input }) => {
+      const { user } = ctx
+      const { slackId } = input
+
+      await db.user.update({
+        where: { id: user.id },
+        data: { slackId },
+      })
+
+      return c.json({ success: true })
+    }),
+
   setPreferredTheme: privateProcedure
     .input(
       z.object({
