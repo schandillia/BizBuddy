@@ -16,12 +16,20 @@ enum Plan {
   PRO
 }
 
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
 model User {
   id         String  @id @default(cuid())
   externalId String? @unique
 
   quotaLimit Int
   plan       Plan @default(FREE)
+
+  theme Theme @default(SYSTEM)
 
   email     String   @unique
   apiKey    String   @unique @default(cuid())

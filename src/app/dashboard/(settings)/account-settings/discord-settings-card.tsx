@@ -9,7 +9,7 @@ import { useMutation } from "@tanstack/react-query"
 import Link from "next/link"
 import { useState } from "react"
 
-export const AccountSettings = ({
+export const DiscordSettingsCard = ({
   discordId: initialDiscordId,
 }: {
   discordId: string

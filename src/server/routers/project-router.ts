@@ -51,4 +51,26 @@ export const projectRouter = router({
 
       return c.json({ success: true })
     }),
+
+  setPreferredTheme: privateProcedure
+    .input(
+      z.object({
+        theme: z.enum(["LIGHT", "DARK", "SYSTEM"]),
+      })
+    )
+    .mutation(async ({ c, ctx, input }) => {
+      const { user } = ctx
+      const { theme } = input
+
+      const updatedUser = await db.user.update({
+        where: { id: user.id },
+        data: { theme },
+        select: { theme: true },
+      })
+
+      return c.json({
+        success: true,
+        theme: updatedUser.theme,
+      })
+    }),
 })
