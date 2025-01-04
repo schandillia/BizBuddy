@@ -57,7 +57,6 @@ export const AppearancePageContent = ({
       return res.json()
     },
     onSuccess: (fontSize) => {
-      // You might want to update some global font size state or CSS variable here
       document.documentElement.style.setProperty(
         "--base-font-size",
         `${fontSize}px`
@@ -120,19 +119,23 @@ export const AppearancePageContent = ({
           <Label className="dark:text-gray-400">Font Size</Label>
           <div
             className={clsx(
+              "flex items-center gap-4",
               isFontSizePending && "opacity-50 pointer-events-none"
             )}
           >
+            <span className="text-xs text-gray-500">Aa</span>
             <Slider
+              className="flex-1"
               min={12}
               max={18}
               step={2}
               value={[fontSize]}
               onValueChange={handleFontSizeChange}
             />
-            <div className="mt-2 text-sm text-gray-500">
-              Current size: {fontSize}px
-            </div>
+            <span className="text-lg text-gray-500">Aa</span>
+          </div>
+          <div className="text-sm text-gray-500">
+            Current size: {fontSize}px
           </div>
         </div>
       </Card>
