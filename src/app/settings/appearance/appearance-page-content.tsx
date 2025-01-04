@@ -10,19 +10,19 @@ import { useTheme } from "next-themes"
 
 type Theme = "LIGHT" | "DARK" | "SYSTEM"
 
-interface AppearanceSettingsProps {
+interface AppearancePageContentProps {
   preferredTheme: Theme
 }
 
 const themes: { value: Theme; label: string }[] = [
   { value: "LIGHT", label: "Light" },
   { value: "DARK", label: "Dark" },
-  { value: "SYSTEM", label: "System" },
+  { value: "SYSTEM", label: "Auto" },
 ]
 
-export const AppearanceSettings = ({
+export const AppearancePageContent = ({
   preferredTheme: initialPreferredTheme,
-}: AppearanceSettingsProps) => {
+}: AppearancePageContentProps) => {
   const [preferredTheme, setPreferredTheme] = useState<Theme>(
     initialPreferredTheme
   )

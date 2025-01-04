@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { CheckIcon, ClipboardIcon } from "lucide-react"
 import { useState } from "react"
 
-export const ApiKeySettings = ({ apiKey }: { apiKey: string }) => {
+export const ApiKeyPageContent = ({ apiKey }: { apiKey: string }) => {
   const [copySuccess, setCopySuccess] = useState(false)
 
   const copyApiKey = () => {

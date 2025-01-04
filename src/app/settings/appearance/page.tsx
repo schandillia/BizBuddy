@@ -1,8 +1,8 @@
-import { DashboardPage } from "@/components/dashboard-page"
+import { UserPage } from "@/components/user-page"
 import { db } from "@/db"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { ApiKeySettings } from "./api-key-settings"
+import { AppearancePageContent } from "@/app/settings/appearance/appearance-page-content"
 
 const Page = async () => {
   const auth = await currentUser()
@@ -20,9 +20,9 @@ const Page = async () => {
   }
 
   return (
-    <DashboardPage title="API Key">
-      <ApiKeySettings apiKey={user.apiKey ?? ""} />
-    </DashboardPage>
+    <UserPage title="Appearance">
+      <AppearancePageContent preferredTheme={user.theme ?? ""} />
+    </UserPage>
   )
 }
 

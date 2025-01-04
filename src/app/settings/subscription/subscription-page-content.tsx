@@ -9,7 +9,7 @@ import { BarChart } from "lucide-react"
 import { useRouter } from "next/navigation"
 import brand from "@/lib/constants/brand.json"
 
-export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
+export const SubscriptionPageContent = ({ plan }: { plan: Plan }) => {
   const router = useRouter()
 
   const { mutate: createCheckoutSession } = useMutation({
@@ -44,7 +44,7 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="border-2 border-brand-700">
+        <Card>
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <p className="text-sm/6 font-medium">Total Events</p>
             <BarChart className="size-4 text-muted-foreground" />
@@ -88,9 +88,10 @@ export const UpgradePageContent = ({ plan }: { plan: Plan }) => {
             onClick={() => createCheckoutSession()}
             className="inline cursor-pointer underline text-brand-600"
           >
-            or upgrade now to increase your limit &rarr;
+            or upgrade now to increase your limit
           </span>
         ) : null}
+        .
       </p>
     </div>
   )

@@ -1,8 +1,8 @@
-import { DashboardPage } from "@/components/dashboard-page"
+import { UserPage } from "@/components/user-page"
 import { db } from "@/db"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { UpgradePageContent } from "./upgrade-page-content"
+import { SubscriptionPageContent } from "@/app/settings/subscription/subscription-page-content"
 
 const Page = async () => {
   const auth = await currentUser()
@@ -20,9 +20,9 @@ const Page = async () => {
   }
 
   return (
-    <DashboardPage title="Pro Membership">
-      <UpgradePageContent plan={user.plan} />
-    </DashboardPage>
+    <UserPage title="Subscription">
+      <SubscriptionPageContent plan={user.plan} />
+    </UserPage>
   )
 }
 

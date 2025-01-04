@@ -7,28 +7,28 @@ import { Heading } from "./heading"
 import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
 
-interface DashboardPageProps {
+interface UserPageProps {
   title: string
   children?: ReactNode
   hideBackButton?: boolean
   cta?: ReactNode
 }
 
-export const DashboardPage = ({
+export const UserPage = ({
   title,
   children,
   cta,
   hideBackButton,
-}: DashboardPageProps) => {
+}: UserPageProps) => {
   const router = useRouter()
   const pathname = usePathname() // This will give you the current path
 
   const handleBackButtonClick = () => {
-    // Check if we're on /dashboard, if so, navigate to /
-    if (pathname === "/dashboard") {
+    // Check if we're on /settings, if so, navigate to /
+    if (pathname === "/settings" || pathname === "/settings/profile") {
       router.push("/")
     } else {
-      router.push("/dashboard")
+      router.push("/settings")
     }
   }
 

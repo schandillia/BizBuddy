@@ -38,57 +38,44 @@ export const projectRouter = router({
     })
   }),
 
-  setDiscordID: privateProcedure
-    .input(z.object({ discordId: z.string().max(20) }))
-    .mutation(async ({ c, ctx, input }) => {
-      const { user } = ctx
-      const { discordId } = input
-
-      await db.user.update({
-        where: { id: user.id },
-        data: { discordId },
+  setIntegrationIDs: privateProcedure
+    .input(
+      z.object({
+        discordId: z.string().max(20),
+        discordEnabled: z.boolean(),
+        webexId: z.string().max(20),
+        webexEnabled: z.boolean(),
+        whatsappId: z.string().max(20),
+        whatsappEnabled: z.boolean(),
+        slackId: z.string().max(20),
+        slackEnabled: z.boolean(),
       })
-
-      return c.json({ success: true })
-    }),
-
-  setWebexID: privateProcedure
-    .input(z.object({ webexId: z.string().max(20) }))
+    )
     .mutation(async ({ c, ctx, input }) => {
       const { user } = ctx
-      const { webexId } = input
+      const {
+        discordId,
+        discordEnabled,
+        webexId,
+        webexEnabled,
+        whatsappId,
+        whatsappEnabled,
+        slackId,
+        slackEnabled,
+      } = input
 
       await db.user.update({
         where: { id: user.id },
-        data: { webexId },
-      })
-
-      return c.json({ success: true })
-    }),
-
-  setWhatsappID: privateProcedure
-    .input(z.object({ whatsappId: z.string().max(20) }))
-    .mutation(async ({ c, ctx, input }) => {
-      const { user } = ctx
-      const { whatsappId } = input
-
-      await db.user.update({
-        where: { id: user.id },
-        data: { whatsappId },
-      })
-
-      return c.json({ success: true })
-    }),
-
-  setSlackID: privateProcedure
-    .input(z.object({ slackId: z.string().max(20) }))
-    .mutation(async ({ c, ctx, input }) => {
-      const { user } = ctx
-      const { slackId } = input
-
-      await db.user.update({
-        where: { id: user.id },
-        data: { slackId },
+        data: {
+          discordId,
+          discordEnabled,
+          webexId,
+          webexEnabled,
+          whatsappId,
+          whatsappEnabled,
+          slackId,
+          slackEnabled,
+        },
       })
 
       return c.json({ success: true })

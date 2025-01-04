@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { currentUser } from "@clerk/nextjs/server"
 import { BrandLogo } from "@/components/brand-logo"
 import { UserButton } from "@clerk/nextjs"
+import { DashboardNavButton } from "./dashboard-nav-button"
 
 export const Navbar = async () => {
   const user = await currentUser()
@@ -34,15 +35,7 @@ export const Navbar = async () => {
           <div className="h-full flex items-center space-x-4">
             {user ? (
               <>
-                <Link
-                  href="/dashboard"
-                  className={buttonVariants({
-                    size: "sm",
-                    className: "flex items-center gap-1 mr-4",
-                  })}
-                >
-                  Dashboard
-                </Link>
+                <DashboardNavButton />
                 <UserButton />
               </>
             ) : (

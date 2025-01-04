@@ -1,11 +1,7 @@
-import { DashboardPage } from "@/components/dashboard-page"
+import { UserPage } from "@/components/user-page"
 import { db } from "@/db"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { DashboardPageContent } from "./dashboard-page-content"
-import { CreateEventTypeModal } from "@/components/create-event-type-modal"
-import { Button } from "@/components/ui/button"
-import { PlusIcon } from "lucide-react"
 import { createCheckoutSession } from "@/lib/stripe"
 import { PaymentSuccessModal } from "@/components/payment-success-modal"
 
@@ -30,6 +26,11 @@ const Page = async ({ searchParams }: PageProps) => {
     return redirect("/welcome")
   }
 
+  // Check if the user is on /settings with no sub-route, and redirect to /settings/profile
+  if (!searchParams["intent"]) {
+    redirect("/settings/profile")
+  }
+
   const intent = searchParams.intent
 
   if (intent === "upgrade") {
@@ -47,19 +48,9 @@ const Page = async ({ searchParams }: PageProps) => {
     <>
       {success ? <PaymentSuccessModal /> : null}
 
-      <DashboardPage
-        cta={
-          <CreateEventTypeModal>
-            <Button className="w-full sm:w-fit">
-              <PlusIcon className="size-4 mr-2" />
-              Add Event Type
-            </Button>
-          </CreateEventTypeModal>
-        }
-        title="Dashboard"
-      >
-        <DashboardPageContent />
-      </DashboardPage>
+      <UserPage title="Profile">
+        <div>settings home</div>
+      </UserPage>
     </>
   )
 }
