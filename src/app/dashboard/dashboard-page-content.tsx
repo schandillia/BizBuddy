@@ -6,7 +6,7 @@ import { Modal } from "@/components/ui/modal"
 import { client } from "@/lib/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { format, formatDistanceToNow } from "date-fns"
-import { ArrowRight, BarChart2, Clock, Database, Trash2 } from "lucide-react"
+import { BarChart2, Clock, Database, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { DashboardEmptyState } from "./dashboard-empty-state"
@@ -131,7 +131,7 @@ export const DashboardPageContent = () => {
                     className: "flex items-center gap-2 text-sm",
                   })}
                 >
-                  View all <ArrowRight className="size-4" />
+                  View all
                 </Link>
                 <Button
                   variant="ghost"

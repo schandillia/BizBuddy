@@ -15,13 +15,11 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 
-type IntegrationService = {
-  name: string
+type ServiceName = "discord" | "webex" | "slack" | "whatsapp"
+
+type ServiceState = {
   id: string
-  setId: (value: string) => void
   enabled: boolean
-  setEnabled: (value: boolean) => void
-  placeholder: string
 }
 
 type IntegrationPageContentProps = {
@@ -45,15 +43,12 @@ export const IntegrationPageContent = ({
   whatsappEnabled: initialWhatsappEnabled,
   slackEnabled: initialSlackEnabled,
 }: IntegrationPageContentProps) => {
-  const [discordId, setDiscordId] = useState(initialDiscordId)
-  const [webexId, setWebexId] = useState(initialWebexId)
-  const [slackId, setSlackId] = useState(initialSlackId)
-  const [whatsappId, setWhatsappId] = useState(initialWhatsappId)
-
-  const [discordEnabled, setDiscordEnabled] = useState(initialDiscordEnabled)
-  const [webexEnabled, setWebexEnabled] = useState(initialWebexEnabled)
-  const [whatsappEnabled, setWhatsappEnabled] = useState(initialWhatsappEnabled)
-  const [slackEnabled, setSlackEnabled] = useState(initialSlackEnabled)
+  const [services, setServices] = useState<Record<ServiceName, ServiceState>>({
+    discord: { id: initialDiscordId, enabled: initialDiscordEnabled },
+    webex: { id: initialWebexId, enabled: initialWebexEnabled },
+    slack: { id: initialSlackId, enabled: initialSlackEnabled },
+    whatsapp: { id: initialWhatsappId, enabled: initialWhatsappEnabled },
+  })
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: IntegrationPageContentProps) => {
@@ -62,52 +57,54 @@ export const IntegrationPageContent = ({
     },
   })
 
-  const integrationServices: IntegrationService[] = [
+  const updateService = (
+    serviceName: ServiceName,
+    updates: Partial<ServiceState>
+  ) => {
+    setServices((prev) => ({
+      ...prev,
+      [serviceName]: { ...prev[serviceName], ...updates },
+    }))
+  }
+
+  const serviceConfigs = [
     {
-      name: "Discord",
-      id: discordId,
-      setId: setDiscordId,
-      enabled: discordEnabled,
-      setEnabled: setDiscordEnabled,
+      name: "discord" as ServiceName,
+      displayName: "Discord",
       placeholder: "Enter your Discord ID",
     },
     {
-      name: "Webex",
-      id: webexId,
-      setId: setWebexId,
-      enabled: webexEnabled,
-      setEnabled: setWebexEnabled,
+      name: "webex" as ServiceName,
+      displayName: "Webex",
       placeholder: "Enter your Webex ID",
     },
     {
-      name: "Slack",
-      id: slackId,
-      setId: setSlackId,
-      enabled: slackEnabled,
-      setEnabled: setSlackEnabled,
+      name: "slack" as ServiceName,
+      displayName: "Slack",
       placeholder: "Enter your Slack ID",
     },
     {
-      name: "WhatsApp",
-      id: whatsappId,
-      setId: setWhatsappId,
-      enabled: whatsappEnabled,
-      setEnabled: setWhatsappEnabled,
+      name: "whatsapp" as ServiceName,
+      displayName: "WhatsApp",
       placeholder: "Enter your WhatsApp ID",
     },
   ]
 
   const handleSave = () => {
-    mutate({
-      discordId,
-      webexId,
-      slackId,
-      whatsappId,
-      discordEnabled,
-      webexEnabled,
-      whatsappEnabled,
-      slackEnabled,
-    })
+    const payload = {
+      discordId: services.discord.id,
+      webexId: services.webex.id,
+      slackId: services.slack.id,
+      whatsappId: services.whatsapp.id,
+      discordEnabled:
+        services.discord.id.trim() !== "" && services.discord.enabled,
+      webexEnabled: services.webex.id.trim() !== "" && services.webex.enabled,
+      slackEnabled: services.slack.id.trim() !== "" && services.slack.enabled,
+      whatsappEnabled:
+        services.whatsapp.id.trim() !== "" && services.whatsapp.enabled,
+    }
+
+    mutate(payload)
   }
 
   return (
@@ -121,22 +118,26 @@ export const IntegrationPageContent = ({
           </TableRow>
         </TableHeader>
         <TableBody className="dark:text-gray-300">
-          {integrationServices.map((service) => (
-            <TableRow key={service.name} className="dark:hover:bg-brand-950/40">
-              <TableCell className="font-medium">{service.name}</TableCell>
+          {serviceConfigs.map(({ name, displayName, placeholder }) => (
+            <TableRow key={name} className="dark:hover:bg-brand-950/40">
+              <TableCell className="font-medium">{displayName}</TableCell>
               <TableCell>
-                <Switch
-                  checked={service.enabled}
-                  onCheckedChange={service.setEnabled}
-                  className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
-                />
+                {services[name].id.trim() !== "" && (
+                  <Switch
+                    checked={services[name].enabled}
+                    onCheckedChange={(value) =>
+                      updateService(name, { enabled: value })
+                    }
+                    className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
+                  />
+                )}
               </TableCell>
               <TableCell className="text-right">
                 <Input
                   className="mt-1 dark:placeholder:text-gray-600"
-                  value={service.id}
-                  onChange={(e) => service.setId(e.target.value)}
-                  placeholder={service.placeholder}
+                  value={services[name].id}
+                  onChange={(e) => updateService(name, { id: e.target.value })}
+                  placeholder={placeholder}
                 />
               </TableCell>
             </TableRow>
