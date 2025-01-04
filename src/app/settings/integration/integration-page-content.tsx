@@ -114,9 +114,9 @@ export const IntegrationPageContent = ({
     <div className="max-w-3xl flex flex-col gap-8">
       <Table>
         <TableHeader>
-          <TableRow className="dark:hover:bg-brand-950/40">
+          <TableRow className="hover:bg-transparent">
             <TableHead>Service</TableHead>
-            <TableHead>Enable</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Identifier</TableHead>
           </TableRow>
         </TableHeader>
