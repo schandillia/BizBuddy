@@ -30,6 +30,12 @@ export default async function RootLayout({
 
   const preferredTheme = user?.theme.toLowerCase()
 
+  const fontSizeMap: Record<number, string> = {
+    12: "text-xs",
+    14: "text-sm",
+    16: "text-base",
+    18: "text-lg",
+  }
   // Updated script to handle theme initialization for both logged-in and non-logged-in users
   const themeScript = `
     try {
