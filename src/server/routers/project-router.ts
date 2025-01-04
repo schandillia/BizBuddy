@@ -102,4 +102,26 @@ export const projectRouter = router({
         theme: updatedUser.theme,
       })
     }),
+
+  setPreferredFontSize: privateProcedure
+    .input(
+      z.object({
+        fontSize: z.number().min(12).max(18).step(2),
+      })
+    )
+    .mutation(async ({ c, ctx, input }) => {
+      const { user } = ctx
+      const { fontSize } = input
+
+      const updatedUser = await db.user.update({
+        where: { id: user.id },
+        data: { fontSize },
+        select: { fontSize: true },
+      })
+
+      return c.json({
+        success: true,
+        fontSize: updatedUser.fontSize,
+      })
+    }),
 })

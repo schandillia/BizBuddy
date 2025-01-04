@@ -21,7 +21,10 @@ const Page = async () => {
 
   return (
     <UserPage title="Appearance">
-      <AppearancePageContent preferredTheme={user.theme ?? ""} />
+      <AppearancePageContent
+        preferredTheme={user.theme}
+        preferredFontSize={user.fontSize}
+      />
     </UserPage>
   )
 }

@@ -13,6 +13,7 @@ type Theme = "LIGHT" | "DARK" | "SYSTEM"
 
 interface AppearancePageContentProps {
   preferredTheme: Theme
+  preferredFontSize: number
 }
 
 const themes: { value: Theme; label: string }[] = [
@@ -23,13 +24,16 @@ const themes: { value: Theme; label: string }[] = [
 
 export const AppearancePageContent = ({
   preferredTheme: initialPreferredTheme,
+  preferredFontSize: initialPreferredFontSize,
 }: AppearancePageContentProps) => {
   const [preferredTheme, setPreferredTheme] = useState<Theme>(
     initialPreferredTheme
   )
-  const { setTheme } = useTheme() // Move useTheme hook to component level
+  const [fontSize, setFontSize] = useState<number>(initialPreferredFontSize)
+  const { setTheme } = useTheme()
 
-  const { mutate, isPending } = useMutation({
+  // Theme mutation
+  const { mutate: mutateTheme, isPending: isThemePending } = useMutation({
     mutationFn: async (theme: Theme) => {
       const res = await client.project.setPreferredTheme.$post({
         theme,
@@ -37,19 +41,42 @@ export const AppearancePageContent = ({
       return res.json()
     },
     onSuccess: (_, theme) => {
-      // Update the theme using setTheme from useTheme hook
       setTheme(theme.toLowerCase())
-      // Optional: Show success toast/message
     },
     onError: (error) => {
       console.error("Failed to update theme:", error)
-      // Optional: Show error toast/message
+    },
+  })
+
+  // Font size mutation
+  const { mutate: mutateFontSize, isPending: isFontSizePending } = useMutation({
+    mutationFn: async (fontSize: number) => {
+      const res = await client.project.setPreferredFontSize.$post({
+        fontSize,
+      })
+      return res.json()
+    },
+    onSuccess: (fontSize) => {
+      // You might want to update some global font size state or CSS variable here
+      document.documentElement.style.setProperty(
+        "--base-font-size",
+        `${fontSize}px`
+      )
+    },
+    onError: (error) => {
+      console.error("Failed to update font size:", error)
     },
   })
 
   const handleThemeChange = (value: Theme) => {
     setPreferredTheme(value)
-    mutate(value)
+    mutateTheme(value)
+  }
+
+  const handleFontSizeChange = (values: number[]) => {
+    const newSize = values[0]
+    setFontSize(newSize)
+    mutateFontSize(newSize)
   }
 
   return (
@@ -63,7 +90,7 @@ export const AppearancePageContent = ({
             onValueChange={handleThemeChange}
             className={clsx(
               "mt-2 flex space-x-4",
-              isPending && "opacity-50 pointer-events-none"
+              isThemePending && "opacity-50 pointer-events-none"
             )}
           >
             {themes.map(({ value, label }) => (
@@ -91,8 +118,21 @@ export const AppearancePageContent = ({
       <Card className="max-w-xl w-full p-6">
         <div className="space-y-4">
           <Label className="dark:text-gray-400">Font Size</Label>
-          <div>
-            <Slider defaultValue={[10]} max={24} step={6} />
+          <div
+            className={clsx(
+              isFontSizePending && "opacity-50 pointer-events-none"
+            )}
+          >
+            <Slider
+              min={12}
+              max={18}
+              step={2}
+              value={[fontSize]}
+              onValueChange={handleFontSizeChange}
+            />
+            <div className="mt-2 text-sm text-gray-500">
+              Current size: {fontSize}px
+            </div>
           </div>
         </div>
       </Card>

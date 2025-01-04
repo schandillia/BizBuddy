@@ -30,6 +30,7 @@ model User {
   plan       Plan @default(FREE)
 
   theme Theme @default(SYSTEM)
+  fontSize Int @default(16)
 
   email     String   @unique
   apiKey    String   @unique @default(cuid())
@@ -41,6 +42,7 @@ model User {
   whatsappEnabled Boolean @default(false)
   slackId String?
   slackEnabled Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
