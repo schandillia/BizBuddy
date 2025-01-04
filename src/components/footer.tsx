@@ -30,7 +30,7 @@ export default function Footer() {
     <>
       {/* <div className="flex-grow" /> */}
       <div
-        className="inset-x-0 bottom-0 w-full border-t border-gray-200 dark:border-gray-800 bg-brand-25 dark:bg-brand-900/50 text-sm text-soft dark:text-white/70"
+        className="inset-x-0 bottom-0 w-full border-t border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-brand-900/75 text-sm text-soft dark:text-white/70"
         role="contentinfo" // Landmark role for footer
       >
         <MaxWidthWrapper>

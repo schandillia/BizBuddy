@@ -15,6 +15,15 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 
+type IntegrationService = {
+  name: string
+  id: string
+  setId: (value: string) => void
+  enabled: boolean
+  setEnabled: (value: boolean) => void
+  placeholder: string
+}
+
 type IntegrationPageContentProps = {
   discordId: string
   webexId: string
@@ -53,6 +62,41 @@ export const IntegrationPageContent = ({
     },
   })
 
+  const integrationServices: IntegrationService[] = [
+    {
+      name: "Discord",
+      id: discordId,
+      setId: setDiscordId,
+      enabled: discordEnabled,
+      setEnabled: setDiscordEnabled,
+      placeholder: "Enter your Discord ID",
+    },
+    {
+      name: "Webex",
+      id: webexId,
+      setId: setWebexId,
+      enabled: webexEnabled,
+      setEnabled: setWebexEnabled,
+      placeholder: "Enter your Webex ID",
+    },
+    {
+      name: "Slack",
+      id: slackId,
+      setId: setSlackId,
+      enabled: slackEnabled,
+      setEnabled: setSlackEnabled,
+      placeholder: "Enter your Slack ID",
+    },
+    {
+      name: "WhatsApp",
+      id: whatsappId,
+      setId: setWhatsappId,
+      enabled: whatsappEnabled,
+      setEnabled: setWhatsappEnabled,
+      placeholder: "Enter your WhatsApp ID",
+    },
+  ]
+
   const handleSave = () => {
     mutate({
       discordId,
@@ -77,82 +121,26 @@ export const IntegrationPageContent = ({
           </TableRow>
         </TableHeader>
         <TableBody className="dark:text-gray-300">
-          {/* Discord */}
-          <TableRow className="dark:hover:bg-brand-950/40">
-            <TableCell className="font-medium">Discord</TableCell>
-            <TableCell>
-              <Switch
-                checked={discordEnabled}
-                onCheckedChange={setDiscordEnabled}
-                className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
-              />
-            </TableCell>
-            <TableCell className="text-right">
-              <Input
-                className="mt-1"
-                value={discordId}
-                onChange={(e) => setDiscordId(e.target.value)}
-                placeholder="Enter your Discord ID"
-              />
-            </TableCell>
-          </TableRow>
-          {/* Webex */}
-          <TableRow className="dark:hover:bg-brand-950/40">
-            <TableCell className="font-medium">Webex</TableCell>
-            <TableCell>
-              <Switch
-                checked={webexEnabled}
-                onCheckedChange={setWebexEnabled}
-                className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
-              />
-            </TableCell>
-            <TableCell className="text-right">
-              <Input
-                className="mt-1"
-                value={webexId}
-                onChange={(e) => setWebexId(e.target.value)}
-                placeholder="Enter your Webex ID"
-              />
-            </TableCell>
-          </TableRow>
-          {/* Slack */}
-          <TableRow className="dark:hover:bg-brand-950/40">
-            <TableCell className="font-medium">Slack</TableCell>
-            <TableCell>
-              <Switch
-                checked={slackEnabled}
-                onCheckedChange={setSlackEnabled}
-                className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
-              />
-            </TableCell>
-            <TableCell className="text-right">
-              <Input
-                className="mt-1"
-                value={slackId}
-                onChange={(e) => setSlackId(e.target.value)}
-                placeholder="Enter your Slack ID"
-              />
-            </TableCell>
-          </TableRow>
-          {/* WhatsApp */}
-          <TableRow className="dark:hover:bg-brand-950/40">
-            <TableCell className="font-medium">WhatsApp</TableCell>
-            <TableCell>
-              <Switch
-                checked={whatsappEnabled}
-                onCheckedChange={setWhatsappEnabled}
-                className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
-              />
-            </TableCell>
-            <TableCell className="text-right">
-              <Input
-                className="mt-1 dark:placeholder:text-gray-600"
-                value={whatsappId}
-                onChange={(e) => setWhatsappId(e.target.value)}
-                placeholder="Enter your WhatsApp ID"
-              />
-            </TableCell>
-          </TableRow>
+          {integrationServices.map((service) => (
+            <TableRow key={service.name} className="dark:hover:bg-brand-950/40">
+              <TableCell className="font-medium">{service.name}</TableCell>
+              <TableCell>
+                <Switch
+                  checked={service.enabled}
+                  onCheckedChange={service.setEnabled}
+                  className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
+                />
+              </TableCell>
+              <TableCell className="text-right">
+                <Input
+                  className="mt-1 dark:placeholder:text-gray-600"
+                  value={service.id}
+                  onChange={(e) => service.setId(e.target.value)}
+                  placeholder={service.placeholder}
+                />
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
       <div className="pt-4">

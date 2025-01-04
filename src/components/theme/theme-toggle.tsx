@@ -45,7 +45,7 @@ export default function ThemeToggle() {
 
   return (
     <Button
-      className="rounded-full hover:opacity-80"
+      className="rounded-full dark:hover:bg-brand-950/70"
       variant="outline"
       size="icon"
       onClick={cycleTheme}

@@ -108,7 +108,7 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
       </div>
 
       <div className="flex flex-col">
-        <hr className="my-4 md:my-6 w-full h-px bg-gray-100 dark:border-brand-900" />
+        <hr className="my-4 md:my-6 w-full h-px bg-gray-100 dark:bg-brand-700 dark:border-brand-950" />
         <div className="flex justify-between items-center">
           <UserButton
             showName
@@ -129,7 +129,7 @@ const Layout = ({ children }: PropsWithChildren) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   return (
-    <div className="relative h-screen flex flex-col md:flex-row bg-white dark:bg-brand-950 overflow-hidden">
+    <div className="relative h-screen flex flex-col md:flex-row bg-white dark:bg-brand-900/75 overflow-hidden">
       {/* sidebar for desktop */}
       <div className="hidden md:block w-64 lg:w-80 border-r border-gray-100 dark:border-brand-900 p-6 h-full text-brand-900 relative z-10">
         <Sidebar />
