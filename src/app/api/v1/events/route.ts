@@ -1,7 +1,7 @@
 // Import required dependencies and configurations
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { db } from "@/db"
-import { DiscordClient } from "@/lib/discord-client"
+import { DiscordClient } from "@/lib/api/integrations/clients/discord-client"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"

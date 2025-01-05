@@ -1,4 +1,4 @@
-import { DiscordClient } from "@/lib/discord-client"
+import { DiscordClient } from "@/lib/api/integrations/clients/discord-client"
 
 export const sendToDiscord = async ({
   discordId,

@@ -1,21 +1,108 @@
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { db } from "@/db"
 import { sendToDiscord } from "@/lib/api/integrations/discord"
+import { sendToSlack } from "@/lib/api/integrations/slack"
+import { sendToTeams } from "@/lib/api/integrations/teams"
 import { sendToWebex } from "@/lib/api/integrations/webex"
+import { sendToWhatsapp } from "@/lib/api/integrations/whatsapp"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 
-// Define the shape of valid requests using Zod schema
 const REQUEST_VALIDATOR = z
   .object({
-    type: TYPE_NAME_VALIDATOR, // The event type (must match predefined types)
-    fields: z.record(z.string().or(z.number()).or(z.boolean())).optional(), // Optional key-value pairs
-    description: z.string().optional(), // Optional event description
+    type: TYPE_NAME_VALIDATOR,
+    fields: z.record(z.string().or(z.number()).or(z.boolean())).optional(),
+    description: z.string().optional(),
   })
   .strict()
 
-// POST endpoint handler for processing events
+type IntegrationResult = {
+  success: boolean
+  message?: string
+}
+
+// Helper function to validate integration-specific requirements
+const validateIntegrationConfig = (
+  user: any,
+  integration: string
+): { isValid: boolean; message?: string } => {
+  switch (integration) {
+    case "DISCORD":
+      if (!user.discordId) {
+        return {
+          isValid: false,
+          message: "Please enter your Discord ID in your account settings",
+        }
+      }
+      break
+    case "WEBEX":
+      if (!user.webexId) {
+        return {
+          isValid: false,
+          message: "Please enter your Webex ID in your account settings",
+        }
+      }
+      break
+    case "WHATSAPP":
+      if (!user.whatsappId) {
+        return {
+          isValid: false,
+          message: "Please enter your WhatsApp number in your account settings",
+        }
+      }
+      break
+    case "NONE":
+      return {
+        isValid: false,
+        message: "Please activate an integration in your account settings",
+      }
+      break
+  }
+  return { isValid: true }
+}
+
+// Function to send event based on integration type
+const sendEventToIntegration = async (
+  integration: string,
+  user: any,
+  eventData: any
+): Promise<IntegrationResult> => {
+  switch (integration) {
+    case "DISCORD":
+      return await sendToDiscord({
+        discordId: user.discordId,
+        eventData,
+        botToken: process.env.DISCORD_BOT_TOKEN as string,
+      })
+    case "WEBEX":
+      return await sendToWebex({
+        webexId: user.webexId,
+        eventData,
+      })
+    case "WHATSAPP":
+      return await sendToWhatsapp({
+        whatsappId: user.whatsappId,
+        eventData,
+      })
+    case "SLACK":
+      return await sendToSlack({
+        slackId: user.slackId,
+        eventData,
+      })
+    case "TEAMS":
+      return await sendToTeams({
+        teamsId: user.teamsId,
+        eventData,
+      })
+    default:
+      return {
+        success: false,
+        message: `Unsupported integration: ${integration}`,
+      }
+  }
+}
+
 export const POST = async (req: NextRequest) => {
   try {
     // Authentication check section
@@ -48,22 +135,20 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json(
         {
           message:
-            "Activate a provider in your account’s integrations section.",
+            "Activate a provider in your account's integrations section.",
         },
         { status: 403 }
       )
     }
 
-    if (user.activeIntegration !== "DISCORD") {
+    // Validate integration-specific requirements
+    const integrationValidation = validateIntegrationConfig(
+      user,
+      user.activeIntegration
+    )
+    if (!integrationValidation.isValid) {
       return NextResponse.json(
-        { message: "Unsupported integration. Activate Discord to proceed." },
-        { status: 403 }
-      )
-    }
-
-    if (!user.discordId) {
-      return NextResponse.json(
-        { message: "Please enter your Discord ID in your account settings" },
+        { message: integrationValidation.message },
         { status: 403 }
       )
     }
@@ -147,21 +232,21 @@ export const POST = async (req: NextRequest) => {
       },
     })
 
-    // Handle Discord integration
-    const discordResult = await sendToDiscord({
-      discordId: user.discordId,
-      eventData,
-      botToken: process.env.DISCORD_BOT_TOKEN as string,
-    })
+    // Send event to appropriate integration
+    const integrationResult = await sendEventToIntegration(
+      user.activeIntegration,
+      user,
+      eventData
+    )
 
-    if (!discordResult.success) {
+    if (!integrationResult.success) {
       await db.event.update({
         where: { id: event.id },
         data: { deliveryStatus: "FAILED" },
       })
 
       return NextResponse.json(
-        { message: discordResult.message, eventId: event.id },
+        { message: integrationResult.message, eventId: event.id },
         { status: 500 }
       )
     }

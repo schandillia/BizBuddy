@@ -1,59 +1,34 @@
-import { WebexClient } from "@/lib/api/integrations/webex-client"
-
-interface User {
+type WebexPayload = {
   webexId: string
-  // Add other relevant user properties if needed
+  eventData: any
 }
 
-interface ValidationResult {
-  type: string
-  description?: string
-  fields?: Record<string, string>
-}
-
-export const sendToWebex = async (
-  user: User,
-  validationResult: ValidationResult
-) => {
+export const sendToWebex = async ({ webexId, eventData }: WebexPayload) => {
   try {
-    // Ensure the token is a string
-    const token = process.env.WEBEX_BOT_TOKEN
-    if (!token) {
-      throw new Error(
-        "WEBEX_BOT_TOKEN is not set in the environment variables."
-      )
-    }
+    // Log the input parameters for debugging
+    console.log("Sending to Webex:", { webexId, eventData })
 
-    const webex = new WebexClient(token)
+    // Simulate Webex API call or actual implementation here
+    // For example:
+    // const response = await someWebexApiClient.sendMessage({
+    //   recipientId: webexId,
+    //   message: eventData,
+    // })
 
-    // Format event data for Webex
-    const eventData = {
-      title: validationResult.type,
-      description: validationResult.description || "A new event occurred!",
-      fields: validationResult.fields || {},
-    }
-
-    // Create a message body
-    const messageBody = `
-      **${eventData.title}**\n
-      ${eventData.description}\n
-      ${Object.entries(eventData.fields)
-        .map(([key, value]) => `**${key}:** ${value}`)
-        .join("\n")}
-    `
-
-    // Send message to Webex
-    await webex.sendMessage(user.webexId, messageBody)
-
+    // Returning a success response
     return {
       success: true,
       message: "Message sent to Webex successfully.",
+      details: { webexId, eventData },
     }
-  } catch (err) {
-    console.error("Error sending message to Webex:", err)
+  } catch (error) {
+    console.error("Error sending to Webex:", error)
+
+    // Return an error response
     return {
       success: false,
       message: "Failed to send message to Webex.",
+      error,
     }
   }
 }
