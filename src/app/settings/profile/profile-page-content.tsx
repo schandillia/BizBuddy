@@ -16,14 +16,11 @@ interface User {
   theme: string // Replace with your Theme type if available
   email: string
   apiKey: string
+  activeIntegration: string
   discordId: string | null
-  discordEnabled: boolean
   webexId: string | null
-  webexEnabled: boolean
   slackId: string | null
-  slackEnabled: boolean
-  whatsappId: string | null
-  whatsappEnabled: boolean
+  teamsId: string | null
   createdAt: Date
   updatedAt: Date
 }
