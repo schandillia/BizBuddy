@@ -22,6 +22,15 @@ enum Theme {
   SYSTEM
 }
 
+enum Integration {
+  DISCORD
+  WEBEX
+  WHATSAPP
+  SLACK
+  TEAMS
+  NONE
+}
+
 model User {
   id         String  @id @default(cuid())
   externalId String? @unique
@@ -34,21 +43,21 @@ model User {
 
   email     String   @unique
   apiKey    String   @unique @default(cuid())
+  
+  // Integration fields
+  activeIntegration Integration @default(NONE)
   discordId String?
-  discordEnabled Boolean @default(false)
   webexId String?
-  webexEnabled Boolean @default(false)
   whatsappId String?
-  whatsappEnabled Boolean @default(false)
   slackId String?
-  slackEnabled Boolean @default(false)
+  teamsId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   EventTypes EventType[]
-  events           Event[]
-  Quota           Quota[]
+  events     Event[]
+  Quota      Quota[]
 
   @@index([email, apiKey])
 }

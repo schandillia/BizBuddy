@@ -22,14 +22,12 @@ const Page = async () => {
   return (
     <UserPage title="Integration">
       <IntegrationPageContent
+        activeIntegration={user.activeIntegration}
         discordId={user.discordId ?? ""}
-        discordEnabled={user.discordEnabled ?? ""}
         webexId={user.webexId ?? ""}
-        webexEnabled={user.webexEnabled ?? ""}
-        slackId={user.slackId ?? ""}
-        slackEnabled={user.slackEnabled ?? ""}
         whatsappId={user.whatsappId ?? ""}
-        whatsappEnabled={user.whatsappEnabled ?? ""}
+        slackId={user.slackId ?? ""}
+        teamsId={user.teamsId ?? ""}
       />
     </UserPage>
   )

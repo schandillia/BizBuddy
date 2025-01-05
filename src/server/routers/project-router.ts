@@ -38,43 +38,36 @@ export const projectRouter = router({
     })
   }),
 
-  setIntegrationIDs: privateProcedure
+  setIntegration: privateProcedure
     .input(
       z.object({
-        discordId: z.string().max(20),
-        discordEnabled: z.boolean(),
-        webexId: z.string().max(20),
-        webexEnabled: z.boolean(),
-        whatsappId: z.string().max(20),
-        whatsappEnabled: z.boolean(),
-        slackId: z.string().max(20),
-        slackEnabled: z.boolean(),
+        activeIntegration: z.enum([
+          "DISCORD",
+          "WEBEX",
+          "WHATSAPP",
+          "SLACK",
+          "TEAMS",
+          "NONE",
+        ]),
+        discordId: z.string().max(20).optional(),
+        webexId: z.string().max(20).optional(),
+        whatsappId: z.string().max(20).optional(),
+        slackId: z.string().max(20).optional(),
+        teamsId: z.string().max(20).optional(),
       })
     )
-    .mutation(async ({ c, ctx, input }) => {
+    .mutation(async ({ ctx, input, c }) => {
       const { user } = ctx
-      const {
-        discordId,
-        discordEnabled,
-        webexId,
-        webexEnabled,
-        whatsappId,
-        whatsappEnabled,
-        slackId,
-        slackEnabled,
-      } = input
 
       await db.user.update({
         where: { id: user.id },
         data: {
-          discordId,
-          discordEnabled,
-          webexId,
-          webexEnabled,
-          whatsappId,
-          whatsappEnabled,
-          slackId,
-          slackEnabled,
+          activeIntegration: input.activeIntegration,
+          discordId: input.discordId?.trim() || null,
+          webexId: input.webexId?.trim() || null,
+          whatsappId: input.whatsappId?.trim() || null,
+          slackId: input.slackId?.trim() || null,
+          teamsId: input.teamsId?.trim() || null,
         },
       })
 

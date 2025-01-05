@@ -15,125 +15,121 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 
-type ServiceName = "discord" | "webex" | "slack" | "whatsapp"
+type ServiceName = "DISCORD" | "WEBEX" | "WHATSAPP" | "SLACK" | "TEAMS" | "NONE"
 
-type ServiceState = {
-  id: string
-  enabled: boolean
+type IntegrationIds = {
+  [K in Exclude<ServiceName, "NONE">]: string
 }
 
 type IntegrationPageContentProps = {
+  activeIntegration: ServiceName
   discordId: string
   webexId: string
-  slackId: string
   whatsappId: string
-  discordEnabled: boolean
-  webexEnabled: boolean
-  whatsappEnabled: boolean
-  slackEnabled: boolean
+  slackId: string
+  teamsId: string
 }
 
 export const IntegrationPageContent = ({
+  activeIntegration: initialActiveIntegration,
   discordId: initialDiscordId,
   webexId: initialWebexId,
-  slackId: initialSlackId,
   whatsappId: initialWhatsappId,
-  discordEnabled: initialDiscordEnabled,
-  webexEnabled: initialWebexEnabled,
-  whatsappEnabled: initialWhatsappEnabled,
-  slackEnabled: initialSlackEnabled,
+  slackId: initialSlackId,
+  teamsId: initialTeamsId,
 }: IntegrationPageContentProps) => {
-  const [services, setServices] = useState<Record<ServiceName, ServiceState>>({
-    discord: { id: initialDiscordId, enabled: initialDiscordEnabled },
-    webex: { id: initialWebexId, enabled: initialWebexEnabled },
-    slack: { id: initialSlackId, enabled: initialSlackEnabled },
-    whatsapp: { id: initialWhatsappId, enabled: initialWhatsappEnabled },
+  const [activeIntegration, setActiveIntegration] = useState<ServiceName>(
+    initialActiveIntegration
+  )
+  const [integrationIds, setIntegrationIds] = useState<IntegrationIds>({
+    DISCORD: initialDiscordId,
+    WEBEX: initialWebexId,
+    WHATSAPP: initialWhatsappId,
+    SLACK: initialSlackId,
+    TEAMS: initialTeamsId,
   })
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: IntegrationPageContentProps) => {
-      const res = await client.project.setIntegrationIDs.$post(data)
+    mutationFn: async ({
+      activeIntegration,
+      discordId,
+      webexId,
+      whatsappId,
+      slackId,
+      teamsId,
+    }: {
+      activeIntegration: ServiceName
+      discordId?: string
+      webexId?: string
+      whatsappId?: string
+      slackId?: string
+      teamsId?: string
+    }) => {
+      const res = await client.project.setIntegration.$post({
+        activeIntegration,
+        discordId,
+        webexId,
+        whatsappId,
+        slackId,
+        teamsId,
+      })
       return await res.json()
     },
   })
 
-  const updateService = (
-    serviceName: ServiceName,
-    updates: Partial<ServiceState>
-  ) => {
-    setServices((prev) => {
-      // If we're enabling a service, disable all others
-      if (updates.enabled) {
-        const newServices = Object.keys(prev).reduce(
-          (acc, key) => ({
-            ...acc,
-            [key]: {
-              ...prev[key as ServiceName],
-              enabled: false, // Disable all services initially
-            },
-          }),
-          {} as Record<ServiceName, ServiceState>
-        )
-
-        // Then enable only the selected service
-        return {
-          ...newServices,
-          [serviceName]: {
-            ...prev[serviceName],
-            ...updates,
-          },
-        }
-      }
-
-      // If we're just updating the ID or disabling a service, proceed normally
-      return {
-        ...prev,
-        [serviceName]: {
-          ...prev[serviceName],
-          ...updates,
-        },
-      }
-    })
-  }
-
   const serviceConfigs = [
     {
-      name: "discord" as ServiceName,
+      name: "DISCORD",
       displayName: "Discord",
       placeholder: "Enter your Discord ID",
     },
+    { name: "WEBEX", displayName: "Webex", placeholder: "Enter your Webex ID" },
+    { name: "SLACK", displayName: "Slack", placeholder: "Enter your Slack ID" },
     {
-      name: "webex" as ServiceName,
-      displayName: "Webex",
-      placeholder: "Enter your Webex ID",
-    },
-    {
-      name: "slack" as ServiceName,
-      displayName: "Slack",
-      placeholder: "Enter your Slack ID",
-    },
-    {
-      name: "whatsapp" as ServiceName,
+      name: "WHATSAPP",
       displayName: "WhatsApp",
       placeholder: "Enter your WhatsApp ID",
     },
+    { name: "TEAMS", displayName: "Teams", placeholder: "Enter your Teams ID" },
   ]
 
+  const handleInputChange = (
+    serviceName: Exclude<ServiceName, "NONE">,
+    value: string
+  ) => {
+    setIntegrationIds((prev) => ({
+      ...prev,
+      [serviceName]: value,
+    }))
+  }
+
+  const handleServiceToggle = (serviceName: Exclude<ServiceName, "NONE">) => {
+    if (integrationIds[serviceName]?.trim()) {
+      setActiveIntegration((prev) =>
+        prev === serviceName ? "NONE" : serviceName
+      )
+    }
+  }
+
   const handleSave = () => {
-    const payload = {
-      discordId: services.discord.id,
-      webexId: services.webex.id,
-      slackId: services.slack.id,
-      whatsappId: services.whatsapp.id,
-      discordEnabled:
-        services.discord.id.trim() !== "" && services.discord.enabled,
-      webexEnabled: services.webex.id.trim() !== "" && services.webex.enabled,
-      slackEnabled: services.slack.id.trim() !== "" && services.slack.enabled,
-      whatsappEnabled:
-        services.whatsapp.id.trim() !== "" && services.whatsapp.enabled,
+    if (activeIntegration === "NONE") {
+      return
     }
 
-    mutate(payload)
+    const currentId =
+      integrationIds[activeIntegration as Exclude<ServiceName, "NONE">]
+    if (!currentId?.trim()) {
+      return
+    }
+
+    mutate({
+      activeIntegration,
+      discordId: integrationIds.DISCORD?.trim(),
+      webexId: integrationIds.WEBEX?.trim(),
+      whatsappId: integrationIds.WHATSAPP?.trim(),
+      slackId: integrationIds.SLACK?.trim(),
+      teamsId: integrationIds.TEAMS?.trim(),
+    })
   }
 
   return (
@@ -147,34 +143,55 @@ export const IntegrationPageContent = ({
           </TableRow>
         </TableHeader>
         <TableBody className="dark:text-gray-300">
-          {serviceConfigs.map(({ name, displayName, placeholder }) => (
-            <TableRow key={name} className="dark:hover:bg-brand-950/40">
-              <TableCell className="font-medium">{displayName}</TableCell>
-              <TableCell>
-                {services[name].id.trim() !== "" && (
-                  <Switch
-                    checked={services[name].enabled}
-                    onCheckedChange={(value) =>
-                      updateService(name, { enabled: value })
-                    }
-                    className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
+          {serviceConfigs.map(({ name, displayName, placeholder }) => {
+            const currentId = integrationIds[name as keyof IntegrationIds] // Cast here to narrow the type
+            const hasValidId = currentId?.trim().length > 0
+
+            return (
+              <TableRow key={name} className="dark:hover:bg-brand-950/40">
+                <TableCell className="font-medium">{displayName}</TableCell>
+                <TableCell>
+                  {hasValidId && (
+                    <Switch
+                      checked={activeIntegration === name}
+                      onCheckedChange={() =>
+                        handleServiceToggle(
+                          name as Exclude<ServiceName, "NONE">
+                        )
+                      } // Cast here too
+                      className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
+                    />
+                  )}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Input
+                    className="mt-1 dark:placeholder:text-gray-600"
+                    value={currentId}
+                    onChange={(e) =>
+                      handleInputChange(
+                        name as Exclude<ServiceName, "NONE">,
+                        e.target.value
+                      )
+                    } // Cast here
+                    placeholder={placeholder}
                   />
-                )}
-              </TableCell>
-              <TableCell className="text-right">
-                <Input
-                  className="mt-1 dark:placeholder:text-gray-600"
-                  value={services[name].id}
-                  onChange={(e) => updateService(name, { id: e.target.value })}
-                  placeholder={placeholder}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
       <div className="pt-4">
-        <Button onClick={handleSave} disabled={isPending}>
+        <Button
+          onClick={handleSave}
+          disabled={
+            isPending ||
+            activeIntegration === "NONE" ||
+            !integrationIds[
+              activeIntegration as Exclude<ServiceName, "NONE">
+            ]?.trim()
+          }
+        >
           {isPending ? "Saving..." : "Save Changes"}
         </Button>
       </div>
