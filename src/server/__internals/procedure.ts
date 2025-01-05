@@ -6,7 +6,7 @@ import superjson from "superjson"
 import { Bindings } from "../env"
 
 /**
- * Type-level SuperJSON integration
+ * Type-level SuperJSON channel
  */
 declare module "hono" {
   interface Context {

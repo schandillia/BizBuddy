@@ -22,7 +22,7 @@ enum Theme {
   SYSTEM
 }
 
-enum Integration {
+enum Channel {
   DISCORD
   WEBEX
   WHATSAPP
@@ -44,8 +44,8 @@ model User {
   email     String   @unique
   apiKey    String   @unique @default(cuid())
   
-  // Integration fields
-  activeIntegration Integration @default(NONE)
+  // Channel fields
+  activeChannel Channel @default(NONE)
   discordId String?
   webexId String?
   whatsappId String?

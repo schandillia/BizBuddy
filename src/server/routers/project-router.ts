@@ -38,10 +38,10 @@ export const projectRouter = router({
     })
   }),
 
-  setIntegration: privateProcedure
+  setChannel: privateProcedure
     .input(
       z.object({
-        activeIntegration: z.enum([
+        activeChannel: z.enum([
           "DISCORD",
           "WEBEX",
           "WHATSAPP",
@@ -62,7 +62,7 @@ export const projectRouter = router({
       await db.user.update({
         where: { id: user.id },
         data: {
-          activeIntegration: input.activeIntegration,
+          activeChannel: input.activeChannel,
           discordId: input.discordId?.trim() || null,
           webexId: input.webexId?.trim() || null,
           whatsappId: input.whatsappId?.trim() || null,

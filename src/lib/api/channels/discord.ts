@@ -1,4 +1,4 @@
-import { DiscordClient } from "@/lib/api/integrations/clients/discord-client"
+import { DiscordClient } from "@/lib/api/channels/clients/discord-client"
 
 export const sendToDiscord = async ({
   discordId,
@@ -22,7 +22,7 @@ export const sendToDiscord = async ({
 
     return { success: true, message: "Message delivered successfully" }
   } catch (error) {
-    console.error("Discord Integration Error:", error)
+    console.error("Discord Channel Error:", error)
     return {
       success: false,
       message: "Failed to deliver the message to Discord",

@@ -1,7 +1,7 @@
 // Import required dependencies and configurations
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { db } from "@/db"
-import { DiscordClient } from "@/lib/api/integrations/clients/discord-client"
+import { DiscordClient } from "@/lib/api/channels/clients/discord-client"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
@@ -53,8 +53,8 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 })
     }
 
-    // Ensure user's activeIntegration is set to DISCORD
-    if (user.activeIntegration !== "DISCORD") {
+    // Ensure user's activeChannel is set to DISCORD
+    if (user.activeChannel !== "DISCORD") {
       return NextResponse.json(
         {
           message: "Activate your Discord",
@@ -105,7 +105,7 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    // Discord integration section
+    // Discord channel section
     // Initialize Discord client and create DM channel
     const discord = new DiscordClient(process.env.DISCORD_BOT_TOKEN)
     const dmChannel = await discord.createDM(user.discordId)

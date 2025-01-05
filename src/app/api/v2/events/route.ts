@@ -1,10 +1,10 @@
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { db } from "@/db"
-import { sendToDiscord } from "@/lib/api/integrations/discord"
-import { sendToSlack } from "@/lib/api/integrations/slack"
-import { sendToTeams } from "@/lib/api/integrations/teams"
-import { sendToWebex } from "@/lib/api/integrations/webex"
-import { sendToWhatsapp } from "@/lib/api/integrations/whatsapp"
+import { sendToDiscord } from "@/lib/api/channels/discord"
+import { sendToSlack } from "@/lib/api/channels/slack"
+import { sendToTeams } from "@/lib/api/channels/teams"
+import { sendToWebex } from "@/lib/api/channels/webex"
+import { sendToWhatsapp } from "@/lib/api/channels/whatsapp"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
@@ -17,17 +17,17 @@ const REQUEST_VALIDATOR = z
   })
   .strict()
 
-type IntegrationResult = {
+type ChannelResult = {
   success: boolean
   message?: string
 }
 
-// Helper function to validate integration-specific requirements
-const validateIntegrationConfig = (
+// Helper function to validate channel-specific requirements
+const validateChannelConfig = (
   user: any,
-  integration: string
+  channel: string
 ): { isValid: boolean; message?: string } => {
-  switch (integration) {
+  switch (channel) {
     case "DISCORD":
       if (!user.discordId) {
         return {
@@ -55,20 +55,20 @@ const validateIntegrationConfig = (
     case "NONE":
       return {
         isValid: false,
-        message: "Please activate an integration in your account settings",
+        message: "Please activate an channel in your account settings",
       }
       break
   }
   return { isValid: true }
 }
 
-// Function to send event based on integration type
-const sendEventToIntegration = async (
-  integration: string,
+// Function to send event based on channel type
+const sendEventToChannel = async (
+  channel: string,
   user: any,
   eventData: any
-): Promise<IntegrationResult> => {
-  switch (integration) {
+): Promise<ChannelResult> => {
+  switch (channel) {
     case "DISCORD":
       return await sendToDiscord({
         discordId: user.discordId,
@@ -98,7 +98,7 @@ const sendEventToIntegration = async (
     default:
       return {
         success: false,
-        message: `Unsupported integration: ${integration}`,
+        message: `Unsupported channel: ${channel}`,
       }
   }
 }
@@ -130,25 +130,21 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 })
     }
 
-    // Check activeIntegration
-    if (user.activeIntegration === "NONE") {
+    // Check activeChannel
+    if (user.activeChannel === "NONE") {
       return NextResponse.json(
         {
-          message:
-            "Activate a provider in your account's integrations section.",
+          message: "Activate a provider in your account's channels section.",
         },
         { status: 403 }
       )
     }
 
-    // Validate integration-specific requirements
-    const integrationValidation = validateIntegrationConfig(
-      user,
-      user.activeIntegration
-    )
-    if (!integrationValidation.isValid) {
+    // Validate channel-specific requirements
+    const channelValidation = validateChannelConfig(user, user.activeChannel)
+    if (!channelValidation.isValid) {
       return NextResponse.json(
-        { message: integrationValidation.message },
+        { message: channelValidation.message },
         { status: 403 }
       )
     }
@@ -232,21 +228,21 @@ export const POST = async (req: NextRequest) => {
       },
     })
 
-    // Send event to appropriate integration
-    const integrationResult = await sendEventToIntegration(
-      user.activeIntegration,
+    // Send event to appropriate channel
+    const channelResult = await sendEventToChannel(
+      user.activeChannel,
       user,
       eventData
     )
 
-    if (!integrationResult.success) {
+    if (!channelResult.success) {
       await db.event.update({
         where: { id: event.id },
         data: { deliveryStatus: "FAILED" },
       })
 
       return NextResponse.json(
-        { message: integrationResult.message, eventId: event.id },
+        { message: channelResult.message, eventId: event.id },
         { status: 500 }
       )
     }

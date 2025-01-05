@@ -15,17 +15,17 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 
-// Define the allowed service names for integrations.
+// Define the allowed service names for channels.
 type ServiceName = "DISCORD" | "WEBEX" | "WHATSAPP" | "SLACK" | "TEAMS" | "NONE"
 
-// Define the shape of the integration IDs (mapping each service to its ID).
-type IntegrationIds = {
+// Define the shape of the channel IDs (mapping each service to its ID).
+type ChannelIds = {
   [K in Exclude<ServiceName, "NONE">]: string
 }
 
-// Define the props expected by the IntegrationPageContent component.
-type IntegrationPageContentProps = {
-  activeIntegration: ServiceName // The currently active integration service
+// Define the props expected by the ChannelsPageContent component.
+type ChannelsPageContentProps = {
+  activeChannel: ServiceName // The currently active channel service
   discordId: string // Discord service ID
   webexId: string // Webex service ID
   whatsappId: string // WhatsApp service ID
@@ -33,21 +33,20 @@ type IntegrationPageContentProps = {
   teamsId: string // Teams service ID
 }
 
-export const IntegrationPageContent = ({
-  activeIntegration: initialActiveIntegration,
+export const ChannelsPageContent = ({
+  activeChannel: initialActiveChannel,
   discordId: initialDiscordId,
   webexId: initialWebexId,
   whatsappId: initialWhatsappId,
   slackId: initialSlackId,
   teamsId: initialTeamsId,
-}: IntegrationPageContentProps) => {
-  // State to track the active integration service
-  const [activeIntegration, setActiveIntegration] = useState<ServiceName>(
-    initialActiveIntegration
-  )
+}: ChannelsPageContentProps) => {
+  // State to track the active channel service
+  const [activeChannel, setActiveChannel] =
+    useState<ServiceName>(initialActiveChannel)
 
-  // State to track the integration IDs for each service
-  const [integrationIds, setIntegrationIds] = useState<IntegrationIds>({
+  // State to track the channel IDs for each service
+  const [channelIds, setChannelIds] = useState<ChannelIds>({
     DISCORD: initialDiscordId,
     WEBEX: initialWebexId,
     WHATSAPP: initialWhatsappId,
@@ -55,26 +54,26 @@ export const IntegrationPageContent = ({
     TEAMS: initialTeamsId,
   })
 
-  // Mutation hook for handling saving of the integration data
+  // Mutation hook for handling saving of the channel data
   const { mutate, isPending } = useMutation({
     mutationFn: async ({
-      activeIntegration,
+      activeChannel,
       discordId,
       webexId,
       whatsappId,
       slackId,
       teamsId,
     }: {
-      activeIntegration: ServiceName
+      activeChannel: ServiceName
       discordId?: string
       webexId?: string
       whatsappId?: string
       slackId?: string
       teamsId?: string
     }) => {
-      // API call to save the integration data
-      const res = await client.project.setIntegration.$post({
-        activeIntegration,
+      // API call to save the channel data
+      const res = await client.project.setChannel.$post({
+        activeChannel,
         discordId,
         webexId,
         whatsappId,
@@ -85,7 +84,7 @@ export const IntegrationPageContent = ({
     },
   })
 
-  // Configuration for each service integration
+  // Configuration for each service channel
   const serviceConfigs = [
     {
       name: "DISCORD",
@@ -102,57 +101,54 @@ export const IntegrationPageContent = ({
     { name: "TEAMS", displayName: "Teams", placeholder: "Enter your Teams ID" },
   ]
 
-  // Function to handle changes in input fields for each integration ID
+  // Function to handle changes in input fields for each channel ID
   const handleInputChange = (
     serviceName: Exclude<ServiceName, "NONE">, // Service name (without "NONE")
     value: string // New ID value
   ) => {
     // Update the state with the new ID for the specified service
-    setIntegrationIds((prev) => ({
+    setChannelIds((prev) => ({
       ...prev,
       [serviceName]: value,
     }))
   }
 
-  // Function to toggle the active integration service when the switch is clicked
+  // Function to toggle the active channel service when the switch is clicked
   const handleServiceToggle = (serviceName: Exclude<ServiceName, "NONE">) => {
-    // If the service ID is not empty, toggle the active integration
-    if (integrationIds[serviceName]?.trim()) {
-      setActiveIntegration((prev) =>
-        prev === serviceName ? "NONE" : serviceName
-      )
+    // If the service ID is not empty, toggle the active channel
+    if (channelIds[serviceName]?.trim()) {
+      setActiveChannel((prev) => (prev === serviceName ? "NONE" : serviceName))
     }
   }
 
-  // Function to save the current integration settings
+  // Function to save the current channel settings
   const handleSave = () => {
     // If no service is active, don't proceed
-    if (activeIntegration === "NONE") {
+    if (activeChannel === "NONE") {
       return
     }
 
     // Get the ID of the active service
-    const currentId =
-      integrationIds[activeIntegration as Exclude<ServiceName, "NONE">]
+    const currentId = channelIds[activeChannel as Exclude<ServiceName, "NONE">]
     // If the ID is empty, don't proceed
     if (!currentId?.trim()) {
       return
     }
 
-    // Trigger the mutation to save the integration data
+    // Trigger the mutation to save the channel data
     mutate({
-      activeIntegration,
-      discordId: integrationIds.DISCORD?.trim(),
-      webexId: integrationIds.WEBEX?.trim(),
-      whatsappId: integrationIds.WHATSAPP?.trim(),
-      slackId: integrationIds.SLACK?.trim(),
-      teamsId: integrationIds.TEAMS?.trim(),
+      activeChannel,
+      discordId: channelIds.DISCORD?.trim(),
+      webexId: channelIds.WEBEX?.trim(),
+      whatsappId: channelIds.WHATSAPP?.trim(),
+      slackId: channelIds.SLACK?.trim(),
+      teamsId: channelIds.TEAMS?.trim(),
     })
   }
 
   return (
     <div className="max-w-3xl flex flex-col gap-8">
-      {/* Table to display integration services */}
+      {/* Table to display channel services */}
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
@@ -165,7 +161,7 @@ export const IntegrationPageContent = ({
           {/* Iterate through each service and render a table row */}
           {serviceConfigs.map(({ name, displayName, placeholder }) => {
             // Get the current ID for the service
-            const currentId = integrationIds[name as keyof IntegrationIds]
+            const currentId = channelIds[name as keyof ChannelIds]
             // Check if the ID is valid (non-empty)
             const hasValidId = currentId?.trim().length > 0
 
@@ -176,7 +172,7 @@ export const IntegrationPageContent = ({
                   {/* Display the toggle switch if the service ID is valid */}
                   {hasValidId && (
                     <Switch
-                      checked={activeIntegration === name}
+                      checked={activeChannel === name}
                       onCheckedChange={() =>
                         handleServiceToggle(
                           name as Exclude<ServiceName, "NONE">
@@ -212,10 +208,8 @@ export const IntegrationPageContent = ({
           disabled={
             // Disable button if conditions are not met
             isPending ||
-            activeIntegration === "NONE" ||
-            !integrationIds[
-              activeIntegration as Exclude<ServiceName, "NONE">
-            ]?.trim()
+            activeChannel === "NONE" ||
+            !channelIds[activeChannel as Exclude<ServiceName, "NONE">]?.trim()
           }
         >
           {isPending ? "Saving..." : "Save Changes"}

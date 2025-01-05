@@ -16,7 +16,7 @@ interface User {
   theme: string // Replace with your Theme type if available
   email: string
   apiKey: string
-  activeIntegration: string
+  activeChannel: string
   discordId: string | null
   webexId: string | null
   slackId: string | null

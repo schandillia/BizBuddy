@@ -2,7 +2,7 @@ import { UserPage } from "@/components/user-page"
 import { db } from "@/db"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { IntegrationPageContent } from "@/app/settings/integration/integration-page-content"
+import { ChannelsPageContent } from "@/app/settings/channels/channels-page-content"
 
 const Page = async () => {
   const auth = await currentUser()
@@ -20,9 +20,9 @@ const Page = async () => {
   }
 
   return (
-    <UserPage title="Integration">
-      <IntegrationPageContent
-        activeIntegration={user.activeIntegration}
+    <UserPage title="Channels">
+      <ChannelsPageContent
+        activeChannel={user.activeChannel}
         discordId={user.discordId ?? ""}
         webexId={user.webexId ?? ""}
         whatsappId={user.whatsappId ?? ""}

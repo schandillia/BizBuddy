@@ -49,7 +49,7 @@ const SIDEBAR_ITEMS: SidebarType[] = [
   {
     type: "System",
     items: [
-      { href: "/settings/integration", icon: RadioTower, text: "Integration" },
+      { href: "/settings/channels", icon: RadioTower, text: "Channels" },
       { href: "/settings/api-key", icon: Key, text: "API Key" },
     ],
   },
