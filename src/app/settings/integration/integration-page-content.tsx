@@ -61,10 +61,39 @@ export const IntegrationPageContent = ({
     serviceName: ServiceName,
     updates: Partial<ServiceState>
   ) => {
-    setServices((prev) => ({
-      ...prev,
-      [serviceName]: { ...prev[serviceName], ...updates },
-    }))
+    setServices((prev) => {
+      // If we're enabling a service, disable all others
+      if (updates.enabled) {
+        const newServices = Object.keys(prev).reduce(
+          (acc, key) => ({
+            ...acc,
+            [key]: {
+              ...prev[key as ServiceName],
+              enabled: false, // Disable all services initially
+            },
+          }),
+          {} as Record<ServiceName, ServiceState>
+        )
+
+        // Then enable only the selected service
+        return {
+          ...newServices,
+          [serviceName]: {
+            ...prev[serviceName],
+            ...updates,
+          },
+        }
+      }
+
+      // If we're just updating the ID or disabling a service, proceed normally
+      return {
+        ...prev,
+        [serviceName]: {
+          ...prev[serviceName],
+          ...updates,
+        },
+      }
+    })
   }
 
   const serviceConfigs = [
