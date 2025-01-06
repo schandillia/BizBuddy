@@ -50,7 +50,7 @@ export const ApiKeyPageContent = ({
             type="password"
             value={apiKey}
             readOnly
-            className="pr-12" // Add right padding for the button
+            className="pr-14" // Add right padding for the button
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-2">
             <Button
