@@ -1,9 +1,8 @@
-import { DashboardPage } from "@/components/dashboard-page"
 import { db } from "@/db"
 import { currentUser } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
-import { ApiKeyPageContent } from "@//app/settings/api-key/api-key-page-content"
 import { UserPage } from "@/components/user-page"
+import { ApiKeyWrapper } from "@/app/settings/api-key/api-key-wrapper"
 
 const Page = async () => {
   const auth = await currentUser()
@@ -22,7 +21,7 @@ const Page = async () => {
 
   return (
     <UserPage title="API Key">
-      <ApiKeyPageContent apiKey={user.apiKey ?? ""} />
+      <ApiKeyWrapper initialApiKey={user.apiKey ?? ""} />
     </UserPage>
   )
 }
