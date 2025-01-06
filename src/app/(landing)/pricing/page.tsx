@@ -34,9 +34,10 @@ const Page = () => {
   return (
     <div className="bg-brand-25 dark:bg-brand-950 py-24 sm:py-32 sm:pt-12">
       <MaxWidthWrapper>
-        <div className="mx-auto max-w-2xl sm:text-center">
+        <div className="mx-auto max-w-2xl sm:text-center items-center flex flex-col">
           <Heading className="text-center">Simple no-tricks pricing</Heading>
-          <p className="mt-6 text-base/7 text-gray-600 dark:text-gray-300 max-w-prose text-center text-pretty">
+
+          <p className="mt-6 text-base/7 text-gray-600 dark:text-gray-300 max-w-xl text-center text-pretty">
             We hate subscriptions. And chances are, you do too. That's why we
             offer lifetime access to {brand.BRAND} for a one-time payment.
           </p>

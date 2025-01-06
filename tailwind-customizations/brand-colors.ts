@@ -169,4 +169,4 @@ const colors = {
   },
 }
 
-export const brandColors = colors.gold
+export const brandColors = colors.green
