@@ -67,7 +67,7 @@ const PricingTier = ({
             </Button>
             <div className="flex items-center space-x-2 mt-2">
               <span className="flex items-center">
-                <FaLock className="size-3 text-gray-700 dark:text-white/70" />{" "}
+                <FaLock className="size-3 text-gray-700 dark:text-white/70" />
               </span>
               <p className="text-xs leading-5 text-gray-700 dark:text-white/70">
                 Secure payment. Start monitoring in minutes.
