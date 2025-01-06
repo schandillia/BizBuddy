@@ -1,16 +1,21 @@
 import { Heading } from "@/components/heading"
 import { MaxWidthWrapper } from "@/components/max-width-wrapper"
-import { Check, Star } from "lucide-react"
+import { Check, Sparkles } from "lucide-react"
 import { ShinyButton } from "@/components/shiny-button"
 import { MockDiscordUI } from "@/components/mock-discord-ui"
-import { AnimatedList, AnimatedListItem } from "@/components/ui/animated-list"
+import { AnimatedList } from "@/components/ui/animated-list"
 import { DiscordMessage } from "@/components/discord-message"
 import Image from "next/image"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
-import { Icons } from "@/components/icons"
 import brand from "@/lib/constants/brand.json"
+import features from "@/lib/constants/features.json"
 import Testimonials from "@/components/testimonials"
+import CyclingText from "@/components/cycling-text"
+
+interface Features {
+  features: string[]
+}
 
 const Page = () => {
   const codeSnippet = `await fetch("http://localhost:3000/api/v1/events", {
@@ -30,34 +35,45 @@ const Page = () => {
 
   return (
     <>
-      <section className="relative py-24 sm:py-32 bg-brand-25 dark:bg-brand-950">
+      <section className="relative py-24 sm:py-32 sm:pt-12 bg-brand-25 dark:bg-brand-950">
         <MaxWidthWrapper className="text-center">
           <div className="relative mx-auto text-center flex flex-col items-center gap-10">
-            <div>
-              <Heading>
-                <span>Real-Time SaaS Insights,</span>
-                <br />
-                <span className="relative bg-gradient-to-r from-brand-600 to-brand-800 text-transparent bg-clip-text">
-                  Delivered to Your Discord
-                </span>
-              </Heading>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/30">
+              <Sparkles className="size-4 text-brand-600 dark:text-brand-400" />
+              <span className="text-sm font-medium text-brand-600 dark:text-brand-400">
+                Now with enhanced analytics
+              </span>
             </div>
+            <Heading className="flex flex-col gap-y-2">
+              <span>Real-Time Business Insights,</span>
+              <span className="relative bg-gradient-to-r from-brand-500 to-brand-800 text-transparent bg-clip-text mt-2">
+                Delivered to Your{" "}
+                <CyclingText
+                  words={[
+                    "Email",
+                    "Discord",
+                    "Slack",
+                    "Teams",
+                    "Webex",
+                    "WhatsApp",
+                  ]}
+                  interval={1000}
+                />
+              </span>
+            </Heading>
 
             <p className="text-base/7 text-gray-600 dark:text-gray-300 max-w-prose text-center text-pretty">
-              {brand.BRAND} is the easiest way to monitor your SaaS. Get instant
-              notifications for{" "}
+              Stay on top of your business with {brand.BRAND}’s instant
+              notifications for key events like{" "}
               <span className="font-semibold text-gray-700 dark:text-gray-100">
-                sales, new users, or any other event
-              </span>{" "}
-              sent directly to your Discord.
+                sales and new sign-ups
+              </span>
+              . Get updates via email, Discord, Slack, Webex, WhatsApp, or
+              Teams.
             </p>
 
             <ul className="space-y-2 text-base/7 text-gray-600 dark:text-gray-300 text-left flex flex-col items-start">
-              {[
-                "Real-time Discord alerts for critical events",
-                "Buy once, use forever",
-                "Track sales, new users, or any other event",
-              ].map((item, index) => (
+              {features.features.map((item, index) => (
                 <li key={index} className="flex gap-1.5 items-center text-left">
                   <Check className="size-5 shrink-0 text-brand-700" />
                   {item}

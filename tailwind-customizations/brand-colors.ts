@@ -169,5 +169,4 @@ const colors = {
   },
 }
 
-// Directly export the `yellow` color palette.
 export const brandColors = colors.gold

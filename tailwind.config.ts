@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss"
 import { fontFamily } from "tailwindcss/defaultTheme"
-import { brandColors } from "./colors"
+import { brandColors } from "./tailwind-customizations/brand-colors"
 
 const config: Config = {
   darkMode: ["class"],
@@ -72,6 +72,11 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+    require("./tailwind-customizations/tailwind-animations"),
+  ],
 }
+
 export default config
