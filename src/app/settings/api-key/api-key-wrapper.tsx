@@ -1,15 +1,16 @@
-// app/settings/api-key/api-key-wrapper.tsx
 "use client"
 
 import { ApiKeyPageContent } from "./api-key-page-content"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { isCuid } from "@/lib/api/is-cuid"
 
 interface ApiKeyWrapperProps {
   initialApiKey: string
 }
 
 export const ApiKeyWrapper = ({ initialApiKey }: ApiKeyWrapperProps) => {
-  const [apiKey, setApiKey] = useState(initialApiKey)
+  const [apiKey, setApiKey] = useState(initialApiKey) // Keep it as string
+  const [isVisible, setIsVisible] = useState(!isCuid(initialApiKey)) // Visibility depends on whether it's a CUID
 
   const handleRegenerateKey = async () => {
     try {
@@ -22,14 +23,24 @@ export const ApiKeyWrapper = ({ initialApiKey }: ApiKeyWrapperProps) => {
       }
 
       const { apiKey: newApiKey } = await response.json()
-      setApiKey(newApiKey) // This will update the UI immediately
+      setApiKey(newApiKey)
+      setIsVisible(true) // Show the new API key
     } catch (error) {
       console.error("Error regenerating key:", error)
-      // You might want to show an error toast here
     }
   }
 
+  useEffect(() => {
+    // Automatically regenerate if the initial API key is a CUID
+    if (isCuid(initialApiKey)) {
+      handleRegenerateKey()
+    }
+  }, [initialApiKey])
+
   return (
-    <ApiKeyPageContent apiKey={apiKey} onRegenerateKey={handleRegenerateKey} />
+    <ApiKeyPageContent
+      apiKey={isVisible ? apiKey : "********"} // Mask the key if not visible
+      onRegenerateKey={handleRegenerateKey}
+    />
   )
 }
