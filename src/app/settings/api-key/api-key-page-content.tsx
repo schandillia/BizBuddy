@@ -68,7 +68,7 @@ export const ApiKeyPageContent = ({
         </div>
 
         <div className="mt-4 flex items-center justify-between">
-          <p className="text-sm/6 text-gray-600 dark:text-gray-300 text-pretty pr-4 border-r-2 border-black/10 dark:border-black/20">
+          <p className="text-sm text-gray-500 text-pretty pr-4 border-r-2 border-black/10 dark:border-black/20">
             Your API key is sensitive and provides access to your account. Treat
             it like a password—do not share it or expose it publicly. If you
             regenerate the key, the current key will become invalid, potentially

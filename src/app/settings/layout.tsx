@@ -20,6 +20,7 @@ import Link from "next/link"
 import { PropsWithChildren, useState } from "react"
 import { BrandLogo } from "@/components/brand-logo"
 import ThemeToggle from "@/components/theme/theme-toggle"
+import { usePathname } from "next/navigation"
 
 interface SidebarItem {
   href: string
@@ -71,6 +72,8 @@ const SIDEBAR_ITEMS: SidebarType[] = [
 ]
 
 const Sidebar = ({ onClose }: { onClose?: () => void }) => {
+  const pathname = usePathname()
+
   return (
     <div className="space-y-4 md:space-y-6 relative z-20 flex flex-col h-full">
       {/* logo */}
@@ -87,20 +90,33 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
                 {type}
               </p>
               <div className="-mx-2 flex flex-1 flex-col">
-                {items.map((item, i) => (
-                  <Link
-                    key={i}
-                    href={item.href}
-                    className={cn(
-                      buttonVariants({ variant: "ghost" }),
-                      "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-brand-900 transition"
-                    )}
-                    onClick={onClose}
-                  >
-                    <item.icon className="size-4 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200" />
-                    {item.text}
-                  </Link>
-                ))}
+                {items.map((item, i) => {
+                  const isActive = pathname === item.href
+                  return (
+                    <Link
+                      key={i}
+                      href={item.href}
+                      className={cn(
+                        buttonVariants({ variant: "ghost" }),
+                        "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6",
+                        isActive
+                          ? "bg-gray-50 dark:bg-brand-900 text-brand-900 dark:text-brand-200"
+                          : "text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-brand-900 transition"
+                      )}
+                      onClick={onClose}
+                    >
+                      <item.icon
+                        className={cn(
+                          "size-4",
+                          isActive
+                            ? "text-brand-900 dark:text-brand-200"
+                            : "text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200"
+                        )}
+                      />
+                      {item.text}
+                    </Link>
+                  )
+                })}
               </div>
             </li>
           ))}
@@ -109,7 +125,7 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
 
       <div className="flex flex-col">
         <hr className="my-4 md:my-6 w-full h-px bg-gray-100 dark:bg-brand-700 dark:border-brand-950" />
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center pr-6">
           <UserButton
             showName
             appearance={{
@@ -131,7 +147,7 @@ const Layout = ({ children }: PropsWithChildren) => {
   return (
     <div className="relative h-screen flex flex-col md:flex-row bg-white dark:bg-brand-900/75 overflow-hidden">
       {/* sidebar for desktop */}
-      <div className="hidden md:block w-64 lg:w-80 border-r border-gray-100 dark:border-brand-900 p-6 h-full text-brand-900 relative z-10">
+      <div className="hidden md:block w-64 lg:w-80 border-r border-gray-100 dark:border-brand-900 p-6 pr-0 h-full text-brand-900 relative z-10">
         <Sidebar />
       </div>
 
