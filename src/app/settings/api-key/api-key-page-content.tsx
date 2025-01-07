@@ -1,11 +1,10 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckIcon, ClipboardIcon, RefreshCwIcon } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,9 +27,19 @@ export const ApiKeyPageContent = ({
   const [copySuccess, setCopySuccess] = useState(false)
   const [isRegenerating, setIsRegenerating] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [showNewKeyWarning, setShowNewKeyWarning] = useState(false)
+
+  const isEncrypted = apiKey?.startsWith("$")
+
+  // Show warning when a new unencrypted key is generated
+  useEffect(() => {
+    if (apiKey && !isEncrypted) {
+      setShowNewKeyWarning(true)
+    }
+  }, [apiKey, isEncrypted])
 
   const copyApiKey = () => {
-    if (apiKey) {
+    if (apiKey && !isEncrypted) {
       navigator.clipboard.writeText(apiKey)
       setCopySuccess(true)
       setTimeout(() => setCopySuccess(false), 2000)
@@ -45,47 +54,67 @@ export const ApiKeyPageContent = ({
       console.error("Failed to regenerate API key:", error)
     } finally {
       setIsRegenerating(false)
-      setIsModalOpen(false) // Close the modal after the action is performed
+      setIsModalOpen(false)
     }
   }
 
   return (
     <Card className="max-w-xl w-full">
-      <div className="p-6">
-        <Label className="dark:text-gray-400">Your API Key</Label>
-        <div className="mt-1 relative">
-          <Input
-            type={apiKey ? "password" : "text"}
-            value={apiKey || "Generating..."} // Show placeholder if apiKey is empty
-            readOnly
-            className={`pr-14 ${!apiKey ? "italic text-gray-500" : ""}`} // Style placeholder
-          />
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-            <Button
-              variant="ghost"
-              onClick={copyApiKey}
-              className="h-8 w-8 p-0"
-              disabled={!apiKey} // Disable copy button if apiKey is empty
-            >
-              {copySuccess ? (
-                <CheckIcon className="h-4 w-4 text-brand-900 dark:text-brand-700" />
-              ) : (
-                <ClipboardIcon className="h-4 w-4 text-brand-900 dark:text-brand-700" />
-              )}
-            </Button>
+      <div className="p-6 space-y-4">
+        {showNewKeyWarning && !isEncrypted && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription className="text-amber-600 dark:text-amber-400">
+              This is the only time you'll see this API key in plain text.
+              Please copy it now and store it securely. If you lose it, you'll
+              need to generate a new key.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <div>
+          <Label className="dark:text-gray-400">Your API Key</Label>
+          <div className="mt-1 relative">
+            <Input
+              type={isEncrypted ? "password" : "text"}
+              value={apiKey || "Generating..."}
+              readOnly
+              disabled={isEncrypted}
+              className={`pr-14 ${!apiKey ? "italic text-gray-500" : ""} 
+                ${
+                  isEncrypted
+                    ? "bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
+                    : ""
+                }`}
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+              <Button
+                variant="ghost"
+                onClick={copyApiKey}
+                className="h-8 w-8 p-0"
+                disabled={!apiKey || isEncrypted}
+                title={
+                  isEncrypted
+                    ? "Encrypted keys cannot be copied"
+                    : "Copy API key"
+                }
+              >
+                {copySuccess ? (
+                  <CheckIcon className="h-4 w-4 text-brand-900 dark:text-brand-700" />
+                ) : (
+                  <ClipboardIcon className="h-4 w-4 text-brand-900 dark:text-brand-700" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500 text-pretty pr-4 border-r-2 border-black/10 dark:border-black/20">
-            Your API key is sensitive and provides access to your account. Treat
-            it like a password—do not share it or expose it publicly. If you
-            regenerate the key, the current key will become invalid, potentially
-            disrupting services using it. Be sure to update all your
-            applications with the new key.
+            {isEncrypted
+              ? "This API key is encrypted and can't be viewed in plain text. If you need to see the key again, you'll need to regenerate it."
+              : "Your API key is sensitive and provides access to your account. Treat it like a password—do not share it or expose it publicly. If you regenerate the key, the current key will become invalid, potentially disrupting services using it."}
           </p>
 
-          {/* Triggering the AlertDialog */}
           <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <AlertDialogTrigger asChild>
               <Button
@@ -99,14 +128,15 @@ export const ApiKeyPageContent = ({
               </Button>
             </AlertDialogTrigger>
 
-            {/* Alert Dialog Content */}
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Regenerate API Key</AlertDialogTitle>
               </AlertDialogHeader>
               <AlertDialogDescription className="text-pretty">
                 Are you sure you want to regenerate your API key? Your old key
-                will stop working immediately.
+                will stop working immediately. Remember to copy the new key
+                immediately as you won't be able to see it again after it's
+                encrypted.
               </AlertDialogDescription>
               <AlertDialogFooter>
                 <AlertDialogCancel onClick={() => setIsModalOpen(false)}>

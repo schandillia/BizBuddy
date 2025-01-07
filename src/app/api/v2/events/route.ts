@@ -8,6 +8,7 @@ import { sendToWhatsapp } from "@/lib/api/channels/whatsapp"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
+import bcrypt from "bcrypt"
 
 const REQUEST_VALIDATOR = z
   .object({
@@ -55,7 +56,7 @@ const validateChannelConfig = (
     case "NONE":
       return {
         isValid: false,
-        message: "Please activate an channel in your account settings",
+        message: "Please activate a channel in your account settings",
       }
       break
   }
@@ -120,11 +121,19 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 })
     }
 
-    // User validation
-    const user = await db.user.findUnique({
-      where: { apiKey },
+    // User validation with bcrypt comparison
+    const users = await db.user.findMany({
       include: { EventTypes: true },
     })
+
+    let user = null
+    for (const potentialUser of users) {
+      const isMatch = await bcrypt.compare(apiKey, potentialUser.apiKey)
+      if (isMatch) {
+        user = potentialUser
+        break
+      }
+    }
 
     if (!user) {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 })

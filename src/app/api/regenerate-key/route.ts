@@ -10,13 +10,14 @@ export async function POST() {
       return Response.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const newKey = generateApiKey()
+    const { generatedKey, hashedKey } = await generateApiKey()
+
     await db.user.update({
       where: { externalId: auth.id },
-      data: { apiKey: newKey },
+      data: { apiKey: hashedKey },
     })
 
-    return Response.json({ apiKey: newKey })
+    return Response.json({ apiKey: generatedKey })
   } catch (error) {
     return Response.json({ error: "Failed to regenerate key" }, { status: 500 })
   }

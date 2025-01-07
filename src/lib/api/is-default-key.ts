@@ -1,4 +1,4 @@
 export function isDefaultKey(str: string): boolean {
-  // Check if the string starts with "pk_"
-  return !str.startsWith("pk_")
+  // Check if the string is shorter than 30 characters
+  return str.length < 30
 }
