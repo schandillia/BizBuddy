@@ -6,6 +6,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CheckIcon, ClipboardIcon, RefreshCwIcon } from "lucide-react"
 import { useState } from "react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export const ApiKeyPageContent = ({
   apiKey,
@@ -16,6 +27,7 @@ export const ApiKeyPageContent = ({
 }) => {
   const [copySuccess, setCopySuccess] = useState(false)
   const [isRegenerating, setIsRegenerating] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const copyApiKey = () => {
     if (apiKey) {
@@ -26,19 +38,14 @@ export const ApiKeyPageContent = ({
   }
 
   const handleRegenerate = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to regenerate your API key? Your old key will stop working immediately."
-      )
-    ) {
-      setIsRegenerating(true)
-      try {
-        await onRegenerateKey()
-      } catch (error) {
-        console.error("Failed to regenerate API key:", error)
-      } finally {
-        setIsRegenerating(false)
-      }
+    setIsRegenerating(true)
+    try {
+      await onRegenerateKey()
+    } catch (error) {
+      console.error("Failed to regenerate API key:", error)
+    } finally {
+      setIsRegenerating(false)
+      setIsModalOpen(false) // Close the modal after the action is performed
     }
   }
 
@@ -77,15 +84,65 @@ export const ApiKeyPageContent = ({
             disrupting services using it. Be sure to update all your
             applications with the new key.
           </p>
-          <Button
-            variant="destructive"
-            onClick={handleRegenerate}
-            disabled={isRegenerating}
-            className="ml-4"
-          >
-            <RefreshCwIcon className="h-4 w-4 mr-2" />
-            {isRegenerating ? "Regenerating..." : "Regenerate Key"}
-          </Button>
+
+          {/* Triggering the AlertDialog */}
+          <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="destructive"
+                onClick={() => setIsModalOpen(true)}
+                disabled={isRegenerating}
+                className="ml-4"
+              >
+                <RefreshCwIcon className="h-4 w-4 mr-2" />
+                {isRegenerating ? "Regenerating..." : "Regenerate Key"}
+              </Button>
+            </AlertDialogTrigger>
+
+            {/* Alert Dialog Content */}
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Regenerate API Key</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogDescription className="text-pretty">
+                Are you sure you want to regenerate your API key? Your old key
+                will stop working immediately.
+              </AlertDialogDescription>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setIsModalOpen(false)}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={handleRegenerate}>
+                  {isRegenerating ? (
+                    <span className="flex items-center space-x-2">
+                      <svg
+                        className="animate-spin h-5 w-5 text-brand-900 dark:text-brand-700"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 0115.1-4.4L23 4a9.9 9.9 0 00-1.4-1.6C19.6-.9 15.1-2 12-2 5.4-2 1 2.4 1 8s4.4 10 9.9 10c2.7 0 5.2-.8 7.1-2.3l3.1 3.1a8.5 8.5 0 01-2.6 1c-1.5.1-3.1-.5-4.2-1.5-2.2-1.8-3.7-4.6-3.7-7.7z"
+                        />
+                      </svg>
+                      <span>Regenerating...</span>
+                    </span>
+                  ) : (
+                    "Regenerate"
+                  )}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </Card>
