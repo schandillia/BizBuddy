@@ -65,7 +65,7 @@ export const ApiKeyPageContent = ({
           <Alert variant="destructive" className="mb-4">
             <AlertDescription className="text-amber-600 dark:text-amber-400">
               This is the only time you'll see this API key in plain text.
-              Please copy it now and store it securely. If you lose it, you'll
+              Please copy it now and store it securely. If you lose it, you’ll
               need to generate a new key.
             </AlertDescription>
           </Alert>
@@ -111,7 +111,7 @@ export const ApiKeyPageContent = ({
         <div className="flex items-center justify-between">
           <p className="text-sm text-gray-500 text-pretty pr-4 border-r-2 border-black/10 dark:border-black/20">
             {isEncrypted
-              ? "This API key is encrypted and can't be viewed in plain text. If you need to see the key again, you'll need to regenerate it."
+              ? "This API key is encrypted and can’t be viewed in plain text. If you need to see the key again, you'll need to regenerate it."
               : "Your API key is sensitive and provides access to your account. Treat it like a password—do not share it or expose it publicly. If you regenerate the key, the current key will become invalid, potentially disrupting services using it."}
           </p>
 
