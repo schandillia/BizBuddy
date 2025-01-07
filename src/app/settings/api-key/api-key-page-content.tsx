@@ -63,8 +63,8 @@ export const ApiKeyPageContent = ({
       <div className="p-6 space-y-4">
         {showNewKeyWarning && !isEncrypted && (
           <Alert variant="destructive" className="mb-4">
-            <AlertDescription className="text-amber-600 dark:text-amber-400">
-              This is the only time you'll see this API key in plain text.
+            <AlertDescription className="text-xs text-pretty text-red-500 dark:text-red-400">
+              This is the only time you’ll see this API key in plain text.
               Please copy it now and store it securely. If you lose it, you’ll
               need to generate a new key.
             </AlertDescription>
