@@ -24,6 +24,7 @@ enum Theme {
 
 enum Channel {
   DISCORD
+  EMAIL
   WEBEX
   WHATSAPP
   SLACK
@@ -47,6 +48,7 @@ model User {
   // Channel fields
   activeChannel Channel @default(NONE)
   discordId String?
+  emailId String?
   webexId String?
   whatsappId String?
   slackId String?

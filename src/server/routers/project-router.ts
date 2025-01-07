@@ -43,6 +43,7 @@ export const projectRouter = router({
       z.object({
         activeChannel: z.enum([
           "DISCORD",
+          "EMAIL",
           "WEBEX",
           "WHATSAPP",
           "SLACK",
@@ -50,6 +51,7 @@ export const projectRouter = router({
           "NONE",
         ]),
         discordId: z.string().max(20).optional(),
+        emailId: z.string().max(20).optional(),
         webexId: z.string().max(20).optional(),
         whatsappId: z.string().max(20).optional(),
         slackId: z.string().max(20).optional(),
@@ -64,6 +66,7 @@ export const projectRouter = router({
         data: {
           activeChannel: input.activeChannel,
           discordId: input.discordId?.trim() || null,
+          emailId: input.emailId?.trim() || null,
           webexId: input.webexId?.trim() || null,
           whatsappId: input.whatsappId?.trim() || null,
           slackId: input.slackId?.trim() || null,

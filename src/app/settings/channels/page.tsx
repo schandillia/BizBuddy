@@ -24,6 +24,7 @@ const Page = async () => {
       <ChannelsPageContent
         activeChannel={user.activeChannel}
         discordId={user.discordId ?? ""}
+        emailId={user.emailId ?? ""}
         webexId={user.webexId ?? ""}
         whatsappId={user.whatsappId ?? ""}
         slackId={user.slackId ?? ""}

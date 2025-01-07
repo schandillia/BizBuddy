@@ -1,10 +1,20 @@
 import React from "react"
 import DiscordInstructions from "@/app/settings/channels/instructions/discord"
 import SlackInstructions from "@/app/settings/channels/instructions/slack"
+import WebexInstructions from "./webex"
+import TeamsInstructions from "./teams"
+import EmailInstructions from "./email"
+import WhatsappInstructions from "./whatsapp"
 // import WebexInstructions from "@/app/settings/channels/instructions/webex"
 // import TeamsInstructions from "@/app/settings/channels/instructions/teams"
 
-type ChannelType = "discord" | "slack" | "webex" | "teams" | "whatsapp"
+type ChannelType =
+  | "discord"
+  | "email"
+  | "slack"
+  | "webex"
+  | "teams"
+  | "whatsapp"
 
 interface InstructionsBoxProps {
   channel: ChannelType
@@ -17,11 +27,14 @@ const InstructionsBox: React.FC<InstructionsBoxProps> = ({ channel }) => {
         return <DiscordInstructions />
       case "slack":
         return <SlackInstructions />
-      // Add other cases as components are created
-      // case "webex":
-      //   return <WebexInstructions />
-      // case "teams":
-      //   return <TeamsInstructions />
+      case "webex":
+        return <WebexInstructions />
+      case "teams":
+        return <TeamsInstructions />
+      case "email":
+        return <EmailInstructions />
+      case "whatsapp":
+        return <WhatsappInstructions />
       default:
         return null
     }

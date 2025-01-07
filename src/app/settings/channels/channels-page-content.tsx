@@ -14,11 +14,16 @@ import {
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
-import DiscordInstructions from "@/app/settings/channels/instructions/discord"
-import SlackInstructions from "@/app/settings/channels/instructions/slack"
 import InstructionsBox from "./instructions/instructions-box"
 
-type ServiceName = "DISCORD" | "WEBEX" | "WHATSAPP" | "SLACK" | "TEAMS" | "NONE"
+type ServiceName =
+  | "DISCORD"
+  | "EMAIL"
+  | "WEBEX"
+  | "WHATSAPP"
+  | "SLACK"
+  | "TEAMS"
+  | "NONE"
 
 type ChannelIds = {
   [K in Exclude<ServiceName, "NONE">]: string
@@ -27,6 +32,7 @@ type ChannelIds = {
 type ChannelsPageContentProps = {
   activeChannel: ServiceName
   discordId: string
+  emailId: string
   webexId: string
   whatsappId: string
   slackId: string
@@ -36,6 +42,7 @@ type ChannelsPageContentProps = {
 export const ChannelsPageContent = ({
   activeChannel: initialActiveChannel,
   discordId: initialDiscordId,
+  emailId: initialEmailId,
   webexId: initialWebexId,
   whatsappId: initialWhatsappId,
   slackId: initialSlackId,
@@ -46,6 +53,7 @@ export const ChannelsPageContent = ({
 
   const [channelIds, setChannelIds] = useState<ChannelIds>({
     DISCORD: initialDiscordId,
+    EMAIL: initialEmailId,
     WEBEX: initialWebexId,
     WHATSAPP: initialWhatsappId,
     SLACK: initialSlackId,
@@ -56,6 +64,7 @@ export const ChannelsPageContent = ({
     mutationFn: async ({
       activeChannel,
       discordId,
+      emailId,
       webexId,
       whatsappId,
       slackId,
@@ -63,6 +72,7 @@ export const ChannelsPageContent = ({
     }: {
       activeChannel: ServiceName
       discordId?: string
+      emailId?: string
       webexId?: string
       whatsappId?: string
       slackId?: string
@@ -71,6 +81,7 @@ export const ChannelsPageContent = ({
       const res = await client.project.setChannel.$post({
         activeChannel,
         discordId,
+        emailId,
         webexId,
         whatsappId,
         slackId,
@@ -85,6 +96,11 @@ export const ChannelsPageContent = ({
       name: "DISCORD",
       displayName: "Discord",
       placeholder: "Enter your Discord ID",
+    },
+    {
+      name: "EMAIL",
+      displayName: "Email",
+      placeholder: "Enter your Email ID",
     },
     { name: "WEBEX", displayName: "Webex", placeholder: "Enter your Webex ID" },
     { name: "SLACK", displayName: "Slack", placeholder: "Enter your Slack ID" },
@@ -195,7 +211,11 @@ export const ChannelsPageContent = ({
       </div>
       {/* Render instructions for active service */}
       {activeChannel === "DISCORD" && <InstructionsBox channel="discord" />}
+      {activeChannel === "WEBEX" && <InstructionsBox channel="webex" />}
       {activeChannel === "SLACK" && <InstructionsBox channel="slack" />}
+      {activeChannel === "WHATSAPP" && <InstructionsBox channel="whatsapp" />}
+      {activeChannel === "TEAMS" && <InstructionsBox channel="teams" />}
+      {activeChannel === "EMAIL" && <InstructionsBox channel="email" />}
     </div>
   )
 }
