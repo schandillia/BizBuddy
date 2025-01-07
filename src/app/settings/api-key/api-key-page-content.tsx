@@ -1,4 +1,3 @@
-// app/settings/api-key/api-key-page-content.tsx
 "use client"
 
 import { Button } from "@/components/ui/button"
@@ -19,9 +18,11 @@ export const ApiKeyPageContent = ({
   const [isRegenerating, setIsRegenerating] = useState(false)
 
   const copyApiKey = () => {
-    navigator.clipboard.writeText(apiKey)
-    setCopySuccess(true)
-    setTimeout(() => setCopySuccess(false), 2000)
+    if (apiKey) {
+      navigator.clipboard.writeText(apiKey)
+      setCopySuccess(true)
+      setTimeout(() => setCopySuccess(false), 2000)
+    }
   }
 
   const handleRegenerate = async () => {
@@ -47,16 +48,17 @@ export const ApiKeyPageContent = ({
         <Label className="dark:text-gray-400">Your API Key</Label>
         <div className="mt-1 relative">
           <Input
-            type="password"
-            value={apiKey}
+            type={apiKey ? "password" : "text"}
+            value={apiKey || "Generating..."} // Show placeholder if apiKey is empty
             readOnly
-            className="pr-14" // Add right padding for the button
+            className={`pr-14 ${!apiKey ? "italic text-gray-500" : ""}`} // Style placeholder
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-2">
             <Button
               variant="ghost"
               onClick={copyApiKey}
               className="h-8 w-8 p-0"
+              disabled={!apiKey} // Disable copy button if apiKey is empty
             >
               {copySuccess ? (
                 <CheckIcon className="h-4 w-4 text-brand-900 dark:text-brand-700" />
