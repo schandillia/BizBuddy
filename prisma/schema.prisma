@@ -44,6 +44,7 @@ model User {
 
   email     String   @unique
   apiKey    String   @unique @default(cuid())
+  apiKeyHint String?
   
   // Channel fields
   activeChannel Channel @default(NONE)

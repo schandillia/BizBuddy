@@ -14,7 +14,7 @@ export async function POST() {
 
     await db.user.update({
       where: { externalId: auth.id },
-      data: { apiKey: hashedKey },
+      data: { apiKey: hashedKey, apiKeyHint: generatedKey.slice(-6) },
     })
 
     return Response.json({ apiKey: generatedKey })
