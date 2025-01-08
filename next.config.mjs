@@ -7,4 +7,4 @@ const nextConfig = {
   output: "standalone",
 }
 
-export default config
+export default nextConfig
