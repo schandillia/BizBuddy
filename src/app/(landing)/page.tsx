@@ -35,7 +35,15 @@ const Page = () => {
 
   return (
     <>
-      <section className="relative py-24 sm:py-32 sm:pt-12 bg-brand-25 dark:bg-brand-950">
+      <section
+        className="relative py-24 sm:py-32 sm:pt-12 bg-brand-25 dark:bg-brand-950"
+        style={{
+          backgroundImage: `url('/landing.svg')`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+        }}
+      >
         <MaxWidthWrapper className="text-center">
           <div className="relative mx-auto text-center flex flex-col items-center gap-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/30">

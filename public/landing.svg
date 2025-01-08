@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500">
+  <g opacity="0.3">
+    <!-- Base Grid -->
+    <g opacity="0.2">
+      <path d="M0,100 L800,100" stroke="#888888" stroke-width="0.5"/>
+      <path d="M0,200 L800,200" stroke="#888888" stroke-width="0.5"/>
+      <path d="M0,300 L800,300" stroke="#888888" stroke-width="0.5"/>
+      <path d="M0,400 L800,400" stroke="#888888" stroke-width="0.5"/>
+      <path d="M100,0 L100,500" stroke="#888888" stroke-width="0.5"/>
+      <path d="M200,0 L200,500" stroke="#888888" stroke-width="0.5"/>
+      <path d="M300,0 L300,500" stroke="#888888" stroke-width="0.5"/>
+      <path d="M400,0 L400,500" stroke="#888888" stroke-width="0.5"/>
+      <path d="M500,0 L500,500" stroke="#888888" stroke-width="0.5"/>
+      <path d="M600,0 L600,500" stroke="#888888" stroke-width="0.5"/>
+      <path d="M700,0 L700,500" stroke="#888888" stroke-width="0.5"/>
+    </g>
+
+    <!-- Dynamic Circuit Paths with Animations -->
+    <g>
+      <!-- Circuit Section 1 -->
+      <g>
+        <circle cx="50" cy="50" r="6" fill="#888888">
+          <animate attributeName="r" values="6;10;6" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="150" cy="50" r="4" fill="#888888">
+          <animate attributeName="r" values="4;8;4" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="150" cy="150" r="5" fill="#888888">
+          <animate attributeName="r" values="5;7;5" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <path d="M50,50 L150,50 L150,150" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;10,10;0,10" dur="3s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Circuit Section 2 -->
+      <g>
+        <circle cx="250" cy="50" r="8" fill="#888888">
+          <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="350" cy="50" r="7" fill="#888888">
+          <animate attributeName="r" values="7;11;7" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="350" cy="150" r="6" fill="#888888">
+          <animate attributeName="r" values="6;9;6" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <path d="M150,50 L250,50 L250,150 L350,150" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="4s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Repeating pattern with more nodes -->
+      <g>
+        <circle cx="450" cy="50" r="9" fill="#888888">
+          <animate attributeName="r" values="9;13;9" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="550" cy="50" r="5" fill="#888888">
+          <animate attributeName="r" values="5;8;5" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="650" cy="50" r="4" fill="#888888">
+          <animate attributeName="r" values="4;6;4" dur="6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="750" cy="50" r="3" fill="#888888">
+          <animate attributeName="r" values="3;5;3" dur="6s" repeatCount="indefinite"/>
+        </circle>
+        <path d="M350,50 L450,50 L450,150 L550,150 L550,50 L650,50 L650,150 L750,150" 
+              stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="6s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Lower Level Circuits -->
+      <g>
+        <circle cx="50" cy="250" r="5" fill="#888888">
+          <animate attributeName="r" values="5;8;5" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="150" cy="250" r="7" fill="#888888">
+          <animate attributeName="r" values="7;10;7" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="250" cy="250" r="6" fill="#888888">
+          <animate attributeName="r" values="6;9;6" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <path d="M50,250 L150,250 L150,350 L250,350 L250,250" 
+              stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="4s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Cross Connections -->
+      <g>
+        <path d="M150,150 L150,250" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="5s" repeatCount="indefinite"/>
+        </path>
+        <path d="M350,150 L350,250" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="5s" repeatCount="indefinite"/>
+        </path>
+        <path d="M550,150 L550,250" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="5s" repeatCount="indefinite"/>
+        </path>
+        <path d="M750,150 L750,250" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="5s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Additional Circuit Elements -->
+      <g>
+        <circle cx="350" cy="250" r="4" fill="#888888">
+          <animate attributeName="r" values="4;7;4" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="450" cy="250" r="10" fill="#888888">
+          <animate attributeName="r" values="10;14;10" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="550" cy="250" r="6" fill="#888888">
+          <animate attributeName="r" values="6;9;6" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <path d="M350,250 L450,250 L450,350 L550,350 L550,250" 
+              stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="6s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- More Cross-Level Connections -->
+      <g>
+        <path d="M250,150 L250,350" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="6s" repeatCount="indefinite"/>
+        </path>
+        <path d="M450,150 L450,350" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="6s" repeatCount="indefinite"/>
+        </path>
+        <path d="M650,150 L650,350" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="6s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Moving Nodes -->
+      <g>
+        <circle cx="100" cy="100" r="3" fill="#888888">
+          <animateMotion path="M0,0 L50,0 L50,50 L0,50 L0,0" dur="8s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="300" cy="200" r="5" fill="#888888">
+          <animateMotion path="M0,0 L100,0 L100,100 L0,100 L0,0" dur="10s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="500" cy="300" r="7" fill="#888888">
+          <animateMotion path="M0,0 L75,0 L75,75 L0,75 L0,0" dur="12s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- Additional Circuit Paths -->
+      <g>
+        <path d="M50,350 L150,350 L150,450 L250,450" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="7s" repeatCount="indefinite"/>
+        </path>
+        <path d="M350,350 L450,350 L450,450 L550,450" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="7s" repeatCount="indefinite"/>
+        </path>
+        <path d="M550,350 L650,350 L650,450 L750,450" stroke="#888888" stroke-width="1" fill="none">
+          <animate attributeName="stroke-dasharray" values="0,10;5,10;0,10" dur="7s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Pulse Effects on Key Nodes -->
+      <g>
+        <circle cx="250" cy="450" r="4" fill="#888888">
+          <animate attributeName="r" values="4;6;4" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="550" cy="450" r="5" fill="#888888">
+          <animate attributeName="r" values="5;7;5" dur="5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="750" cy="450" r="6" fill="#888888">
+          <animate attributeName="r" values="6;8;6" dur="6s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+    </g>
+  </g>
+</svg>
