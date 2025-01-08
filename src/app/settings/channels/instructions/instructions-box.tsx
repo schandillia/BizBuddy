@@ -1,12 +1,11 @@
 import React from "react"
 import DiscordInstructions from "@/app/settings/channels/instructions/discord"
 import SlackInstructions from "@/app/settings/channels/instructions/slack"
-import WebexInstructions from "./webex"
-import TeamsInstructions from "./teams"
-import EmailInstructions from "./email"
-import WhatsappInstructions from "./whatsapp"
-// import WebexInstructions from "@/app/settings/channels/instructions/webex"
-// import TeamsInstructions from "@/app/settings/channels/instructions/teams"
+import WebexInstructions from "@/app/settings/channels/instructions/webex"
+import TeamsInstructions from "@/app/settings/channels/instructions/teams"
+import EmailInstructions from "@/app/settings/channels/instructions/email"
+import WhatsappInstructions from "@/app/settings/channels/instructions/whatsapp"
+import { Heading } from "@/components/heading"
 
 type ChannelType =
   | "discord"
@@ -40,10 +39,29 @@ const InstructionsBox: React.FC<InstructionsBoxProps> = ({ channel }) => {
     }
   }
 
+  const channelMap: Record<string, string> = {
+    discord: "Discord",
+    slack: "Slack",
+    webex: "Webex",
+    teams: "Teams",
+    email: "Email",
+    whatsapp: "WhatsApp",
+  }
+
+  const channelName = channelMap[channel.toLowerCase()] || null
+
   return (
-    <div className="prose lg:prose-lg prose-headings:text-gray-600 dark:prose-headings:text-gray-400 prose-strong:text-gray-600 dark:prose-strong:text-gray-400 prose-a:text-brand-800 dark:prose-a:text-brand-300 dark:prose-invert marker:text-brand-800 dark:marker:text-brand-200/70 max-w-full mx-auto bg-brand-25 dark:bg-brand-900/60 p-10 rounded-lg shadow-md">
-      {getInstructions()}
-    </div>
+    <>
+      <Heading
+        as="h2"
+        className="text-gray-600 dark:text-gray-300 font-extrabold"
+      >
+        Setting up your {channelName}
+      </Heading>
+      <div className="prose lg:prose-lg prose-headings:text-gray-600 dark:prose-headings:text-gray-300 prose-strong:text-gray-600 dark:prose-strong:text-gray-300 prose-a:text-brand-800 dark:prose-a:text-brand-300 dark:prose-invert marker:text-brand-900 dark:marker:text-brand-100 max-w-full mx-auto bg-white dark:bg-brand-900 dark:border-brand-950 border-2 p-10 rounded-lg shadow-inner">
+        {getInstructions()}
+      </div>
+    </>
   )
 }
 

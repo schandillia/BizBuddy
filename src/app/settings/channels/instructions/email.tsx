@@ -5,8 +5,6 @@ import channelConfig from "@/lib/constants/channels.json"
 const EmailInstructions: React.FC = () => {
   return (
     <>
-      <h3>Setting Up Email Notifications: Step-by-Step Guide</h3>
-
       <p>
         Follow these instructions to set up Email notifications for your
         project. Don't worry if you're new to Email - we'll walk you through

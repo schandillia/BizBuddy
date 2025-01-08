@@ -5,8 +5,6 @@ import channelConfig from "@/lib/constants/channels.json"
 const WhatsappInstructions: React.FC = () => {
   return (
     <>
-      <h3>Setting Up Whatsapp Notifications: Step-by-Step Guide</h3>
-
       <p>
         Follow these instructions to set up Whatsapp notifications for your
         project. Don't worry if you're new to Whatsapp - we'll walk you through

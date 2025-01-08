@@ -5,8 +5,6 @@ import channelConfig from "@/lib/constants/channels.json"
 const WebexInstructions: React.FC = () => {
   return (
     <>
-      <h3>Setting Up Webex Notifications: Step-by-Step Guide</h3>
-
       <p>
         Follow these instructions to set up Webex notifications for your
         project. Don't worry if you're new to Webex - we'll walk you through

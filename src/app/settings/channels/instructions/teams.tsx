@@ -5,8 +5,6 @@ import channelConfig from "@/lib/constants/channels.json"
 const TeamsInstructions: React.FC = () => {
   return (
     <>
-      <h3>Setting Up Teams Notifications: Step-by-Step Guide</h3>
-
       <p>
         Follow these instructions to set up Teams notifications for your
         project. Don't worry if you're new to Teams - we'll walk you through

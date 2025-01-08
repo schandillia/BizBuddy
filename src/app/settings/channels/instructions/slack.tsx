@@ -5,8 +5,6 @@ import channelConfig from "@/lib/constants/channels.json"
 const SlackInstructions: React.FC = () => {
   return (
     <>
-      <h3>Setting Up Slack Notifications: Step-by-Step Guide</h3>
-
       <p>
         Follow these instructions to set up Slack notifications for your
         project. Don't worry if you're new to Slack - we'll walk you through

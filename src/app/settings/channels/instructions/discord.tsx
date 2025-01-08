@@ -5,8 +5,6 @@ import channelConfig from "@/lib/constants/channels.json"
 const DiscordInstructions: React.FC = () => {
   return (
     <>
-      {" "}
-      <h3>Setting Up Discord Notifications: Step-by-Step Guide</h3>
       <p>
         Follow these instructions to set up Discord notifications for your
         project. Don't worry if you're new to Discord - we’ll walk you through
