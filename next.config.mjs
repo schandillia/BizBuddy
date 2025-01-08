@@ -1,3 +1,5 @@
+import withBundleAnalyzer from "@next/bundle-analyzer"
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,
@@ -7,4 +9,8 @@ const nextConfig = {
   output: "standalone",
 }
 
-export default nextConfig
+const config = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})(nextConfig)
+
+export default config
