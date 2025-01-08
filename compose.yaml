@@ -1,0 +1,21 @@
+version: "3.9"
+
+volumes:
+  node_modules:
+
+services:
+  app:
+    build: .
+    container_name: bizbuddy_app_container
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - .:/app:cached
+      - node_modules:/app/node_modules
+    working_dir: /app # Important: Set the working directory
+    command: ["node", "server.js"] # Correct command for standalone
+    env_file:
+      - .env
+    # depends_on: # Uncomment if you have a database or other dependencies
+    #   - db
