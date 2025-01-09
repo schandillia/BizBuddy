@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { CheckIcon, ClipboardIcon, EyeIcon, EyeOffIcon } from "lucide-react"
+import {
+  CheckIcon,
+  ClipboardIcon,
+  EyeIcon,
+  EyeOffIcon,
+  Loader2,
+} from "lucide-react"
 import { useState } from "react"
 import { Modal } from "@/components/ui/modal"
 
@@ -20,6 +26,9 @@ export const ApiKeyPageContent = ({
   const [showKey, setShowKey] = useState(false)
   const [showRegenerateModal, setShowRegenerateModal] = useState(false)
   const [isRegenerating, setIsRegenerating] = useState(false)
+  const [apiKeyHint, setApiKeyHint] = useState<string>("")
+  const [isLoadingHint, setIsLoadingHint] = useState(false)
+  const [hintError, setHintError] = useState<string>("")
 
   const copyApiKey = () => {
     if (apiKey) {
@@ -29,10 +38,35 @@ export const ApiKeyPageContent = ({
     }
   }
 
-  const firstVisit = !apiKey.startsWith("****")
+  const firstVisit = !!apiKey && apiKey !== ""
 
   const handleRegenerate = () => {
     setShowRegenerateModal(true)
+  }
+
+  const fetchApiKeyHint = async () => {
+    try {
+      setIsLoadingHint(true)
+      setHintError("")
+
+      const response = await fetch("/api/api-key-hint")
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      setApiKeyHint(`****${data.apiKeyHint}`)
+      setShowKey(true)
+    } catch (error) {
+      console.error("Error fetching API key hint:", error)
+      setHintError(
+        error instanceof Error ? error.message : "Failed to load API key hint"
+      )
+      setShowKey(false)
+    } finally {
+      setIsLoadingHint(false)
+    }
   }
 
   const confirmRegenerate = async () => {
@@ -41,13 +75,13 @@ export const ApiKeyPageContent = ({
       const response = await fetch("/api/regenerate-key", {
         method: "POST",
       })
+      const data = await response.json()
 
-      if (!response.ok) {
-        throw new Error("Failed to regenerate key")
+      if (data.error) {
+        throw new Error(data.error)
       }
 
-      const { apiKey: newApiKey } = await response.json()
-      setApiKey(newApiKey)
+      setApiKey(data.apiKey)
       setShowRegenerateModal(false)
     } catch (error) {
       console.error("Error regenerating key:", error)
@@ -110,22 +144,30 @@ export const ApiKeyPageContent = ({
                   className="p-0 h-auto hover:bg-transparent text-gray-500 dark:text-gray-400"
                   onClick={() => setShowKey(false)}
                 >
-                  <EyeOffIcon className="h-4 w-4" />
+                  <EyeOffIcon className="size-4 mr-2" />
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {apiKeyHint || "No hint available"}
+                  </span>
                 </Button>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  {apiKey}
-                </span>
               </>
             ) : (
               <>
                 <Button
                   variant="link"
                   className="text-sm p-0 h-auto flex items-center space-x-2 dark:text-gray-400"
-                  onClick={() => setShowKey(true)}
+                  onClick={fetchApiKeyHint}
+                  disabled={isLoadingHint}
                 >
                   <EyeIcon className="size-4 text-gray-500 dark:text-gray-400" />
                   <span className="text-gray-500 dark:text-gray-400">
-                    Reveal API Key hint
+                    {isLoadingHint ? (
+                      <Loader2
+                        className="animate-spin ml-2 size-4 text-gray-700 dark:text-gray-200"
+                        size="sm"
+                      />
+                    ) : (
+                      "Reveal API Key hint"
+                    )}
                   </span>
                 </Button>
               </>
@@ -134,6 +176,7 @@ export const ApiKeyPageContent = ({
               Regenerate
             </Button>
           </div>
+          {hintError && <p className="text-sm text-red-500">{hintError}</p>}
           <p className="text-sm text-gray-500 dark:text-gray-400 text-pretty">
             Your API key is sensitive and provides access to your service. Treat
             it like a password—do not share it or expose it publicly. If you

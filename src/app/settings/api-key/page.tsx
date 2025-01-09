@@ -36,7 +36,7 @@ const Page = async () => {
     apiKey = generatedKey // Set the unencrypted key for the user
   } else {
     // Set initialKey to the last 6 characters of the encrypted key followed by 4 asterisks
-    apiKey = `****${user.apiKeyHint}`
+    apiKey = ""
   }
 
   return (
