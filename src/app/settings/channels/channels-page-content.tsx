@@ -128,26 +128,46 @@ export const ChannelsPageContent = ({
     }
   }
 
+  const MAX_LENGTHS = {
+    DISCORD: 20,
+    EMAIL: 254,
+    WEBEX: 100,
+    WHATSAPP: 50,
+    SLACK: 20,
+    TEAMS: 100,
+  } as const
+
   const handleSave = () => {
     if (activeChannel === "NONE") {
       return
     }
 
-    const currentId = channelIds[activeChannel as Exclude<ServiceName, "NONE">]
-    if (!currentId?.trim()) {
+    const payload = {
+      activeChannel,
+      discordId: channelIds.DISCORD?.trim() || undefined,
+      emailId: channelIds.EMAIL?.trim() || undefined,
+      webexId: channelIds.WEBEX?.trim() || undefined,
+      whatsappId: channelIds.WHATSAPP?.trim() || undefined,
+      slackId: channelIds.SLACK?.trim() || undefined,
+      teamsId: channelIds.TEAMS?.trim() || undefined,
+    }
+
+    // Service-specific length validation
+    const hasInvalidLength = Object.entries(channelIds).some(
+      ([service, value]) => {
+        if (!value?.trim()) return false
+        const maxLength = MAX_LENGTHS[service as keyof typeof MAX_LENGTHS]
+        return value.trim().length > maxLength
+      }
+    )
+
+    if (hasInvalidLength) {
+      alert("One or more IDs exceed their maximum length")
       return
     }
 
-    mutate({
-      activeChannel,
-      discordId: channelIds.DISCORD?.trim(),
-      webexId: channelIds.WEBEX?.trim(),
-      whatsappId: channelIds.WHATSAPP?.trim(),
-      slackId: channelIds.SLACK?.trim(),
-      teamsId: channelIds.TEAMS?.trim(),
-    })
+    mutate(payload)
   }
-
   return (
     <div className="max-w-3xl flex flex-col gap-8">
       <Table>

@@ -25,7 +25,9 @@ export async function sendToWebex({
       },
       body: JSON.stringify({
         toPersonEmail: webexId,
-        markdown: JSON.stringify(eventData),
+        text: Object.entries(eventData)
+          .map(([key, value]) => `**${key}**: ${value}`)
+          .join("\n"),
       }),
     })
 

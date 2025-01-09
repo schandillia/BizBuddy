@@ -50,12 +50,12 @@ export const projectRouter = router({
           "TEAMS",
           "NONE",
         ]),
-        discordId: z.string().max(20).optional(),
-        emailId: z.string().max(20).optional(),
-        webexId: z.string().max(20).optional(),
-        whatsappId: z.string().max(20).optional(),
-        slackId: z.string().max(20).optional(),
-        teamsId: z.string().max(20).optional(),
+        discordId: z.string().max(20).optional(), // Discord uses snowflake IDs, always 17-19 digits
+        emailId: z.string().max(254).optional(), // Max email length per RFC 5321
+        webexId: z.string().max(100).optional(), // WebEx uses emails or room IDs
+        whatsappId: z.string().max(50).optional(), // WhatsApp numbers with country code
+        slackId: z.string().max(20).optional(), // Slack user IDs are usually 9-11 chars
+        teamsId: z.string().max(100).optional(), // Teams uses UPNs or chat IDs
       })
     )
     .mutation(async ({ ctx, input, c }) => {
