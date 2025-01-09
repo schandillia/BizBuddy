@@ -134,9 +134,9 @@ export const typeRouter = router({
   insertQuickstartTypes: privateProcedure.mutation(async ({ ctx, c }) => {
     const types = await db.eventType.createMany({
       data: [
-        { name: "bug", emoji: "🐞", color: 0xff6b6b },
         { name: "sale", emoji: "💰", color: 0xffeb3b },
-        { name: "question", emoji: "🤔", color: 0x6c5ce7 },
+        { name: "sign-up", emoji: "🧑", color: 0x6c5ce7 },
+        { name: "bug", emoji: "🐞", color: 0xff6b6b },
       ].map((type) => ({
         ...type,
         userId: ctx.user.id,
