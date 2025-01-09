@@ -15,6 +15,7 @@ export const sendToDiscord = async ({
   }
   discordBotToken: string
 }) => {
+  console.log("eventData from discord.ts: ", eventData)
   try {
     const discord = new DiscordClient(discordBotToken)
     const dmChannel = await discord.createDM(discordId)

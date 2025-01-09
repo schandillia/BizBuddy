@@ -6,17 +6,37 @@ interface WebexMessageResponse {
 }
 
 interface SendToWebexParams {
-  eventData: any
+  eventData: {
+    title: string
+    description: string
+    color?: number
+    timestamp?: string
+    fields?: { name: string; value: string; inline?: boolean }[]
+  }
   webexId: string
   webexBotToken: string
 }
 
-export async function sendToWebex({
+export const sendToWebex = async ({
   eventData,
   webexId,
   webexBotToken,
-}: SendToWebexParams): Promise<WebexMessageResponse> {
+}: SendToWebexParams): Promise<WebexMessageResponse> => {
   try {
+    // Format the message content
+    const messageContent = [
+      `**${eventData.title}**`, // Title in bold
+      eventData.description, // Description in italics
+      "", // Empty line for spacing
+    ]
+
+    // Add formatted fields if they exist
+    if (eventData.fields && eventData.fields.length > 0) {
+      eventData.fields.forEach((field) => {
+        messageContent.push(`**${field.name}**: ${field.value}`)
+      })
+    }
+
     const response = await fetch("https://webexapis.com/v1/messages", {
       method: "POST",
       headers: {
@@ -25,9 +45,7 @@ export async function sendToWebex({
       },
       body: JSON.stringify({
         toPersonEmail: webexId,
-        text: Object.entries(eventData)
-          .map(([key, value]) => `**${key}**: ${value}`)
-          .join("\n"),
+        markdown: messageContent.join("\n"),
       }),
     })
 
