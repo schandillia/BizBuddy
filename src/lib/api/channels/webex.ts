@@ -1,34 +1,47 @@
-type WebexPayload = {
-  webexId: string
-  eventData: any
+// src/lib/api/channels/webex.ts
+
+interface WebexMessageResponse {
+  success: boolean
+  message: string
 }
 
-export const sendToWebex = async ({ webexId, eventData }: WebexPayload) => {
+interface SendToWebexParams {
+  eventData: any
+  webexId: string
+  webexBotToken: string
+}
+
+export async function sendToWebex({
+  eventData,
+  webexId,
+  webexBotToken,
+}: SendToWebexParams): Promise<WebexMessageResponse> {
   try {
-    // Log the input parameters for debugging
-    console.log("Sending to Webex:", { webexId, eventData })
+    const response = await fetch("https://webexapis.com/v1/messages", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${webexBotToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        toPersonEmail: webexId,
+        markdown: JSON.stringify(eventData),
+      }),
+    })
 
-    // Simulate Webex API call or actual implementation here
-    // For example:
-    // const response = await someWebexApiClient.sendMessage({
-    //   recipientId: webexId,
-    //   message: eventData,
-    // })
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
 
-    // Returning a success response
     return {
       success: true,
-      message: "Message sent to Webex successfully.",
-      details: { webexId, eventData },
+      message: "Message delivered successfully",
     }
   } catch (error) {
-    console.error("Error sending to Webex:", error)
-
-    // Return an error response
+    console.error("Webex Message Error:", error)
     return {
       success: false,
-      message: "Failed to send message to Webex.",
-      error,
+      message: "Failed to deliver the message to Webex",
     }
   }
 }

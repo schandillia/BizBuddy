@@ -74,12 +74,13 @@ const sendEventToChannel = async (
       return await sendToDiscord({
         discordId: user.discordId,
         eventData,
-        botToken: process.env.DISCORD_BOT_TOKEN as string,
+        discordBotToken: process.env.DISCORD_BOT_TOKEN as string,
       })
     case "WEBEX":
       return await sendToWebex({
         webexId: user.webexId,
         eventData,
+        webexBotToken: process.env.WEBEX_BOT_TOKEN as string,
       })
     case "WHATSAPP":
       return await sendToWhatsapp({

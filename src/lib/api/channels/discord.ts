@@ -3,7 +3,7 @@ import { DiscordClient } from "@/lib/api/channels/clients/discord-client"
 export const sendToDiscord = async ({
   discordId,
   eventData,
-  botToken,
+  discordBotToken,
 }: {
   discordId: string
   eventData: {
@@ -13,10 +13,10 @@ export const sendToDiscord = async ({
     timestamp?: string
     fields?: { name: string; value: string; inline?: boolean }[]
   }
-  botToken: string
+  discordBotToken: string
 }) => {
   try {
-    const discord = new DiscordClient(botToken)
+    const discord = new DiscordClient(discordBotToken)
     const dmChannel = await discord.createDM(discordId)
     await discord.sendEmbed(dmChannel.id, eventData)
 
