@@ -9,24 +9,29 @@ import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import bcrypt from "bcrypt"
 
-const valueSchema: z.ZodTypeAny = z.lazy(() =>
-  z.union([
-    z.string(),
-    z.number(),
-    z.boolean(),
-    z.array(valueSchema),
-    z.record(valueSchema),
-    z.null(),
-  ])
-)
+const hasNestedObjects = (obj: Record<string, any>): boolean => {
+  return Object.values(obj).some(
+    (value) =>
+      typeof value === "object" && value !== null && !Array.isArray(value)
+  )
+}
 
 const REQUEST_VALIDATOR = z
   .object({
     type: TYPE_NAME_VALIDATOR,
-    fields: z.record(valueSchema).optional(),
+    fields: z.record(z.any()).optional(),
     description: z.string().optional(),
   })
   .strict()
+  .superRefine((data, ctx) => {
+    if (data.fields && hasNestedObjects(data.fields)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Nested objects not supported",
+        path: ["fields"],
+      })
+    }
+  })
 
 type ChannelResult = {
   success: boolean
@@ -188,8 +193,22 @@ export const POST = async (req: NextRequest) => {
     const validationResult = REQUEST_VALIDATOR.safeParse(requestData)
 
     if (!validationResult.success) {
+      const eventId =
+        requestData &&
+        typeof requestData === "object" &&
+        "eventId" in requestData
+          ? (requestData as { eventId?: string }).eventId
+          : undefined
+
+      // Extract the first error message
+      const errorMessage =
+        validationResult.error.errors[0]?.message || "Validation failed"
+
       return NextResponse.json(
-        { message: validationResult.error.message },
+        {
+          message: errorMessage,
+          ...(eventId && { eventId }),
+        },
         { status: 422 }
       )
     }
