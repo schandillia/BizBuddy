@@ -164,7 +164,7 @@ export const DashboardPageContent = () => {
             </p>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4 border-t">
+          <div className="flex justify-end space-x-3 pt-4 border-t dark:border-brand-900">
             <Button
               variant="outline"
               onClick={() => setDeletingType(null)}
