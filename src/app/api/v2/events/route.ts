@@ -4,16 +4,26 @@ import { sendToDiscord } from "@/lib/api/channels/discord"
 import { sendToSlack } from "@/lib/api/channels/slack"
 import { sendToTeams } from "@/lib/api/channels/teams"
 import { sendToWebex } from "@/lib/api/channels/webex"
-import { sendToWhatsapp } from "@/lib/api/channels/whatsapp"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import bcrypt from "bcrypt"
 
+const valueSchema: z.ZodTypeAny = z.lazy(() =>
+  z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.array(valueSchema),
+    z.record(valueSchema),
+    z.null(),
+  ])
+)
+
 const REQUEST_VALIDATOR = z
   .object({
     type: TYPE_NAME_VALIDATOR,
-    fields: z.record(z.string().or(z.number()).or(z.boolean())).optional(),
+    fields: z.record(valueSchema).optional(),
     description: z.string().optional(),
   })
   .strict()
@@ -23,7 +33,6 @@ type ChannelResult = {
   message?: string
 }
 
-// Helper function to validate channel-specific requirements
 const validateChannelConfig = (
   user: any,
   channel: string
@@ -58,12 +67,12 @@ const validateChannelConfig = (
         isValid: false,
         message: "Please activate a channel in your account settings",
       }
-      break
+    default:
+      return { isValid: true }
   }
   return { isValid: true }
 }
 
-// Function to send event based on channel type
 const sendEventToChannel = async (
   channel: string,
   user: any,
@@ -82,11 +91,6 @@ const sendEventToChannel = async (
         eventData,
         webexBotToken: process.env.WEBEX_BOT_TOKEN as string,
       })
-    case "WHATSAPP":
-      return await sendToWhatsapp({
-        whatsappId: user.whatsappId,
-        eventData,
-      })
     case "SLACK":
       return await sendToSlack({
         slackId: user.slackId,
@@ -98,16 +102,12 @@ const sendEventToChannel = async (
         eventData,
       })
     default:
-      return {
-        success: false,
-        message: `Unsupported channel: ${channel}`,
-      }
+      return { success: false, message: `Unsupported channel: ${channel}` }
   }
 }
 
 export const POST = async (req: NextRequest) => {
   try {
-    // Authentication check section
     const authHeader = req.headers.get("Authorization")
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -122,10 +122,7 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 })
     }
 
-    // User validation with bcrypt comparison
-    const users = await db.user.findMany({
-      include: { EventTypes: true },
-    })
+    const users = await db.user.findMany({ include: { EventTypes: true } })
 
     let user = null
     for (const potentialUser of users) {
@@ -140,17 +137,13 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ message: "Invalid API key" }, { status: 401 })
     }
 
-    // Check activeChannel
     if (user.activeChannel === "NONE") {
       return NextResponse.json(
-        {
-          message: "Activate a provider in your account's channels section.",
-        },
+        { message: "Activate a provider in your account's channels section." },
         { status: 403 }
       )
     }
 
-    // Validate channel-specific requirements
     const channelValidation = validateChannelConfig(user, user.activeChannel)
     if (!channelValidation.isValid) {
       return NextResponse.json(
@@ -159,7 +152,6 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    // Quota management
     const currentDate = new Date()
     const currentMonth = currentDate.getMonth() + 1
     const currentYear = currentDate.getFullYear()
@@ -183,7 +175,6 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    // Request parsing and validation
     let requestData: unknown
     try {
       requestData = await req.json()
@@ -194,31 +185,38 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    const validationResult = REQUEST_VALIDATOR.parse(requestData)
+    const validationResult = REQUEST_VALIDATOR.safeParse(requestData)
 
-    // Verify the event type
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { message: validationResult.error.message },
+        { status: 422 }
+      )
+    }
+
     const type = user.EventTypes.find(
-      (cat) => cat.name === validationResult.type
+      (cat) => cat.name === validationResult.data.type
     )
 
     if (!type) {
       return NextResponse.json(
-        { message: `You don't have a type named "${validationResult.type}"` },
+        {
+          message: `You don't have a type named "${validationResult.data.type}"`,
+        },
         { status: 404 }
       )
     }
 
-    // Prepare event data
     const eventData = {
       title: `${type.emoji || "🔔"} ${
         type.name.charAt(0).toUpperCase() + type.name.slice(1)
       }`,
       description:
-        validationResult.description ||
+        validationResult.data.description ||
         `A new ${type.name} event has occurred!`,
       color: type.color,
       timestamp: new Date().toISOString(),
-      fields: Object.entries(validationResult.fields || {}).map(
+      fields: Object.entries(validationResult.data.fields || {}).map(
         ([key, value]) => ({
           name: key,
           value: String(value),
@@ -227,18 +225,16 @@ export const POST = async (req: NextRequest) => {
       ),
     }
 
-    // Create event record in database
     const event = await db.event.create({
       data: {
         name: type.name,
         formattedMessage: `${eventData.title}\n\n${eventData.description}`,
         userId: user.id,
-        fields: validationResult.fields || {},
+        fields: validationResult.data.fields || {},
         EventTypeId: type.id,
       },
     })
 
-    // Send event to appropriate channel
     const channelResult = await sendEventToChannel(
       user.activeChannel,
       user,
@@ -250,14 +246,12 @@ export const POST = async (req: NextRequest) => {
         where: { id: event.id },
         data: { deliveryStatus: "FAILED" },
       })
-
       return NextResponse.json(
         { message: channelResult.message, eventId: event.id },
         { status: 500 }
       )
     }
 
-    // Update event and quota
     await db.event.update({
       where: { id: event.id },
       data: { deliveryStatus: "DELIVERED" },
@@ -280,11 +274,9 @@ export const POST = async (req: NextRequest) => {
     })
   } catch (err) {
     console.error(err)
-
     if (err instanceof z.ZodError) {
       return NextResponse.json({ message: err.message }, { status: 422 })
     }
-
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }
