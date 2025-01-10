@@ -68,6 +68,7 @@ model User {
 model EventType {
   id    String  @id @default(cuid())
   name  String
+  slug  String
   color Int
   emoji String?
 
@@ -79,6 +80,7 @@ model EventType {
   events     Event[]
 
   @@unique([name, userId])
+  @@unique([slug, userId])
 }
 
 enum DeliveryStatus {

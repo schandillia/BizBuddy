@@ -7,11 +7,13 @@ import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { parseColor } from "@/utils"
 import { HTTPException } from "hono/http-exception"
 import { Prisma } from "@prisma/client"
+import { FaSalesforce } from "react-icons/fa"
 
 // First, let's define interfaces for our types
 interface EventType {
   id: string
   name: string
+  slug: string
   emoji: string | null
   color: number
   updatedAt: Date
@@ -39,6 +41,7 @@ export const typeRouter = router({
       select: {
         id: true,
         name: true,
+        slug: true,
         emoji: true,
         color: true,
         updatedAt: true,
@@ -77,6 +80,7 @@ export const typeRouter = router({
       return {
         id: type.id,
         name: type.name,
+        slug: type.slug,
         emoji: type.emoji,
         color: type.color,
         updatedAt: type.updatedAt,
@@ -91,12 +95,12 @@ export const typeRouter = router({
   }),
 
   deleteType: privateProcedure
-    .input(z.object({ name: z.string() }))
+    .input(z.object({ slug: z.string() }))
     .mutation(async ({ c, input, ctx }) => {
-      const { name } = input
+      const { slug } = input
 
       await db.eventType.delete({
-        where: { name_userId: { name, userId: ctx.user.id } },
+        where: { slug_userId: { slug, userId: ctx.user.id } },
       })
 
       return c.json({ success: true })
@@ -117,11 +121,27 @@ export const typeRouter = router({
       const { user } = ctx
       const { color, name, emoji } = input
 
-      // TODO: ADD PAID PLAN LOGIC
+      // Check if the event type with the same name already exists for the current user
+      const existingEventType = await db.eventType.findUnique({
+        where: {
+          name_userId: {
+            name: name.toLowerCase(),
+            userId: user.id,
+          },
+        },
+      })
 
+      if (existingEventType) {
+        throw new HTTPException(400, {
+          message: `Event type with name "${name}" already exists.`,
+        })
+      }
+
+      // Proceed to create the new event type if no conflict
       const EventType = await db.eventType.create({
         data: {
-          name: name.toLowerCase(),
+          name: name,
+          slug: name.toLowerCase().toLowerCase().replace(/\s+/g, "-"),
           color: parseColor(color),
           emoji,
           userId: user.id,
@@ -134,9 +154,9 @@ export const typeRouter = router({
   insertQuickstartTypes: privateProcedure.mutation(async ({ ctx, c }) => {
     const types = await db.eventType.createMany({
       data: [
-        { name: "sale", emoji: "💰", color: 0xffeb3b },
-        { name: "sign-up", emoji: "🧑", color: 0x6c5ce7 },
-        { name: "bug", emoji: "🐞", color: 0xff6b6b },
+        { name: "Sale", slug: "sale", emoji: "💰", color: 0xffeb3b },
+        { name: "Sign-Up", slug: "sign-up", emoji: "🧑", color: 0x6c5ce7 },
+        { name: "Bug", slug: "bug", emoji: "🐞", color: 0xff6b6b },
       ].map((type) => ({
         ...type,
         userId: ctx.user.id,

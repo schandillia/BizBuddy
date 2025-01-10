@@ -1,3 +1,9 @@
+# TEST CHANNELS
+
+Discord: 1065488034872692747
+Webex: bibid22513@sfxeur.com
+Slack: U0879MLLAMT
+
 # COPYPASTE LIST
 
 because there is no point in literally typing out svg icons lol

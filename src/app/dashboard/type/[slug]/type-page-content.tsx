@@ -33,7 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { EmptyTypeState } from "@/app/dashboard/type/[name]/empty-type-state"
+import { EmptyTypeState } from "@/app/dashboard/type/[slug]/empty-type-state"
 
 interface TypePageContentProps {
   hasEvents: boolean

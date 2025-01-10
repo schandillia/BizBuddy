@@ -15,6 +15,7 @@ interface EventType {
   id: string
   color?: number // explicitly defining color as a number
   name: string
+  slug: string
   emoji?: string
   createdAt: Date
   lastPing?: Date
@@ -23,7 +24,10 @@ interface EventType {
 }
 
 export const DashboardPageContent = () => {
-  const [deletingType, setDeletingType] = useState<string | null>(null)
+  const [deletingType, setDeletingType] = useState<{
+    name: string
+    slug: string
+  } | null>(null)
   const queryClient = useQueryClient()
 
   const { data: types, isPending: isEventTypesLoading } = useQuery({
@@ -36,8 +40,8 @@ export const DashboardPageContent = () => {
   })
 
   const { mutate: deleteType, isPending: isDeletingType } = useMutation({
-    mutationFn: async (name: string) => {
-      await client.type.deleteType.$post({ name })
+    mutationFn: async (slug: string) => {
+      await client.type.deleteType.$post({ slug })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-event-types"] })
@@ -124,7 +128,7 @@ export const DashboardPageContent = () => {
 
               <div className="flex items-center justify-between mt-4">
                 <Link
-                  href={`/dashboard/type/${type.name}`}
+                  href={`/dashboard/type/${type.slug}`}
                   className={buttonVariants({
                     variant: "outline",
                     size: "sm",
@@ -138,7 +142,9 @@ export const DashboardPageContent = () => {
                   size="sm"
                   className="text-gray-500 hover:text-red-600 transition-colors"
                   aria-label={`Delete ${type.name} type`}
-                  onClick={() => setDeletingType(type.name)}
+                  onClick={() =>
+                    setDeletingType({ name: type.name, slug: type.slug })
+                  }
                 >
                   <Trash2 className="size-5" />
                 </Button>
@@ -159,8 +165,8 @@ export const DashboardPageContent = () => {
               Delete Type
             </h2>
             <p className="text-sm/6 text-gray-600 dark:text-gray-300">
-              Are you sure you want to delete the type “{deletingType}”? This
-              action cannot be undone.
+              Are you sure you want to delete the type “{deletingType?.name}”?
+              This action cannot be undone.
             </p>
           </div>
 
@@ -174,7 +180,7 @@ export const DashboardPageContent = () => {
             </Button>
             <Button
               variant="destructive"
-              onClick={() => deletingType && deleteType(deletingType)}
+              onClick={() => deletingType && deleteType(deletingType.slug)}
               disabled={isDeletingType}
             >
               {isDeletingType ? "Deleting..." : "Delete"}

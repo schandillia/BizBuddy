@@ -64,11 +64,27 @@ export const CreateEventTypeModal = ({
 
   const { mutate: createEventType, isPending } = useMutation({
     mutationFn: async (data: EventTypeForm) => {
-      await client.type.createEventType.$post(data)
+      try {
+        // Call the API to create the event type
+        await client.type.createEventType.$post(data)
+      } catch (error: any) {
+        // Handle any errors such as name already being taken
+        if (
+          error?.response?.status === 400 &&
+          error?.response?.data?.error?.message
+        ) {
+          throw new Error(error?.response?.data?.error?.message)
+        }
+        throw error // Re-throw if it's a different error
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-event-types"] })
       setIsOpen(false)
+    },
+    onError: (error: Error) => {
+      // Handle error globally in the UI, such as name already taken
+      alert(error.message) // Example, you could replace it with better UX handling
     },
   })
 
@@ -127,7 +143,7 @@ export const CreateEventTypeModal = ({
                 autoFocus
                 id="name"
                 {...register("name")}
-                placeholder="e.g. user-signup"
+                placeholder="e.g. User Signup"
                 className="w-full"
               />
               {errors.name ? (

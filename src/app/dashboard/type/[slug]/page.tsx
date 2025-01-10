@@ -6,12 +6,12 @@ import { TypePageContent } from "./type-page-content"
 
 interface PageProps {
   params: {
-    name: string | string[] | undefined
+    slug: string | string[] | undefined
   }
 }
 
 const Page = async ({ params }: PageProps) => {
-  if (typeof params.name !== "string") return notFound()
+  if (typeof params.slug !== "string") return notFound()
 
   const auth = await currentUser()
 
@@ -27,8 +27,8 @@ const Page = async ({ params }: PageProps) => {
 
   const type = await db.eventType.findUnique({
     where: {
-      name_userId: {
-        name: params.name,
+      slug_userId: {
+        slug: params.slug,
         userId: user.id,
       },
     },
@@ -46,7 +46,7 @@ const Page = async ({ params }: PageProps) => {
   const hasEvents = type._count.events > 0
 
   return (
-    <DashboardPage title={`${type.emoji} ${type.name} events`}>
+    <DashboardPage title={`${type.emoji} ${type.name} Events`}>
       <TypePageContent hasEvents={hasEvents} type={type} />
     </DashboardPage>
   )
