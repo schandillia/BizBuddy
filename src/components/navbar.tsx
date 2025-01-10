@@ -4,7 +4,8 @@ import { buttonVariants } from "@/components/ui/button"
 import { auth } from "@/auth"
 import { BrandLogo } from "@/components/brand-logo"
 import { DashboardNavButton } from "@/components/dashboard-nav-button"
-import SignIn from "@/components/sign-in" // Custom Auth.js button
+import SignIn from "@/components/sign-in"
+import UserNavMenu from "@/components/user-nav-menu"
 
 export const Navbar = async () => {
   const session = await auth()
@@ -33,7 +34,7 @@ export const Navbar = async () => {
             {session?.user ? (
               <>
                 <DashboardNavButton />
-                {/* <UserButton user={session.user} /> */}
+                <UserNavMenu user={session.user} />
               </>
             ) : (
               <>
@@ -50,7 +51,6 @@ export const Navbar = async () => {
                   </Link>
                 ))}
                 <div className="h-8 w-px bg-gray-200" />
-
                 <SignIn />
               </>
             )}

@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { auth } from "@/auth"
 import { router } from "../__internals/router"
 import { publicProcedure } from "../procedures"
@@ -25,12 +25,19 @@ export const authRouter = router({
         return c.json({ isSynced: false, message: "Email is required" })
       }
 
+      const userData = {
+        quotaLimit: 100,
+        id: session.user.id,
+        email: email,
+        name: session.user.name ?? "",
+        image: session.user.image ?? "",
+        // Type-cast to handle the case where emailVerified is part of session.user
+        emailVerified:
+          (session.user as { emailVerified?: Date }).emailVerified ?? null,
+      }
+
       await db.user.create({
-        data: {
-          quotaLimit: 100,
-          id: session.user.id,
-          email: email,
-        },
+        data: userData,
       })
     }
 

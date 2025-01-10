@@ -5,7 +5,7 @@ import { bodyFont, accentFont } from "@/lib/style/fonts"
 import { AuthProvider } from "@/components/auth/auth-provider"
 
 import "./globals.css"
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { auth } from "@/auth"
 import meta from "@/lib/constants/meta.json"
 import { ThemeProvider } from "@/components/theme/theme-provider"
