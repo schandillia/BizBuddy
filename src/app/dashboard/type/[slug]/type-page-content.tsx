@@ -310,7 +310,7 @@ export const TypePageContent = ({
           setActiveTab(value as "today" | "week" | "month" | "year")
         }}
       >
-        <TabsList className="mb-2 dark:bg-brand-900">
+        <TabsList className="mb-2 text-gray-200 bg-brand-600 dark:bg-brand-900">
           <TabsTrigger value="today">Today</TabsTrigger>
           <TabsTrigger value="week">This Week</TabsTrigger>
           <TabsTrigger value="month">This Month</TabsTrigger>
