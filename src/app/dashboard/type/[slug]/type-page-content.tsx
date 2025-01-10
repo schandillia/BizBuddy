@@ -1,3 +1,5 @@
+// OLD
+
 "use client"
 
 import { Event, EventType } from "@prisma/client"
@@ -7,8 +9,14 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { client } from "@/lib/client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
-import { ArrowUpDown, BarChart } from "lucide-react"
-import { isAfter, isToday, startOfMonth, startOfWeek } from "date-fns"
+import { ArrowUpDown, ChartNoAxesCombined } from "lucide-react"
+import {
+  isAfter,
+  isToday,
+  startOfYear,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns"
 
 import {
   ColumnDef,
@@ -46,9 +54,9 @@ export const TypePageContent = ({
 }: TypePageContentProps) => {
   const searchParams = useSearchParams()
 
-  const [activeTab, setActiveTab] = useState<"today" | "week" | "month">(
-    "today"
-  )
+  const [activeTab, setActiveTab] = useState<
+    "today" | "week" | "month" | "year"
+  >("today")
 
   // https://localhost:3000/dashboard/type/sale?page=5&limit=30
   const page = parseInt(searchParams.get("page") || "1", 10)
@@ -202,6 +210,7 @@ export const TypePageContent = ({
         total: number
         thisWeek: number
         thisMonth: number
+        thisYear: number
         today: number
       }
     > = {}
@@ -209,6 +218,7 @@ export const TypePageContent = ({
     const now = new Date()
     const weekStart = startOfWeek(now, { weekStartsOn: 0 })
     const monthStart = startOfMonth(now)
+    const yearStart = startOfYear(now)
 
     data.events.forEach((event) => {
       const eventDate = event.createdAt
@@ -216,7 +226,13 @@ export const TypePageContent = ({
       Object.entries(event.fields as object).forEach(([field, value]) => {
         if (typeof value === "number") {
           if (!sums[field]) {
-            sums[field] = { total: 0, thisWeek: 0, thisMonth: 0, today: 0 }
+            sums[field] = {
+              total: 0,
+              thisWeek: 0,
+              thisMonth: 0,
+              thisYear: 0,
+              today: 0,
+            }
           }
 
           sums[field].total += value
@@ -262,7 +278,7 @@ export const TypePageContent = ({
             <p className="text-sm/6 font-medium">
               {field.charAt(0).toUpperCase() + field.slice(1)}
             </p>
-            <BarChart className="size-4 text-muted-foreground" />
+            <ChartNoAxesCombined className="size-4 text-muted-foreground" />
           </div>
 
           <div>
@@ -272,7 +288,9 @@ export const TypePageContent = ({
                 ? "today"
                 : activeTab === "week"
                 ? "this week"
-                : "this month"}
+                : activeTab === "month"
+                ? "this month"
+                : "this year"}
             </p>
           </div>
         </Card>
@@ -289,21 +307,22 @@ export const TypePageContent = ({
       <Tabs
         value={activeTab}
         onValueChange={(value) => {
-          setActiveTab(value as "today" | "week" | "month")
+          setActiveTab(value as "today" | "week" | "month" | "year")
         }}
       >
         <TabsList className="mb-2 dark:bg-brand-900">
           <TabsTrigger value="today">Today</TabsTrigger>
           <TabsTrigger value="week">This Week</TabsTrigger>
           <TabsTrigger value="month">This Month</TabsTrigger>
+          <TabsTrigger value="year">This Year</TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeTab}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-            <Card className="border-2 border-brand-700">
+            <Card>
               <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <p className="text-sm/6 font-medium">Total Events</p>
-                <BarChart className="size-4 text-muted-foreground" />
+                <ChartNoAxesCombined className="size-4 text-muted-foreground" />
               </div>
 
               <div>
@@ -314,7 +333,9 @@ export const TypePageContent = ({
                     ? "today"
                     : activeTab === "week"
                     ? "this week"
-                    : "this month"}
+                    : activeTab === "month"
+                    ? "this month"
+                    : "this year"}
                 </p>
               </div>
             </Card>

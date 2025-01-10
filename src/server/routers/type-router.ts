@@ -1,7 +1,7 @@
 import { db } from "@/db"
 import { router } from "../__internals/router"
 import { privateProcedure } from "../procedures"
-import { startOfDay, startOfMonth, startOfWeek } from "date-fns"
+import { startOfDay, startOfMonth, startOfWeek, startOfYear } from "date-fns"
 import { z } from "zod"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { parseColor } from "@/utils"
@@ -199,7 +199,7 @@ export const typeRouter = router({
         name: TYPE_NAME_VALIDATOR,
         page: z.number(),
         limit: z.number().max(50),
-        timeRange: z.enum(["today", "week", "month"]),
+        timeRange: z.enum(["today", "week", "month", "year"]),
       })
     )
     .query(async ({ c, ctx, input }) => {
@@ -218,6 +218,8 @@ export const typeRouter = router({
         case "month":
           startDate = startOfMonth(now)
           break
+        case "year":
+          startDate = startOfYear(now)
       }
 
       const [events, eventsCount, uniqueFieldCount] = await Promise.all([
