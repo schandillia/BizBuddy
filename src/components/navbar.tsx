@@ -1,13 +1,13 @@
 import Link from "next/link"
-import { MaxWidthWrapper } from "./max-width-wrapper"
+import { MaxWidthWrapper } from "@/components//max-width-wrapper"
 import { buttonVariants } from "@/components/ui/button"
-import { currentUser } from "@clerk/nextjs/server"
+import { auth } from "@/auth"
 import { BrandLogo } from "@/components/brand-logo"
-import { UserButton } from "@clerk/nextjs"
-import { DashboardNavButton } from "./dashboard-nav-button"
+import { DashboardNavButton } from "@/components/dashboard-nav-button"
+import SignIn from "@/components/sign-in" // Custom Auth.js button
 
 export const Navbar = async () => {
-  const user = await currentUser()
+  const session = await auth()
 
   const guestLinks: {
     href: string
@@ -19,10 +19,7 @@ export const Navbar = async () => {
       | "secondary"
       | "ghost"
       | "link"
-  }[] = [
-    { href: "/pricing", label: "Pricing", variant: "ghost" },
-    { href: "/sign-in", label: "Sign in", variant: "ghost" },
-  ]
+  }[] = [{ href: "/pricing", label: "Pricing", variant: "ghost" }]
 
   return (
     <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-brand-900/75 backdrop-blur-lg transition-all">
@@ -33,10 +30,10 @@ export const Navbar = async () => {
           </Link>
 
           <div className="h-full flex items-center space-x-4">
-            {user ? (
+            {session?.user ? (
               <>
                 <DashboardNavButton />
-                <UserButton />
+                {/* <UserButton user={session.user} /> */}
               </>
             ) : (
               <>
@@ -54,15 +51,7 @@ export const Navbar = async () => {
                 ))}
                 <div className="h-8 w-px bg-gray-200" />
 
-                <Link
-                  href="/sign-up"
-                  className={buttonVariants({
-                    size: "sm",
-                    className: "flex items-center gap-1.5",
-                  })}
-                >
-                  Sign up
-                </Link>
+                <SignIn />
               </>
             )}
           </div>

@@ -1,29 +1,27 @@
 import { db } from "@/db"
 import { j } from "./__internals/j"
-import { currentUser } from "@clerk/nextjs/server"
 import { HTTPException } from "hono/http-exception"
+import { auth } from "@/auth"
 
 const authMiddleware = j.middleware(async ({ c, next }) => {
+  // Check for API key in Authorization header
   const authHeader = c.req.header("Authorization")
-
   if (authHeader) {
     const apiKey = authHeader.split(" ")[1] // bearer <API_KEY>
-
     const user = await db.user.findUnique({
       where: { apiKey },
     })
-
     if (user) return next({ user })
   }
 
-  const auth = await currentUser()
-
-  if (!auth) {
+  // If no API key, check for session
+  const session = await auth()
+  if (!session?.user?.id) {
     throw new HTTPException(401, { message: "Unauthorized" })
   }
 
   const user = await db.user.findUnique({
-    where: { externalId: auth.id },
+    where: { id: session.user.id },
   })
 
   if (!user) {

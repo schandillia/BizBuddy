@@ -4,12 +4,12 @@ import * as React from "react"
 import { Computer, MoonStar, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@clerk/nextjs"
+import { useSession } from "next-auth/react"
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
-  const { isSignedIn } = useAuth()
+  const { status } = useSession()
 
   React.useEffect(() => {
     setMounted(true)
@@ -23,7 +23,7 @@ export default function ThemeToggle() {
     setTheme(newTheme)
 
     // Only update localStorage if user is not logged in
-    if (!isSignedIn) {
+    if (status === "unauthenticated") {
       localStorage.setItem("theme", newTheme)
     }
   }

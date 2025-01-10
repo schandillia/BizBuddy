@@ -2,11 +2,11 @@ import type { Metadata } from "next"
 import { Providers } from "@/components/providers"
 import { cn } from "@/utils"
 import { bodyFont, accentFont } from "@/lib/style/fonts"
+import { AuthProvider } from "@/components/auth/auth-provider"
 
 import "./globals.css"
 import { db } from "@/db"
-import { ClerkProvider } from "@clerk/nextjs"
-import { currentUser } from "@clerk/nextjs/server"
+import { auth } from "@/auth"
 import meta from "@/lib/constants/meta.json"
 import { ThemeProvider } from "@/components/theme/theme-provider"
 
@@ -21,21 +21,30 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const auth = await currentUser()
-  const user = auth
-    ? await db.user.findUnique({
-        where: { externalId: auth.id },
+  const session = await auth()
+  let user = null
+  if (session?.user?.id) {
+    try {
+      user = await db.user.findUnique({
+        where: { id: session.user.id },
       })
-    : null
+    } catch (error) {
+      console.error("Error fetching user:", error)
+      // Handle the error appropriately, e.g., log it, display a message, or redirect
+    }
+  } else {
+    // Handle the case where the user is not logged in or the ID is missing
+    console.log("No user session or ID found.")
+  }
 
-  const preferredTheme = user?.theme.toLowerCase()
+  const preferredTheme = user?.theme?.toLowerCase()
   const initialTheme = preferredTheme ?? "dark"
 
   // Simplified theme script
   const themeScript = `
     try {
       const getTheme = () => {
-        const isLoggedIn = ${!!auth};
+        const isLoggedIn = ${!!session};
         const dbTheme = '${preferredTheme ?? ""}';
         
         if (isLoggedIn && dbTheme) {
@@ -63,19 +72,19 @@ export default async function RootLayout({
         className="min-h-[calc(100vh-1px)] flex flex-col font-sans bg-brand-50 dark:bg-brand-950 text-brand-950 antialiased"
         suppressHydrationWarning
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme={initialTheme}
-          enableSystem
-          disableTransitionOnChange
-          storageKey="theme"
-        >
-          <ClerkProvider>
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme={initialTheme}
+            enableSystem
+            disableTransitionOnChange
+            storageKey="theme"
+          >
             <main className="relative flex-1 flex flex-col">
               <Providers>{children}</Providers>
             </main>
-          </ClerkProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   )

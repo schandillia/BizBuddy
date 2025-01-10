@@ -1,15 +1,16 @@
 import { db } from "@/db"
-import { currentUser } from "@clerk/nextjs/server"
+import { auth } from "@/auth"
 
 export async function GET() {
   try {
-    const auth = await currentUser()
-    if (!auth) {
+    const session = await auth()
+
+    if (!session || !session.user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const user = await db.user.findUnique({
-      where: { externalId: auth.id },
+      where: { id: session.user.id },
       select: { apiKeyHint: true },
     })
 

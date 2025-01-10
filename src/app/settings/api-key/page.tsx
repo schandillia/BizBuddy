@@ -13,7 +13,7 @@ const Page = async () => {
   }
 
   const user = await db.user.findUnique({
-    where: { externalId: auth.id },
+    where: { id: auth.id },
   })
 
   if (!user) {
@@ -30,7 +30,7 @@ const Page = async () => {
     // Send unencrypted key (pk_) to user
     const { generatedKey, hashedKey } = await generateApiKey()
     await db.user.update({
-      where: { externalId: auth.id },
+      where: { id: auth.id },
       data: { apiKey: hashedKey, apiKeyHint: generatedKey.slice(-6) },
     })
     apiKey = generatedKey // Set the unencrypted key for the user

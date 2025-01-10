@@ -1,19 +1,19 @@
-// app/api/regenerate-key/route.ts
 import { db } from "@/db"
-import { currentUser } from "@clerk/nextjs/server"
+import { auth } from "@/auth"
 import { generateApiKey } from "@/lib/api/api-key"
 
 export async function POST() {
   try {
-    const auth = await currentUser()
-    if (!auth) {
+    const session = await auth()
+
+    if (!session || !session.user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const { generatedKey, hashedKey } = await generateApiKey()
 
     await db.user.update({
-      where: { externalId: auth.id },
+      where: { id: session.user.id },
       data: { apiKey: hashedKey, apiKeyHint: generatedKey.slice(-6) },
     })
 

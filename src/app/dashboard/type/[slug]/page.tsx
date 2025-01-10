@@ -20,7 +20,7 @@ const Page = async ({ params }: PageProps) => {
   }
 
   const user = await db.user.findUnique({
-    where: { externalId: auth.id },
+    where: { id: auth.id },
   })
 
   if (!user) return notFound()

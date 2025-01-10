@@ -10,7 +10,7 @@ import { useState } from "react"
 // Define the user type
 interface User {
   id: string
-  externalId: string | null
+  id: string | null
   quotaLimit: number
   plan: string // Replace with your Plan type if available
   theme: string // Replace with your Theme type if available
