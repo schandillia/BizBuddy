@@ -95,12 +95,7 @@ export const sendToSlack = async ({
       }),
     }
 
-    console.log(
-      "Sending message with payload:",
-      JSON.stringify(messagePayload, null, 2)
-    )
     const response = await slackClient.chat.postMessage(messagePayload)
-    console.log("Slack API response:", JSON.stringify(response, null, 2))
 
     if (!response.ok) {
       return {
