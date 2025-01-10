@@ -1,5 +1,5 @@
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { sendToDiscord } from "@/lib/api/channels/discord"
 import { sendToSlack } from "@/lib/api/channels/slack"
 import { sendToTeams } from "@/lib/api/channels/teams"

@@ -1,18 +1,21 @@
 import { UserPage } from "@/components/user-page"
-import { db } from "@/db"
-import { currentUser } from "@clerk/nextjs/server"
+import { db } from "@/prisma"
+import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { ProfilePageContent } from "@/app/settings/profile/profile-page-content"
 
 const Page = async () => {
-  const auth = await currentUser()
+  const session = await auth()
 
-  if (!auth) {
+  if (!session) {
+    redirect("/sign-in")
+  }
+  if (!session.user) {
     redirect("/sign-in")
   }
 
   const user = await db.user.findUnique({
-    where: { id: auth.id },
+    where: { id: session.user.id },
   })
 
   if (!user) {

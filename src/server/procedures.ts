@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { j } from "./__internals/j"
 import { HTTPException } from "hono/http-exception"
 import { auth } from "@/auth"

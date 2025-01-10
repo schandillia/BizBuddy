@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { router } from "../__internals/router"
 import { privateProcedure } from "../procedures"
 import { startOfDay, startOfMonth, startOfWeek, startOfYear } from "date-fns"

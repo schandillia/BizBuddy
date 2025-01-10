@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { auth } from "@/auth"
 import { generateApiKey } from "@/lib/api/api-key"
 

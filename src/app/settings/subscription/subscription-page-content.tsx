@@ -5,7 +5,7 @@ import { client } from "@/lib/client"
 import { Plan } from "@prisma/client"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
-import { BarChart } from "lucide-react"
+import { ChartNoAxesCombined } from "lucide-react"
 import { useRouter } from "next/navigation"
 import brand from "@/lib/constants/brand.json"
 
@@ -47,7 +47,7 @@ export const SubscriptionPageContent = ({ plan }: { plan: Plan }) => {
         <Card>
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <p className="text-sm/6 font-medium">Total Events</p>
-            <BarChart className="size-4 text-muted-foreground" />
+            <ChartNoAxesCombined className="size-4 text-muted-foreground" />
           </div>
 
           <div>
@@ -63,7 +63,7 @@ export const SubscriptionPageContent = ({ plan }: { plan: Plan }) => {
         <Card>
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
             <p className="text-sm/6 font-medium">Event Types</p>
-            <BarChart className="size-4 text-muted-foreground" />
+            <ChartNoAxesCombined className="size-4 text-muted-foreground" />
           </div>
 
           <div>

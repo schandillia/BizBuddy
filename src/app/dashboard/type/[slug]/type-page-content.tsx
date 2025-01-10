@@ -1,5 +1,3 @@
-// OLD
-
 "use client"
 
 import { Event, EventType } from "@prisma/client"

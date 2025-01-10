@@ -1,15 +1,15 @@
 "use client"
 
-import PricingTier from "./pricing-tier"
+import PricingTier from "@/app/(landing)/pricing/pricing-tier"
 import { Heading } from "@/components/heading"
 import { MaxWidthWrapper } from "@/components/max-width-wrapper"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "next-auth/react" // Updated import
 import { useMutation } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import brand from "@/lib/constants/brand.json"
 
 const Page = () => {
-  const { user } = useUser()
+  const { data: session } = useSession() // Updated hook
   const router = useRouter()
 
   const INCLUDED_FEATURES = [
@@ -24,7 +24,8 @@ const Page = () => {
   })
 
   const handleGetAccess = () => {
-    if (user) {
+    if (session?.user) {
+      // Updated check for user
       createCheckoutSession()
     } else {
       router.push("/sign-in?intent=upgrade")

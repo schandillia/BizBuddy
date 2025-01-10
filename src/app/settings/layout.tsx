@@ -1,15 +1,14 @@
 "use client"
 
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Modal } from "@/components/ui/modal"
 import { cn } from "@/utils"
-import { UserButton } from "@clerk/nextjs"
 import {
   Gem,
   Key,
   LucideIcon,
   Menu,
-  Monitor,
+  WandSparkles,
   RadioTower,
   Receipt,
   Shield,
@@ -21,6 +20,7 @@ import { PropsWithChildren, useState } from "react"
 import { BrandLogo } from "@/components/brand-logo"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import { usePathname } from "next/navigation"
+import { DialogDescription, DialogTitle } from "@/components/ui/dialog"
 
 interface SidebarItem {
   href: string
@@ -44,7 +44,7 @@ const SIDEBAR_ITEMS: SidebarType[] = [
   {
     type: "Preferences",
     items: [
-      { href: "/settings/appearance", icon: Monitor, text: "Appearance" },
+      { href: "/settings/appearance", icon: WandSparkles, text: "Appearance" },
     ],
   },
   {
@@ -126,14 +126,7 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
       <div className="flex flex-col">
         <hr className="my-4 md:my-6 w-full h-px bg-gray-100 dark:bg-brand-700 dark:border-brand-950" />
         <div className="flex justify-between items-center pr-6">
-          <UserButton
-            showName
-            appearance={{
-              elements: {
-                userButtonBox: "flex-row-reverse dark:text-gray-400",
-              },
-            }}
-          />
+          <Button className="flex-row-reverse dark:text-gray-400">user</Button>
           <ThemeToggle />
         </div>
       </div>
@@ -180,9 +173,9 @@ const Layout = ({ children }: PropsWithChildren) => {
           setShowModal={setIsDrawerOpen}
         >
           <div className="flex justify-between items-center mb-4">
-            <p className="text-lg/7 font-semibold text-brand-900">
+            <div className="text-lg/7 font-semibold text-brand-900">
               <BrandLogo />
-            </p>
+            </div>
             <button
               aria-label="Close modal"
               onClick={() => setIsDrawerOpen(false)}
@@ -190,6 +183,11 @@ const Layout = ({ children }: PropsWithChildren) => {
               <X className="size-6" />
             </button>
           </div>
+
+          <DialogTitle className="sr-only">Navigation Menu</DialogTitle>
+          <DialogDescription className="sr-only">
+            Navigation menu for mobile devices
+          </DialogDescription>
 
           <Sidebar onClose={() => setIsDrawerOpen(false)} />
         </Modal>

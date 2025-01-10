@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { auth } from "@/auth"
 
 export async function GET() {

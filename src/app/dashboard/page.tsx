@@ -1,8 +1,8 @@
 import { DashboardPage } from "@/components/dashboard-page"
-import { db } from "@/db"
-import { currentUser } from "@clerk/nextjs/server"
+import { db } from "@/prisma"
+import { auth } from "@/auth"
 import { redirect } from "next/navigation"
-import { DashboardPageContent } from "./dashboard-page-content"
+import { DashboardPageContent } from "@/app/dashboard/dashboard-page-content"
 import { CreateEventTypeModal } from "@/components/create-event-type-modal"
 import { Button } from "@/components/ui/button"
 import { PlusIcon } from "lucide-react"
@@ -16,14 +16,17 @@ interface PageProps {
 }
 
 const Page = async ({ searchParams }: PageProps) => {
-  const auth = await currentUser()
+  const session = await auth()
 
-  if (!auth) {
+  if (!session) {
+    redirect("/sign-in")
+  }
+  if (!session.user) {
     redirect("/sign-in")
   }
 
   const user = await db.user.findUnique({
-    where: { id: auth.id },
+    where: { id: session.user.id },
   })
 
   if (!user) {

@@ -34,7 +34,9 @@ export const Navbar = async () => {
             {session?.user ? (
               <>
                 <DashboardNavButton />
-                <UserNavMenu user={session.user} />
+                <div className="hidden sm:block">
+                  <UserNavMenu user={session.user} />
+                </div>
               </>
             ) : (
               <>

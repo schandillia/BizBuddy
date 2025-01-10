@@ -1,7 +1,7 @@
 import { addMonths, startOfMonth } from "date-fns"
 import { router } from "../__internals/router"
 import { privateProcedure } from "../procedures"
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { z } from "zod"
 

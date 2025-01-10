@@ -1,4 +1,4 @@
-import { db } from "@/db"
+import { db } from "@/prisma"
 import { stripe } from "@/lib/stripe"
 import { headers } from "next/headers"
 import Stripe from "stripe"

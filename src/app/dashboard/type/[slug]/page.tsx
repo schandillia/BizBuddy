@@ -1,6 +1,6 @@
 import { DashboardPage } from "@/components/dashboard-page"
-import { db } from "@/db"
-import { currentUser } from "@clerk/nextjs/server"
+import { db } from "@/prisma"
+import { auth } from "@/auth"
 import { notFound } from "next/navigation"
 import { TypePageContent } from "./type-page-content"
 
@@ -13,14 +13,18 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
   if (typeof params.slug !== "string") return notFound()
 
-  const auth = await currentUser()
+  const session = await auth()
 
-  if (!auth) {
+  if (!session) {
+    return notFound()
+  }
+
+  if (!session.user) {
     return notFound()
   }
 
   const user = await db.user.findUnique({
-    where: { id: auth.id },
+    where: { id: session.user.id },
   })
 
   if (!user) return notFound()
