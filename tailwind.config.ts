@@ -70,6 +70,30 @@ const config: Config = {
       transitionTimingFunction: {
         "custom-ease": "cubic-bezier(0.19, 1, 0.22, 1)",
       },
+      keyframes: {
+        "slide-in-right": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-out-right": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        "slide-in-left": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-out-left": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+      },
+      animation: {
+        "slide-in-right": "slide-in-right 0.3s custom-ease forwards",
+        "slide-out-right": "slide-out-right 0.3s custom-ease forwards",
+        "slide-in-left": "slide-in-left 0.3s custom-ease forwards",
+        "slide-out-left": "slide-out-left 0.3s custom-ease forwards",
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],

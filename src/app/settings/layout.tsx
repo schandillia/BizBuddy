@@ -1,7 +1,7 @@
 "use client"
 
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Modal } from "@/components/ui/modal"
+import { Sidebar } from "@/components/ui/sidebar"
 import { cn } from "@/utils"
 import {
   Gem,
@@ -13,14 +13,12 @@ import {
   Receipt,
   Shield,
   User,
-  X,
 } from "lucide-react"
 import Link from "next/link"
 import { PropsWithChildren, useState } from "react"
 import { BrandLogo } from "@/components/brand-logo"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import { usePathname } from "next/navigation"
-import { DialogDescription, DialogTitle } from "@/components/ui/dialog"
 
 interface SidebarItem {
   href: string
@@ -71,7 +69,7 @@ const SIDEBAR_ITEMS: SidebarType[] = [
   },
 ]
 
-const Sidebar = ({ onClose }: { onClose?: () => void }) => {
+const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
   const pathname = usePathname()
 
   return (
@@ -98,7 +96,7 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
                       href={item.href}
                       className={cn(
                         buttonVariants({ variant: "ghost" }),
-                        "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6",
+                        "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 cursor-pointer",
                         isActive
                           ? "bg-gray-50 dark:bg-brand-900 text-brand-900 dark:text-brand-200"
                           : "text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-brand-900 transition"
@@ -135,27 +133,27 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
 }
 
 const Layout = ({ children }: PropsWithChildren) => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [showSidebar, setShowSidebar] = useState(false)
 
   return (
     <div className="relative h-screen flex flex-col md:flex-row bg-white dark:bg-brand-900/75 overflow-hidden">
       {/* sidebar for desktop */}
       <div className="hidden md:block w-64 lg:w-80 border-r border-gray-100 dark:border-brand-900 p-6 pr-0 h-full text-brand-900 relative z-10">
-        <Sidebar />
+        <SidebarContent />
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* mobile header */}
-        <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200">
-          <Link href="/" className="text-lg/7 font-semibold">
-            <BrandLogo />
-          </Link>
+        <div className="md:hidden flex items-center justify-start p-4 border-b border-gray-200 dark:border-brand-800">
           <button
-            onClick={() => setIsDrawerOpen(true)}
-            className="text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-400"
+            onClick={() => setShowSidebar(true)}
+            className="text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-400 cursor-pointer"
           >
             <Menu className="size-6" />
           </button>
+          <Link href="/" className="text-lg/7 font-semibold ml-4">
+            <BrandLogo />
+          </Link>
         </div>
 
         {/* main content area */}
@@ -167,22 +165,18 @@ const Layout = ({ children }: PropsWithChildren) => {
           </div>
         </div>
 
-        <Modal
-          className="p-4"
-          showModal={isDrawerOpen}
-          setShowModal={setIsDrawerOpen}
-        >
-          <DialogTitle className="sr-only">Navigation Menu</DialogTitle>
-          <DialogDescription className="sr-only">
-            Navigation menu for mobile devices
-          </DialogDescription>
-
-          <div className="text-lg/7 font-semibold text-brand-900 mb-4">
-            <BrandLogo />
-          </div>
-
-          <Sidebar onClose={() => setIsDrawerOpen(false)} />
-        </Modal>
+        {/* Mobile sidebar */}
+        {showSidebar && (
+          <Sidebar
+            showSidebar={showSidebar}
+            setShowSidebar={setShowSidebar}
+            slideFrom="left"
+            className="p-4 block md:hidden"
+            width="w-80"
+          >
+            <SidebarContent onClose={() => setShowSidebar(false)} />
+          </Sidebar>
+        )}
       </div>
     </div>
   )
