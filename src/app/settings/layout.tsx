@@ -77,7 +77,7 @@ const Sidebar = ({ onClose }: { onClose?: () => void }) => {
   return (
     <div className="space-y-4 md:space-y-6 relative z-20 flex flex-col h-full">
       {/* logo */}
-      <Link href="/" className="hidden sm:block text-lg/7 font-semibold">
+      <Link href="/" className="hidden lg:block text-lg/7 font-semibold">
         <BrandLogo />
       </Link>
 
@@ -172,22 +172,14 @@ const Layout = ({ children }: PropsWithChildren) => {
           showModal={isDrawerOpen}
           setShowModal={setIsDrawerOpen}
         >
-          <div className="flex justify-between items-center mb-4">
-            <div className="text-lg/7 font-semibold text-brand-900">
-              <BrandLogo />
-            </div>
-            <button
-              aria-label="Close modal"
-              onClick={() => setIsDrawerOpen(false)}
-            >
-              <X className="size-6" />
-            </button>
-          </div>
-
           <DialogTitle className="sr-only">Navigation Menu</DialogTitle>
           <DialogDescription className="sr-only">
             Navigation menu for mobile devices
           </DialogDescription>
+
+          <div className="text-lg/7 font-semibold text-brand-900 mb-4">
+            <BrandLogo />
+          </div>
 
           <Sidebar onClose={() => setIsDrawerOpen(false)} />
         </Modal>
