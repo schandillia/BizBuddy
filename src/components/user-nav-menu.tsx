@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Settings, User, LogOut } from "lucide-react"
+import { Settings, User, LogOut, LayoutDashboard } from "lucide-react"
 import Link from "next/link"
 import { signOut as nextAuthSignOut } from "next-auth/react"
 
@@ -37,7 +37,7 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user }) => {
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56 mt-4 z-50">
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.name}</p>
@@ -48,9 +48,15 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user }) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/profile" className="cursor-pointer">
+          <Link href="/settings/profile" className="cursor-pointer">
             <User className="mr-2 h-4 w-4" />
             Profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard" className="cursor-pointer">
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            Dashboard
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
