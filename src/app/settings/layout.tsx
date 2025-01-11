@@ -19,6 +19,7 @@ import { PropsWithChildren, useState } from "react"
 import { BrandLogo } from "@/components/brand-logo"
 import ThemeToggle from "@/components/theme/theme-toggle"
 import { usePathname } from "next/navigation"
+import { DashboardNavButton } from "@/components/dashboard-nav-button"
 
 interface SidebarItem {
   href: string
@@ -144,16 +145,19 @@ const Layout = ({ children }: PropsWithChildren) => {
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* mobile header */}
-        <div className="md:hidden flex items-center justify-start p-4 border-b border-gray-200 dark:border-brand-800">
-          <button
-            onClick={() => setShowSidebar(true)}
-            className="text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-400 cursor-pointer"
-          >
-            <Menu className="size-6" />
-          </button>
-          <Link href="/" className="text-lg/7 font-semibold ml-4">
-            <BrandLogo />
-          </Link>
+        <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-brand-800">
+          <div className="flex items-center">
+            <button
+              onClick={() => setShowSidebar(true)}
+              className="text-gray-500 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-400 cursor-pointer"
+            >
+              <Menu className="size-6" />
+            </button>
+            <Link href="/" className="text-lg/7 font-semibold ml-4">
+              <BrandLogo />
+            </Link>
+          </div>
+          <DashboardNavButton />
         </div>
 
         {/* main content area */}

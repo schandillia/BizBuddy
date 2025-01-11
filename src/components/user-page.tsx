@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react"
 import { Heading } from "./heading"
 import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation"
+import { DashboardNavButton } from "./dashboard-nav-button"
 
 interface UserPageProps {
   title: string
@@ -21,10 +22,9 @@ export const UserPage = ({
   hideBackButton,
 }: UserPageProps) => {
   const router = useRouter()
-  const pathname = usePathname() // This will give you the current path
+  const pathname = usePathname()
 
   const handleBackButtonClick = () => {
-    // Check if we're on /settings, if so, navigate to /
     if (pathname === "/settings" || pathname === "/settings/profile") {
       router.push("/")
     } else {
@@ -34,26 +34,28 @@ export const UserPage = ({
 
   return (
     <section className="flex-1 h-full w-full flex flex-col">
-      <div className="w-full p-6 sm:p-8 flex justify-between border-b border-gray-200 dark:border-brand-900">
-        <div className="w-full flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <div className="flex items-center gap-8">
-            {hideBackButton ? null : (
-              <Button
-                onClick={handleBackButtonClick}
-                className="w-fit bg-white dark:bg-brand-950 dark:hover:bg-brand-900 dark:text-white"
-                variant="outline"
-              >
-                <ArrowLeft className="size-4" />
-              </Button>
-            )}
+      <div className="w-full p-6 sm:p-8 flex justify-between items-center border-b border-gray-200 dark:border-brand-900">
+        {/* Left: Back Button and Heading */}
+        <div className="flex items-center gap-4">
+          {!hideBackButton && (
+            <Button
+              onClick={handleBackButtonClick}
+              className="w-fit bg-white dark:bg-brand-950 dark:hover:bg-brand-900 dark:text-white"
+              variant="outline"
+            >
+              <ArrowLeft className="size-4" />
+            </Button>
+          )}
+          <Heading>{title}</Heading>
+        </div>
 
-            <Heading>{title}</Heading>
-          </div>
-
-          {cta ? <div className="w-full">{cta}</div> : null}
+        {/* Right: DashboardNavButton */}
+        <div className="hidden md:block">
+          <DashboardNavButton />
         </div>
       </div>
 
+      {/* Content */}
       <div className="flex-1 p-6 sm:p-8 flex flex-col overflow-y-auto">
         {children}
       </div>
