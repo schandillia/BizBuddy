@@ -188,6 +188,7 @@ const Page = () => {
                       src="/phone-screen.png"
                       alt="Phone screen displaying app interface"
                       fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
                 </div>
