@@ -54,8 +54,12 @@ const Page = () => {
             </div>
             <Heading className="flex flex-col gap-y-2">
               <span>Real-Time Business Insights,</span>
-              <span className="relative bg-gradient-to-r from-brand-500 to-brand-800 text-transparent bg-clip-text mt-2">
-                Delivered to Your{" "}
+              <div className="pt-1 pb-2">
+                <span className="relative bg-gradient-to-r from-brand-500 to-brand-800 text-transparent bg-clip-text mt-2">
+                  Delivered Straight to Your
+                </span>
+              </div>
+              <div className="text-center">
                 <CyclingText
                   words={[
                     "Email",
@@ -67,7 +71,7 @@ const Page = () => {
                   ]}
                   interval={1000}
                 />
-              </span>
+              </div>
             </Heading>
 
             <p className="text-base/7 text-gray-600 dark:text-gray-300 max-w-prose text-center text-pretty">
