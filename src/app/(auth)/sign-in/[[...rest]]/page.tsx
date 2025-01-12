@@ -1,19 +1,24 @@
 "use client"
 
-import { SignIn } from "@clerk/nextjs"
+import { Button } from "@/components/ui/button"
+import { signIn } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
 
-const Page = () => {
+const SignInPage = () => {
   const searchParams = useSearchParams()
   const intent = searchParams.get("intent")
 
+  const handleGoogleSignIn = () => {
+    signIn("google", {
+      callbackUrl: intent ? `/dashboard?intent=${intent}` : "/dashboard",
+    })
+  }
+
   return (
     <div className="w-full flex-1 flex items-center justify-center">
-      <SignIn
-        forceRedirectUrl={intent ? `/dashboard?intent=${intent}` : "/dashboard"}
-      />
+      <Button onClick={handleGoogleSignIn}>Sign in with Google</Button>
     </div>
   )
 }
 
-export default Page
+export default SignInPage

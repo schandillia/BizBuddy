@@ -1,13 +1,11 @@
-"use client"
+import SignIn from "@/components/sign-in-with-google"
 
-import { SignUp } from "@clerk/nextjs"
-
-const Page = () => {
+const SignUpPage = () => {
   return (
     <div className="w-full flex-1 flex items-center justify-center">
-      <SignUp fallbackRedirectUrl="/welcome" forceRedirectUrl="/welcome" />
+      <SignIn />
     </div>
   )
 }
 
-export default Page
+export default SignUpPage
