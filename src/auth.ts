@@ -98,6 +98,19 @@ export async function signUpWithCredentials(
   name: string
 ) {
   try {
+    // First check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true }, // Only select id field for efficiency
+    })
+
+    if (existingUser) {
+      return {
+        success: false,
+        error: "An account with this email already exists",
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12)
 
     const user = await prisma.user.create({
@@ -112,7 +125,11 @@ export async function signUpWithCredentials(
 
     return { success: true, user }
   } catch (error) {
-    return { success: false, error }
+    console.error("SignUp error:", error)
+    return {
+      success: false,
+      error: "Failed to create account. Please try again later.",
+    }
   }
 }
 

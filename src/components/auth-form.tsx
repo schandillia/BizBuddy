@@ -96,6 +96,14 @@ export const AuthForm = ({ onClose }: AuthFormProps) => {
       const responseData = await response.json()
 
       if (!response.ok) {
+        if (response.status === 409) {
+          // Handle existing email case
+          signUpForm.setError("email", {
+            type: "manual",
+            message: "An account with this email already exists",
+          })
+          return
+        }
         throw new Error(responseData.error || "Something went wrong")
       }
 
@@ -169,7 +177,7 @@ export const AuthForm = ({ onClose }: AuthFormProps) => {
             className="w-full py-2 text-sm"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Sign In"}
+            {loading ? "Authenticating..." : "Sign In"}
           </Button>
         </form>
       ) : (
@@ -238,7 +246,7 @@ export const AuthForm = ({ onClose }: AuthFormProps) => {
             className="w-full py-2 text-sm"
             disabled={loading}
           >
-            {loading ? "Loading..." : "Sign Up"}
+            {loading ? "Signing You Up..." : "Sign Up"}
           </Button>
         </form>
       )}

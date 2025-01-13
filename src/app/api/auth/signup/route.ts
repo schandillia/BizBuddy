@@ -26,11 +26,15 @@ export async function POST(req: Request) {
     )
 
     if (!result.success) {
-      console.error("Signup failed:", result.error)
-      return NextResponse.json(
-        { error: result.error || "Failed to create account" },
-        { status: 400 }
-      )
+      // Check if the error is about existing email
+      if (result.error?.includes("already exists")) {
+        return NextResponse.json(
+          { error: result.error },
+          { status: 409 } // 409 Conflict is appropriate for duplicate resource
+        )
+      }
+
+      return NextResponse.json({ error: result.error }, { status: 400 })
     }
 
     return NextResponse.json(
