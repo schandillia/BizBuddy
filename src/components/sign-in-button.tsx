@@ -23,8 +23,8 @@ const SignInButton = () => {
         setShowModal={setIsModalOpen}
         onClose={closeModal}
       >
+        {/* Credentials sign-in/up form */}
         <SignInWithGoogle />
-        {/* Your existing Google Sign-In form inside the modal */}
       </Modal>
     </div>
   )

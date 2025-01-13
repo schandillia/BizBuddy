@@ -1,11 +1,11 @@
 import Link from "next/link"
 import { MaxWidthWrapper } from "@/components//max-width-wrapper"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { auth } from "@/auth"
 import { BrandLogo } from "@/components/brand-logo"
 import { DashboardNavButton } from "@/components/dashboard-nav-button"
 import UserNavMenu from "@/components/user-nav-menu"
-import SignInButton from "./sign-in-button"
+import SignInButton from "@/components/sign-in-button"
 
 export const Navbar = async () => {
   const session = await auth()
