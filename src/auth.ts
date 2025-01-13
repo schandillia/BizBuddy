@@ -104,7 +104,13 @@ export async function signUpWithCredentials(
   name: string
 ) {
   try {
-    // First check if user exists
+    // Validate email format using Zod before any DB operation
+    const validatedEmail = z
+      .string()
+      .email("Invalid email address")
+      .parse(email)
+
+    // Then check if user exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
       select: { id: true }, // Only select id field for efficiency
