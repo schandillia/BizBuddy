@@ -68,13 +68,20 @@ export const AuthForm = ({ onClose }: AuthFormProps) => {
       })
 
       if (result?.error) {
-        throw new Error("Invalid email or password")
+        signInForm.setError("root", {
+          type: "manual",
+          message: "Invalid email or password",
+        })
+      } else if (result?.ok) {
+        router.refresh()
+        onClose()
       }
-
-      router.refresh()
-      onClose()
-    } catch (err: any) {
-      console.error(err.message)
+    } catch (err) {
+      console.error(err)
+      signInForm.setError("root", {
+        type: "manual",
+        message: "An unexpected error occurred",
+      })
     } finally {
       setLoading(false)
     }
@@ -144,6 +151,11 @@ export const AuthForm = ({ onClose }: AuthFormProps) => {
           onSubmit={signInForm.handleSubmit(onSignInSubmit)}
           className="space-y-2"
         >
+          {signInForm.formState.errors.root && (
+            <p className="text-xs text-red-500 text-center">
+              {signInForm.formState.errors.root.message}
+            </p>
+          )}
           <div>
             <Input
               type="email"

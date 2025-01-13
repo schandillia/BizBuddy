@@ -42,23 +42,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
       async authorize(credentials) {
         try {
-          // Validate input
           const validatedCredentials = credentialsSchema.parse(credentials)
 
-          // Find user
           const user = await prisma.user.findUnique({
             where: { email: validatedCredentials.email },
           })
 
-          if (!user || !user.password) return null
+          // If no user OR invalid password, return the same generic message
+          // This prevents user enumeration
+          if (!user || !user.password) {
+            throw new Error("InvalidCredentials")
+          }
 
-          // Verify password
           const isValidPassword = await bcrypt.compare(
             validatedCredentials.password,
             user.password
           )
 
-          if (!isValidPassword) return null
+          if (!isValidPassword) {
+            throw new Error("InvalidCredentials")
+          }
 
           return {
             id: user.id,
@@ -66,8 +69,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             name: user.name,
             image: user.image,
           }
-        } catch {
-          return null
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            throw new Error("InvalidCredentials")
+          }
+          throw new Error("InvalidCredentials")
         }
       },
     }),
