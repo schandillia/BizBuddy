@@ -70,7 +70,7 @@ export const AuthForm = ({ onClose }: AuthFormProps) => {
       if (result?.error) {
         signInForm.setError("root", {
           type: "manual",
-          message: "Invalid email or password",
+          message: "Invalid credentials",
         })
       } else if (result?.ok) {
         router.refresh()
