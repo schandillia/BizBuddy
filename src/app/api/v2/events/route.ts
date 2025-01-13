@@ -7,7 +7,7 @@ import { sendToWebex } from "@/lib/api/channels/webex"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 
 const hasNestedObjects = (obj: Record<string, any>): boolean => {
   return Object.values(obj).some(

@@ -1,13 +1,12 @@
+// SignInButton.tsx
 "use client"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Modal } from "@/components/ui/modal"
-import { signInWithGoogle } from "@/app/actions/auth"
+import { AuthForm } from "@/components/auth-form"
 
 const SignInButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-
   const openModal = () => setIsModalOpen(true)
   const closeModal = () => setIsModalOpen(false)
 
@@ -18,10 +17,9 @@ const SignInButton = () => {
         showModal={isModalOpen}
         setShowModal={setIsModalOpen}
         onClose={closeModal}
+        className="z-[200]"
       >
-        <form action={signInWithGoogle}>
-          <Button type="submit">Sign In with Google</Button>
-        </form>
+        <AuthForm onClose={closeModal} />
       </Modal>
     </div>
   )
