@@ -1,9 +1,12 @@
-import SignIn from "@/components/sign-in-with-google"
+import { signInWithGoogle } from "@/app/actions/auth"
+import { Button } from "@/components/ui/button"
 
 const SignUpPage = () => {
   return (
     <div className="w-full flex-1 flex items-center justify-center">
-      <SignIn />
+      <form action={signInWithGoogle}>
+        <Button type="submit">Sign In with Google</Button>
+      </form>
     </div>
   )
 }
