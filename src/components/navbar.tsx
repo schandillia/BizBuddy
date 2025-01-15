@@ -6,6 +6,7 @@ import { BrandLogo } from "@/components/brand-logo"
 import { DashboardNavButton } from "@/components/dashboard-nav-button"
 import UserNavMenu from "@/components/user-nav-menu"
 import SignInButton from "@/components/sign-in-button"
+import { AuthButton } from "@/components/auth/auth-button"
 
 export const Navbar = async () => {
   const session = await auth()
@@ -51,7 +52,8 @@ export const Navbar = async () => {
                   </Link>
                 ))}
                 <div className="h-8 w-px bg-gray-200" />
-                <SignInButton />
+                {/* <SignInButton /> */}
+                <AuthButton />
               </>
             )}
           </div>

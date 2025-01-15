@@ -24,6 +24,7 @@ export default async function RootLayout({
   const session = await auth()
   let user = null
   if (session?.user?.id) {
+    console.log("SESSION.USER.ID: ", session.user.id)
     try {
       user = await db.user.findUnique({
         where: { id: session.user.id },

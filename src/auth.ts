@@ -1,161 +1,68 @@
 import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
-import Credentials from "next-auth/providers/credentials"
+import authConfig from "@/auth.config"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { db as prisma } from "@/prisma"
-import { z } from "zod"
-import bcrypt from "bcryptjs"
+import { db } from "@/prisma"
+import { getUserById } from "@/data/user"
+import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation"
 
-const prismaAdapter = PrismaAdapter(prisma)
-
-// Schema for credentials validation
-const credentialsSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-})
-
-// Override the createUser function in the adapter
-const customAdapter = {
-  ...prismaAdapter,
-  createUser: async (data: any) => {
-    const userData = {
-      ...data,
-      quotaLimit: 100, // Add the required field
-      plan: "FREE", // Using schema default but being explicit
-    }
-
-    return await prisma.user.create({
-      data: userData,
-    })
-  },
-}
-
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: customAdapter,
-  providers: [
-    Google,
-    Credentials({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        try {
-          const validatedCredentials = credentialsSchema.parse(credentials)
-
-          const user = await prisma.user.findUnique({
-            where: { email: validatedCredentials.email },
-          })
-
-          // If no user OR invalid password, return the same generic message
-          // This prevents user enumeration
-          if (!user || !user.password) {
-            throw new Error("InvalidCredentials")
-          }
-
-          const isValidPassword = await bcrypt.compare(
-            validatedCredentials.password,
-            user.password
-          )
-
-          if (!isValidPassword) {
-            throw new Error("InvalidCredentials")
-          }
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-          }
-        } catch (error) {
-          if (error instanceof z.ZodError) {
-            throw new Error("InvalidCredentials")
-          }
-          throw new Error("InvalidCredentials")
-        }
-      },
-    }),
-  ],
+export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
-    signIn: "/auth/signin",
-    newUser: "/auth/new-user",
+    signIn: "/auth/login",
     error: "/auth/error",
-    verifyRequest: "/auth/verify-request",
   },
-  session: {
-    strategy: "jwt",
+
+  events: {
+    async linkAccount({ user }) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      })
+    },
   },
+
   callbacks: {
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub!
+    async signIn({ user, account }) {
+      // If OAuth, allow login without email verification
+      if (account?.provider !== "credentials") return true
+
+      // Prevent credentials login without email verification
+      const existingUser = await getUserById(user.id as string)
+      if (!existingUser || !existingUser.emailVerified) return false
+
+      if (existingUser.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id
+        )
+        if (!twoFactorConfirmation) return false
+        await db.twoFactorConfirmation.delete({
+          where: { id: twoFactorConfirmation.id },
+        })
+      }
+
+      return true
+    },
+    async session({ token, session }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub
+      }
+
+      if (token.quotaLimit && session.user) {
+        session.user.quotaLimit = token.quotaLimit as number
       }
       return session
     },
+    async jwt({ token }) {
+      if (!token.sub) return token
+
+      const existingUser = await getUserById(token.sub)
+
+      if (!existingUser) return token
+
+      token.quotaLimit = existingUser.quotaLimit
+      return token
+    },
   },
+  adapter: PrismaAdapter(db),
+  session: { strategy: "jwt" },
+  ...authConfig,
 })
-
-// Helper functions for auth actions
-export async function signUpWithCredentials(
-  email: string,
-  password: string,
-  name: string
-) {
-  try {
-    // Validate email format using Zod before any DB operation
-    const validatedEmail = z
-      .string()
-      .email("Invalid email address")
-      .parse(email)
-
-    // Then check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-      select: { id: true }, // Only select id field for efficiency
-    })
-
-    if (existingUser) {
-      return {
-        success: false,
-        error: "An account with this email already exists",
-      }
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 12)
-
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name,
-        quotaLimit: 100,
-        plan: "FREE",
-      },
-    })
-
-    return { success: true, user }
-  } catch (error) {
-    console.error("SignUp error:", error)
-    return {
-      success: false,
-      error: "Failed to create account. Please try again later.",
-    }
-  }
-}
-
-export async function resetPassword(email: string) {
-  // Implement password reset logic here
-  // This would typically involve:
-  // 1. Generate reset token
-  // 2. Save token to database with expiry
-  // 3. Send email with reset link
-  // 4. Handle token verification and password update in a separate function
-}
-
-export type AuthError =
-  | "CredentialsSignin"
-  | "UserNotFound"
-  | "InvalidPassword"
-  | "EmailExists"

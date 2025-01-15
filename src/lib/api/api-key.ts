@@ -1,6 +1,6 @@
 // lib/api/api-key.ts
 import { randomBytes } from "crypto"
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 
 export async function generateApiKey() {
   // Generate a random 32-byte hex string
