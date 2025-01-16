@@ -1,15 +1,25 @@
-// lib/api/api-key.ts
-import { randomBytes } from "crypto"
-import bcrypt from "bcryptjs"
+// src/lib/api/api-key.ts
+import { createPasswordHash } from "@/lib/password-hash"
 
 export async function generateApiKey() {
-  // Generate a random 32-byte hex string
-  const generatedKey = `pk_${randomBytes(32).toString("hex")}`
+  // Generate a longer random key for API keys
+  const key = new Uint8Array(48)
+  crypto.getRandomValues(key)
 
-  // Hash the generated key using bcrypt
-  const saltRounds = 10 // Adjust salt rounds as needed for security/performance trade-off
-  const hashedKey = await bcrypt.hash(generatedKey, saltRounds)
+  // Convert to base64url without using spread operator
+  const keyBuffer = key.buffer
+  const keyBase64 = btoa(
+    new Uint8Array(keyBuffer).reduce(
+      (data, byte) => data + String.fromCharCode(byte),
+      ""
+    )
+  )
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "")
 
-  // Return both the generated key and its hashed version
+  const generatedKey = `pk_${keyBase64}`
+  const hashedKey = await createPasswordHash(generatedKey)
+
   return { generatedKey, hashedKey }
 }

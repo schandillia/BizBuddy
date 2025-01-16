@@ -25,7 +25,7 @@ const Page = async () => {
 
   let apiKey = user.apiKey ?? "" // Default to current user's API key if it exists
 
-  if (!user.apiKey.startsWith("$")) {
+  if (!user.apiKey.startsWith("wc2:")) {
     // Key is not encrypted
     // Generate custom key (pk_)
     // Encrypt it

@@ -1,10 +1,11 @@
+// src/app/actions/new-password.ts
 "use server"
 
 import { getPasswordResetTokenByToken } from "@/data/password-reset-token"
 import { getUserByEmail } from "@/data/user"
 import { db } from "@/prisma"
 import { NewPasswordSchema } from "@/schemas"
-import bcrypt from "bcryptjs"
+import { createPasswordHash } from "@/lib/password-hash"
 import * as z from "zod"
 
 export const NewPassword = async (
@@ -31,7 +32,7 @@ export const NewPassword = async (
 
   if (!existingUser) return { error: "Email not found" }
 
-  const hashedPassword = await bcrypt.hash(password, 12)
+  const hashedPassword = await createPasswordHash(password)
 
   await db.user.update({
     where: { id: existingUser.id },

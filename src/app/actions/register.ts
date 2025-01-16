@@ -1,8 +1,9 @@
+// src/app/actions/register.ts
 "use server"
 
 import { RegisterSchema } from "@/schemas"
 import * as z from "zod"
-import bcrypt from "bcryptjs"
+import { createPasswordHash } from "@/lib/password-hash"
 import { db } from "@/prisma"
 import { getUserByEmail } from "@/data/user"
 import { generateVerificationToken } from "@/lib/tokens"
@@ -16,7 +17,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   }
 
   const { email, password, name } = validatedFields.data
-  const hashedPassword = await bcrypt.hash(password, 12)
+  const hashedPassword = await createPasswordHash(password)
 
   const existingUser = await getUserByEmail(email)
 
@@ -34,7 +35,6 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   })
 
   const verificationToken = await generateVerificationToken(email)
-
   await sendVerificationEmail(verificationToken.email, verificationToken.token)
 
   return { success: "Confirmation email sent." }

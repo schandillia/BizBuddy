@@ -1,14 +1,15 @@
 import { Resend } from "resend"
+import brand from "@/lib/constants/brand.json"
 
-const baseUrl = "http://localhost:3000/"
+const baseUrl = brand.SITE
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const sendVerificationEmail = async (email: string, token: string) => {
-  const confirmLink = `${baseUrl}auth/new-verification?token=${token}`
+  const confirmLink = `${baseUrl}/auth/new-verification?token=${token}`
 
   await resend.emails.send({
-    from: "onboarding@resend.dev",
+    from: brand.NOREPLY_EMAIL,
     to: email,
     subject: "Confirm your email",
     html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`,
@@ -16,10 +17,10 @@ export const sendVerificationEmail = async (email: string, token: string) => {
 }
 
 export const sendPasswordResetEmail = async (email: string, token: string) => {
-  const resetLink = `${baseUrl}auth/new-password?token=${token}`
+  const resetLink = `${baseUrl}/auth/new-password?token=${token}`
 
   await resend.emails.send({
-    from: "onboarding@resend.dev",
+    from: brand.NOREPLY_EMAIL,
     to: email,
     subject: "Reset your password",
     html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,

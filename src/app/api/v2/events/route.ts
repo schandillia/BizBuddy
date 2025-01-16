@@ -1,3 +1,4 @@
+// src/app/api/v2/events/route.ts
 import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { db } from "@/prisma"
 import { sendToDiscord } from "@/lib/api/channels/discord"
@@ -7,7 +8,7 @@ import { sendToWebex } from "@/lib/api/channels/webex"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import bcrypt from "bcryptjs"
+import { verifyPasswordHash } from "@/lib/password-hash"
 
 const hasNestedObjects = (obj: Record<string, any>): boolean => {
   return Object.values(obj).some(
@@ -131,7 +132,7 @@ export const POST = async (req: NextRequest) => {
 
     let user = null
     for (const potentialUser of users) {
-      const isMatch = await bcrypt.compare(apiKey, potentialUser.apiKey)
+      const isMatch = await verifyPasswordHash(apiKey, potentialUser.apiKey)
       if (isMatch) {
         user = potentialUser
         break

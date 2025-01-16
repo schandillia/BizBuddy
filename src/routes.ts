@@ -30,7 +30,7 @@ export const authRoutes = [
  * These routes will never be blocked
  * @type {string}
  */
-export const apiAuthPrefix = "/api/auth"
+export const apiAuthPrefix = "/api/"
 
 /**
  * The default rediect path after sign-in

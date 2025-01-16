@@ -1,11 +1,15 @@
+// src/auth.config.ts
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { LoginSchema } from "@/schemas"
-
-import bcrypt from "bcryptjs"
-
+import {
+  verifyPasswordHash,
+  createPasswordHash,
+  isLegacyHash,
+} from "@/lib/password-hash"
 import type { NextAuthConfig } from "next-auth"
 import { getUserByEmail } from "@/data/user"
+import { db } from "@/prisma"
 
 export default {
   providers: [
@@ -18,7 +22,7 @@ export default {
           name: profile.name,
           email: profile.email,
           image: profile.picture,
-          quotaLimit: 100, // Set default quotaLimit
+          quotaLimit: 100,
         }
       },
     }),
@@ -32,9 +36,22 @@ export default {
           const user = await getUserByEmail(email)
           if (!user || !user.password) return null
 
-          const passwordsMatch = await bcrypt.compare(password, user.password)
+          const passwordValid = await verifyPasswordHash(
+            password,
+            user.password
+          )
 
-          if (passwordsMatch) return user
+          if (passwordValid) {
+            // If using old hash, upgrade to new hash format
+            if (isLegacyHash(user.password)) {
+              const newHash = await createPasswordHash(password)
+              await db.user.update({
+                where: { id: user.id },
+                data: { password: newHash },
+              })
+            }
+            return user
+          }
         }
         return null
       },
