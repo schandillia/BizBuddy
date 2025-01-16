@@ -6,7 +6,7 @@ import { Modal } from "@/components/ui/modal"
 import { client } from "@/lib/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { format, formatDistanceToNow } from "date-fns"
-import { BarChart2, Clock, Database, Trash2 } from "lucide-react"
+import { BarChart2, Clock, Database, Loader2, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { DashboardEmptyState } from "./dashboard-empty-state"
@@ -182,8 +182,16 @@ export const DashboardPageContent = () => {
               variant="destructive"
               onClick={() => deletingType && deleteType(deletingType.slug)}
               disabled={isDeletingType}
+              className="flex justify-center items-center"
             >
-              {isDeletingType ? "Deleting..." : "Delete"}
+              {isDeletingType ? (
+                <>
+                  Deleting
+                  <Loader2 className="size-4 ml-2 animate-spin" />
+                </>
+              ) : (
+                "Delete"
+              )}
             </Button>
           </div>
         </div>

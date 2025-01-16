@@ -21,6 +21,7 @@ import { login } from "@/app/actions/login"
 import { useState, useTransition } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { Loader2 } from "lucide-react"
 
 // Define the LoginResponse type
 type LoginResponse = {
@@ -154,8 +155,21 @@ export const LoginForm = () => {
           </div>
           <FormError message={error || urlError} />
           <FormSuccess message={success} />
-          <Button disabled={isPending} type="submit" className="w-full">
-            {showTwoFactor ? "Confirm" : "Login"}
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full flex justify-center items-center" // Flexbox to center the loader and text
+          >
+            {isPending ? (
+              <>
+                {showTwoFactor ? "Verifying Code" : "Logging In"}
+                <Loader2 className="size-4 ml-2 animate-spin" />
+              </>
+            ) : showTwoFactor ? (
+              "Verify Code"
+            ) : (
+              "Login"
+            )}
           </Button>
         </form>
       </Form>

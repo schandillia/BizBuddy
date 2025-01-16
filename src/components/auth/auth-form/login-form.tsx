@@ -12,6 +12,7 @@ import { UseFormReturn } from "react-hook-form"
 import { FormError } from "@/components/form-error"
 import { FormSuccess } from "@/components/form-success"
 import { LoginValues } from "./types"
+import { Loader2 } from "lucide-react"
 
 interface LoginFormProps {
   form: UseFormReturn<LoginValues>
@@ -88,9 +89,16 @@ export const LoginForm = ({
       <Button
         disabled={isPending}
         type="submit"
-        className="w-full py-5 text-base font-medium"
+        className="w-full py-5 text-base font-medium flex justify-center items-center" // Flexbox to center the loader and text
       >
-        Sign In
+        {isPending ? (
+          <>
+            Authenticating
+            <Loader2 className="size-4 ml-2 animate-spin" />
+          </>
+        ) : (
+          "Sign In"
+        )}
       </Button>
     </form>
   </Form>

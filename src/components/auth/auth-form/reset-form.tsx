@@ -12,6 +12,7 @@ import { UseFormReturn } from "react-hook-form"
 import { FormError } from "@/components/form-error"
 import { FormSuccess } from "@/components/form-success"
 import { ResetValues } from "./types"
+import { Loader2 } from "lucide-react"
 
 interface ResetFormProps {
   form: UseFormReturn<ResetValues>
@@ -55,9 +56,16 @@ export const ResetForm = ({
       <Button
         disabled={isPending}
         type="submit"
-        className="w-full py-5 text-base font-medium"
+        className="w-full py-5 text-base font-medium flex justify-center items-center" // Flexbox to center the loader and text
       >
-        Send reset email
+        {isPending ? (
+          <>
+            Sending Reset Email
+            <Loader2 className="size-4 ml-2 animate-spin" />
+          </>
+        ) : (
+          "Send Reset Email"
+        )}
       </Button>
     </form>
   </Form>

@@ -28,7 +28,7 @@ const Page = async () => {
   if (!user.apiKey.startsWith("$")) {
     // Key is not encrypted
     // Generate custom key (pk_)
-    // Encrypt it using bcrypt
+    // Encrypt it
     // Update encrypted key to user table
     // Send unencrypted key (pk_) to user
     const { generatedKey, hashedKey } = await generateApiKey()

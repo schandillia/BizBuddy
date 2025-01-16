@@ -4,15 +4,26 @@ import { FcGoogle } from "react-icons/fc"
 import { Button } from "@/components/ui/button"
 import { FaGithub } from "react-icons/fa"
 import { signIn } from "next-auth/react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, usePathname } from "next/navigation"
 
 export const Social = () => {
   const searchParams = useSearchParams()
+  const pathname = usePathname() // More reliable than window.location.pathname
   const intent = searchParams.get("intent")
+
+  // If the user is on the homepage ('/'), set the callbackUrl to '/dashboard'
+  const finalCallbackUrl = pathname === "/" ? "/dashboard" : pathname
+
+  // Append `intent` if it exists
+  const redirectUrl = intent
+    ? `${finalCallbackUrl}?intent=${intent}`
+    : finalCallbackUrl
+
+  console.log({ redirectUrl })
 
   const onClick = (provider: "google" | "github") => {
     signIn(provider, {
-      callbackUrl: intent ? `/dashboard?intent=${intent}` : "/dashboard",
+      callbackUrl: redirectUrl,
     })
   }
 

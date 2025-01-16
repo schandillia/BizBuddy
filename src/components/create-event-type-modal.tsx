@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/utils"
 import { Button } from "@/components/ui/button"
 import { client } from "@/lib/client"
+import { Loader2 } from "lucide-react"
 
 const EVENT_TYPE_VALIDATOR = z.object({
   name: TYPE_NAME_VALIDATOR,
@@ -219,8 +220,19 @@ export const CreateEventTypeModal = ({
             >
               Cancel
             </Button>
-            <Button disabled={isPending} type="submit">
-              {isPending ? "Creating..." : "Create Type"}
+            <Button
+              disabled={isPending}
+              type="submit"
+              className="w-full flex justify-center items-center" // Flexbox to center the loader and text
+            >
+              {isPending ? (
+                <>
+                  Creating Type
+                  <Loader2 className="size-4 ml-2 animate-spin" />
+                </>
+              ) : (
+                "Create Type"
+              )}
             </Button>
           </div>
         </form>

@@ -20,6 +20,7 @@ import { FormSuccess } from "@/components/form-success"
 import { NewPassword } from "@/app/actions/new-password"
 import { useState, useTransition } from "react"
 import { useSearchParams } from "next/navigation"
+import { Loader2 } from "lucide-react"
 
 export const NewPasswordForm = () => {
   const searchParams = useSearchParams()
@@ -79,8 +80,19 @@ export const NewPasswordForm = () => {
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button disabled={isPending} type="submit" className="w-full">
-            Reset password
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full flex justify-center items-center" // Flexbox to center the loader and text
+          >
+            {isPending ? (
+              <>
+                Resetting Password
+                <Loader2 className="size-4 ml-2 animate-spin" />
+              </>
+            ) : (
+              "Reset Password"
+            )}
           </Button>
         </form>
       </Form>

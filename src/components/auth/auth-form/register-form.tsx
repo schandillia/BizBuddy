@@ -12,6 +12,7 @@ import { UseFormReturn } from "react-hook-form"
 import { FormError } from "@/components/form-error"
 import { FormSuccess } from "@/components/form-success"
 import { RegisterValues } from "./types"
+import { Loader2 } from "lucide-react"
 
 interface RegisterFormProps {
   form: UseFormReturn<RegisterValues>
@@ -108,9 +109,16 @@ export const RegisterForm = ({
       <Button
         disabled={isPending}
         type="submit"
-        className="w-full py-5 text-base font-medium"
+        className="w-full py-5 text-base font-medium flex justify-center items-center" // Flexbox to center the loader and text
       >
-        Create Account
+        {isPending ? (
+          <>
+            Setting You Up
+            <Loader2 className="size-4 ml-2 animate-spin" />
+          </>
+        ) : (
+          "Create Account"
+        )}
       </Button>
     </form>
   </Form>

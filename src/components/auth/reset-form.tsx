@@ -19,6 +19,7 @@ import { FormError } from "@/components/form-error"
 import { FormSuccess } from "@/components/form-success"
 import { reset } from "@/app/actions/reset"
 import { useState, useTransition } from "react"
+import { Loader2 } from "lucide-react"
 
 // Define the LoginResponse type
 type LoginResponse = {
@@ -81,8 +82,19 @@ export const ResetForm = () => {
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button disabled={isPending} type="submit" className="w-full">
-            Send reset email
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full flex justify-center items-center" // Flexbox to center the loader and text
+          >
+            {isPending ? (
+              <>
+                Sending Reset Email
+                <Loader2 className="size-4 ml-2 animate-spin" />
+              </>
+            ) : (
+              "Send Reset Email"
+            )}
           </Button>
         </form>
       </Form>

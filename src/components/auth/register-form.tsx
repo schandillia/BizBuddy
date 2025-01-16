@@ -20,6 +20,7 @@ import { FormError } from "@/components/form-error"
 import { FormSuccess } from "@/components/form-success"
 import { register } from "@/app/actions/register"
 import { useState, useTransition } from "react"
+import { Loader2 } from "lucide-react"
 
 export const RegisterForm = () => {
   const [isPending, startTransition] = useTransition()
@@ -131,8 +132,19 @@ export const RegisterForm = () => {
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button disabled={isPending} type="submit" className="w-full">
-            Register
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="w-full flex justify-center items-center" // Flexbox to center the loader and text
+          >
+            {isPending ? (
+              <>
+                Setting You Up
+                <Loader2 className="size-4 ml-2 animate-spin" />
+              </>
+            ) : (
+              "Create Account"
+            )}
           </Button>
         </form>
       </Form>

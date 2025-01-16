@@ -1,5 +1,5 @@
 import { useState, useTransition } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, usePathname } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoginSchema, RegisterSchema, ResetSchema } from "@/schemas"
@@ -17,9 +17,17 @@ import { Socials } from "./socials"
 
 export const AuthForm = () => {
   const searchParams = useSearchParams()
+  const pathname = usePathname() // More reliable than window.location.pathname
   const intent = searchParams.get("intent")
 
-  const callbackUrl = intent ? `/dashboard?intent=${intent}` : "/dashboard"
+  // If the user is on the homepage ('/'), set the callbackUrl to '/dashboard'
+  const finalCallbackUrl = pathname === "/" ? "/dashboard" : pathname
+
+  // Append `intent` if it exists
+  const redirectUrl = intent
+    ? `${finalCallbackUrl}?intent=${intent}`
+    : finalCallbackUrl
+
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with different provider."
@@ -60,7 +68,7 @@ export const AuthForm = () => {
     setSuccess("")
 
     startTransition(() => {
-      login(values, callbackUrl)
+      login(values, redirectUrl)
         .then((data) => {
           if (data?.error) {
             loginForm.reset()
