@@ -12,8 +12,8 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Settings, User, LogOut, LayoutDashboard } from "lucide-react"
 import Link from "next/link"
-import { signOut as nextAuthSignOut } from "next-auth/react"
 import { logOut } from "@/app/actions/auth"
+import { usePathname } from "next/navigation"
 
 interface UserNavMenuProps {
   user: {
@@ -24,6 +24,8 @@ interface UserNavMenuProps {
 }
 
 const UserNavMenu: FC<UserNavMenuProps> = ({ user }) => {
+  const pathname = usePathname()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
@@ -69,7 +71,7 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user }) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer text-red-600 focus:text-red-600"
-          onSelect={() => logOut()}
+          onSelect={() => logOut(pathname)}
         >
           <LogOut className="mr-2 size-4" />
           Log out
