@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { client } from "@/lib/client"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { Loader2 } from "lucide-react"
 
 export const DashboardEmptyState = () => {
   const queryClient = useQueryClient()
@@ -42,12 +43,13 @@ export const DashboardEmptyState = () => {
           disabled={isPending}
         >
           <span className="size-5">🚀</span>
-          <span>{isPending ? "Creating..." : "Quickstart"}</span>
+          <span>{isPending ? "Creating starter types" : "Quickstart"}</span>
+          {isPending && <Loader2 className="size-4 ml-2 animate-spin" />}
         </Button>
 
         <CreateEventTypeModal containerClassName="w-full sm:w-auto">
           <Button className="flex items-center space-x-2 w-full sm:w-auto">
-            <span>Add Type</span>
+            Add type
           </Button>
         </CreateEventTypeModal>
       </div>

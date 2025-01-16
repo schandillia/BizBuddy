@@ -4,7 +4,7 @@ import { NewVerification } from "@/app/actions/new-verification"
 import { CardWrapper } from "@/components/auth/card-wrapper"
 import { FormError } from "@/components/form-error"
 import { FormSuccess } from "@/components/form-success"
-import { Loader } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 
@@ -33,14 +33,24 @@ export const NewVerificationForm = () => {
     onSubmit()
   }, [onSubmit])
 
+  // Set headerLabel dynamically based on success or error
+  let headerLabel = "Confirming your email"
+
+  if (success) {
+    headerLabel = "Your email has been confirmed"
+  } else if (error) {
+    headerLabel = "There was an issue confirming your email"
+  }
+
   return (
     <CardWrapper
-      headerLabel="Confirming your email"
+      headerTitle="Confirmation" // Static title
+      headerLabel={headerLabel} // Dynamic label based on state
       backButtonLabel="Back to login"
       backButtonHref="/auth/login"
     >
-      <div className="flex items-center w-full justify-center">
-        {!success && !error && <Loader className="animate-spin" size={24} />}
+      <div className="flex flex-col items-center w-full justify-center space-y-4 mt-6">
+        {!success && !error && <Loader2 className="animate-spin" size={24} />}
         <FormSuccess message={success} />
         <FormError message={error} />
       </div>

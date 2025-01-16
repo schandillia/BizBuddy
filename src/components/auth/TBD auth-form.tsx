@@ -156,7 +156,7 @@ export const AuthForm = () => {
     <div className="w-full max-w-md mx-auto space-y-3">
       <div className="text-center space-y-1">
         <Heading as="h2" className="text-2xl font-bold tracking-tight">
-          {formState === "register" && "Create Account"}
+          {formState === "register" && "Create account"}
           {formState === "login" && "Welcome Back"}
           {formState === "reset" && "Reset Password"}
           {formState === "2fa" && "Two-Factor Authentication"}
@@ -323,7 +323,7 @@ export const AuthForm = () => {
               type="submit"
               className="w-full py-5 text-base font-medium"
             >
-              Create Account
+              Create account
             </Button>
           </form>
         </Form>
@@ -416,7 +416,7 @@ export const AuthForm = () => {
               type="submit"
               className="w-full py-5 text-base font-medium"
             >
-              Verify Code
+              Verify code
             </Button>
           </form>
         </Form>

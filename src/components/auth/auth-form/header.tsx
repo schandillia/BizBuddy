@@ -18,7 +18,7 @@ export const Header = ({ formState }: HeaderProps) => (
       {formState === "register" && "Create your account to get started"}
       {formState === "login" && "Please enter your credentials to continue"}
       {formState === "reset" && "Enter your email to reset your password"}
-      {formState === "2fa" && "Enter the code sent to your phone"}
+      {formState === "2fa" && "Enter the code sent to your email"}
     </p>
   </div>
 )

@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import InstructionsBox from "./instructions/instructions-box"
+import { Loader2 } from "lucide-react"
 
 type ServiceName =
   | "DISCORD"
@@ -226,7 +227,15 @@ export const ChannelsPageContent = ({
             !channelIds[activeChannel as Exclude<ServiceName, "NONE">]?.trim()
           }
         >
-          {isPending ? "Saving..." : "Save Changes"}
+          {isPending ? (
+            <>
+              Updating channel
+              <Loader2 className="size-4 ml-2 animate-spin" />{" "}
+              {/* Add the loader here */}
+            </>
+          ) : (
+            "Update channel"
+          )}
         </Button>
       </div>
       {/* Render instructions for active service */}

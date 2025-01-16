@@ -60,11 +60,11 @@ export const ResetForm = ({
       >
         {isPending ? (
           <>
-            Sending Reset Email
+            Sending reset email
             <Loader2 className="size-4 ml-2 animate-spin" />
           </>
         ) : (
-          "Send Reset Email"
+          "Send reset email"
         )}
       </Button>
     </form>

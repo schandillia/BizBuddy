@@ -103,11 +103,11 @@ export const TwoFactorForm = ({
       >
         {isPending ? (
           <>
-            Verifying Code
+            Verifying code
             <Loader2 className="size-4 ml-2 animate-spin" />
           </>
         ) : (
-          "Verify Code"
+          "Verify code"
         )}
       </Button>
     </form>

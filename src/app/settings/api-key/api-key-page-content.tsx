@@ -177,13 +177,16 @@ export const ApiKeyPageContent = ({
                   aria-label="Reveal API Key hint"
                 >
                   <EyeIcon className="size-4 text-gray-600 dark:text-gray-300" />
-                  <span className="text-gray-600 dark:text-gray-300">
+                  <span className="text-gray-600 dark:text-gray-300 flex items-center">
                     {isLoadingHint ? (
-                      <Loader2
-                        className="animate-spin ml-2 size-4 text-gray-600 dark:text-gray-300"
-                        size="sm"
-                        aria-label="Loading"
-                      />
+                      <>
+                        Retrieving
+                        <Loader2
+                          className="animate-spin ml-2 size-4 text-gray-600 dark:text-gray-300"
+                          size="sm"
+                          aria-label="Loading"
+                        />
+                      </>
                     ) : (
                       "Reveal API Key hint"
                     )}
@@ -250,7 +253,14 @@ export const ApiKeyPageContent = ({
               disabled={isRegenerating}
               aria-label="Confirm Regeneration"
             >
-              {isRegenerating ? "Regenerating..." : "Yes, regenerate"}
+              {isRegenerating ? (
+                <>
+                  Regenerating
+                  <Loader2 className="size-4 ml-2 animate-spin" />
+                </>
+              ) : (
+                "Yes, regenerate"
+              )}
             </Button>
           </div>
         </div>

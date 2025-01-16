@@ -12,7 +12,7 @@ export const AuthButton = () => {
 
   return (
     <>
-      <Button onClick={onClick}>Get Started</Button>
+      <Button onClick={onClick}>Get started</Button>
 
       {showModal && (
         <Modal showModal={showModal} setShowModal={setShowModal}>

@@ -55,7 +55,7 @@ const Page = async ({ searchParams }: PageProps) => {
           <CreateEventTypeModal>
             <Button className="w-full sm:w-fit">
               <PlusIcon className="size-4 mr-2" />
-              Add Event Type
+              Add event type
             </Button>
           </CreateEventTypeModal>
         }

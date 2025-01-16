@@ -113,11 +113,11 @@ export const RegisterForm = ({
       >
         {isPending ? (
           <>
-            Setting You Up
+            Setting you up
             <Loader2 className="size-4 ml-2 animate-spin" />
           </>
         ) : (
-          "Create Account"
+          "Create account"
         )}
       </Button>
     </form>

@@ -227,11 +227,11 @@ export const CreateEventTypeModal = ({
             >
               {isPending ? (
                 <>
-                  Creating Type
+                  Creating type
                   <Loader2 className="size-4 ml-2 animate-spin" />
                 </>
               ) : (
-                "Create Type"
+                "Create type"
               )}
             </Button>
           </div>

@@ -52,6 +52,7 @@ export const NewPasswordForm = () => {
 
   return (
     <CardWrapper
+      headerTitle="Reset Password"
       headerLabel="Enter a new password"
       backButtonLabel="Back to login"
       backButtonHref="/auth/login"
@@ -87,11 +88,11 @@ export const NewPasswordForm = () => {
           >
             {isPending ? (
               <>
-                Resetting Password
+                Updating password
                 <Loader2 className="size-4 ml-2 animate-spin" />
               </>
             ) : (
-              "Reset Password"
+              "Update password"
             )}
           </Button>
         </form>

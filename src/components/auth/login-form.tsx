@@ -77,7 +77,8 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome Back!"
+      headerTitle="Welcome Back"
+      headerLabel="Please enter your credentials to continue"
       backButtonLabel="Don’t have an account?"
       backButtonHref="/auth/register"
       showSocial
@@ -162,11 +163,11 @@ export const LoginForm = () => {
           >
             {isPending ? (
               <>
-                {showTwoFactor ? "Verifying Code" : "Logging In"}
+                {showTwoFactor ? "Verifying code" : "Logging In"}
                 <Loader2 className="size-4 ml-2 animate-spin" />
               </>
             ) : showTwoFactor ? (
-              "Verify Code"
+              "Verify code"
             ) : (
               "Login"
             )}

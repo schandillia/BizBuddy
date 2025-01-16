@@ -50,7 +50,8 @@ export const RegisterForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Create an Account"
+      headerTitle="Create Account"
+      headerLabel="Create your account to get started"
       backButtonLabel="Already have an account?"
       backButtonHref="/auth/login"
       showSocial
@@ -139,11 +140,11 @@ export const RegisterForm = () => {
           >
             {isPending ? (
               <>
-                Setting You Up
+                Setting you up
                 <Loader2 className="size-4 ml-2 animate-spin" />
               </>
             ) : (
-              "Create Account"
+              "Create account"
             )}
           </Button>
         </form>

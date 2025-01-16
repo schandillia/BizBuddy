@@ -97,7 +97,7 @@ export const LoginForm = ({
             <Loader2 className="size-4 ml-2 animate-spin" />
           </>
         ) : (
-          "Sign In"
+          "Sign in"
         )}
       </Button>
     </form>
