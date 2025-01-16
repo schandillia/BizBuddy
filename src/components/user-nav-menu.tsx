@@ -13,6 +13,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Settings, User, LogOut, LayoutDashboard } from "lucide-react"
 import Link from "next/link"
 import { signOut as nextAuthSignOut } from "next-auth/react"
+import { logOut } from "@/app/actions/auth"
 
 interface UserNavMenuProps {
   user: {
@@ -68,9 +69,9 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user }) => {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer text-red-600 focus:text-red-600"
-          onSelect={() => nextAuthSignOut()}
+          onSelect={() => logOut()}
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="mr-2 size-4" />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -1,4 +1,3 @@
-import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { LoginSchema } from "@/schemas"
@@ -6,7 +5,6 @@ import { LoginSchema } from "@/schemas"
 import bcrypt from "bcryptjs"
 
 import type { NextAuthConfig } from "next-auth"
-import { Providers } from "@/components/providers"
 import { getUserByEmail } from "@/data/user"
 
 export default {

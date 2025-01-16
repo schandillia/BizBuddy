@@ -56,7 +56,9 @@ type FormState = "login" | "register" | "reset" | "2fa"
 
 export const AuthForm = () => {
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get("callbackUrl") || undefined
+  const intent = searchParams.get("intent")
+
+  const callbackUrl = intent ? `/dashboard?intent=${intent}` : "/dashboard"
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with different provider."
@@ -381,7 +383,14 @@ export const AuthForm = () => {
                     <InputOTP
                       maxLength={6}
                       disabled={isPending}
-                      onChange={field.onChange}
+                      value={field.value}
+                      onChange={(value) => {
+                        field.onChange(value)
+                        if (value.length === 6) {
+                          loginForm.handleSubmit(onLoginSubmit)()
+                        }
+                      }}
+                      autoFocus
                     >
                       <InputOTPGroup className="flex justify-center gap-2">
                         <InputOTPSlot index={0} />
