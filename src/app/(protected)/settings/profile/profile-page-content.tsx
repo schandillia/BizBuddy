@@ -19,7 +19,6 @@ interface User {
   discordId: string | null
   webexId: string | null
   slackId: string | null
-  teamsId: string | null
   createdAt: Date
   updatedAt: Date
 }

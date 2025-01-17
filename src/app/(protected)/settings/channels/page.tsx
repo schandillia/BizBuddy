@@ -29,9 +29,7 @@ const Page = async () => {
         discordId={user.discordId ?? ""}
         emailId={user.emailId ?? ""}
         webexId={user.webexId ?? ""}
-        whatsappId={user.whatsappId ?? ""}
         slackId={user.slackId ?? ""}
-        teamsId={user.teamsId ?? ""}
       />
     </UserPage>
   )

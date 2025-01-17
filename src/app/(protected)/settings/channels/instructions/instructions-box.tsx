@@ -2,18 +2,10 @@ import React from "react"
 import DiscordInstructions from "@/app/(protected)/settings/channels/instructions/discord"
 import SlackInstructions from "@/app/(protected)/settings/channels/instructions/slack"
 import WebexInstructions from "@/app/(protected)/settings/channels/instructions/webex"
-import TeamsInstructions from "@/app/(protected)/settings/channels/instructions/teams"
 import EmailInstructions from "@/app/(protected)/settings/channels/instructions/email"
-import WhatsappInstructions from "@/app/(protected)/settings/channels/instructions/whatsapp"
 import { Heading } from "@/components/heading"
 
-type ChannelType =
-  | "discord"
-  | "email"
-  | "slack"
-  | "webex"
-  | "teams"
-  | "whatsapp"
+type ChannelType = "discord" | "email" | "slack" | "webex"
 
 interface InstructionsBoxProps {
   channel: ChannelType
@@ -28,12 +20,8 @@ const InstructionsBox: React.FC<InstructionsBoxProps> = ({ channel }) => {
         return <SlackInstructions />
       case "webex":
         return <WebexInstructions />
-      case "teams":
-        return <TeamsInstructions />
       case "email":
         return <EmailInstructions />
-      case "whatsapp":
-        return <WhatsappInstructions />
       default:
         return null
     }
@@ -43,9 +31,7 @@ const InstructionsBox: React.FC<InstructionsBoxProps> = ({ channel }) => {
     discord: "Discord",
     slack: "Slack",
     webex: "Webex",
-    teams: "Teams",
     email: "Email",
-    whatsapp: "WhatsApp",
   }
 
   const channelName = channelMap[channel.toLowerCase()] || null
