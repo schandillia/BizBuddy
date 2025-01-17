@@ -285,14 +285,12 @@ export const TypePageContent = ({
       return (
         <Card key={field}>
           <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <p className="text-sm/6 font-medium">
-              {field.charAt(0).toUpperCase() + field.slice(1)}
-            </p>
+            <p className="text-sm/6 font-medium">{field}</p>
             <ChartNoAxesCombined className="size-4 text-muted-foreground" />
           </div>
 
           <div>
-            <p className="text-2xl font-bold">{relevantSum.toFixed(2)}</p>
+            <p className="text-2xl font-bold">{relevantSum.toFixed(0)}</p>
             <p className="text-xs/5 text-muted-foreground">
               {activeTab === "today"
                 ? "today"
