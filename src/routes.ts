@@ -1,27 +1,23 @@
 /**
- * An array of routes accessible to guest users
- * These routes do not require authentication
+ * Sets of routes for different access levels
+ * Using Sets for O(1) lookup performance
  */
-export const publicRoutes = [
+export const publicRoutes = new Set([
   "/",
   "/auth/new-verification",
   "/pricing",
   "/terms",
   "/privacy",
   "/about",
-]
+])
 
-/**
- * An array of routes used for authentication
- * These routes redirect logged users to /settings
- */
-export const authRoutes = [
+export const authRoutes = new Set([
   "/auth/login",
   "/auth/register",
   "/auth/error",
   "/auth/reset",
   "/auth/new-password",
-]
+])
 
 /**
  * The prefix for API authentication routes
@@ -30,6 +26,6 @@ export const authRoutes = [
 export const apiRoutes = "/api/"
 
 /**
- * The default rediect path after sign-in
+ * The default redirect path after sign-in
  */
 export const DEFAULT_LOGIN_REDIRECT = "/dashboard"
