@@ -63,7 +63,7 @@ export const LoginForm = ({
                 <Input
                   disabled={isPending}
                   {...field}
-                  placeholder="••••••••"
+                  placeholder="Password"
                   type="password"
                   className="py-5"
                 />

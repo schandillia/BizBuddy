@@ -76,7 +76,7 @@ export const RegisterForm = ({
                 <Input
                   disabled={isPending}
                   {...field}
-                  placeholder="••••••••"
+                  placeholder="Password"
                   type="password"
                   className="py-5"
                 />
@@ -94,7 +94,7 @@ export const RegisterForm = ({
                 <Input
                   disabled={isPending}
                   {...field}
-                  placeholder="••••••••"
+                  placeholder="Confirm password"
                   type="password"
                   className="py-5"
                 />

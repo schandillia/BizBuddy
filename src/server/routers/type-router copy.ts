@@ -9,7 +9,6 @@ import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { parseColor } from "@/utils"
 import { HTTPException } from "hono/http-exception"
 import { Prisma } from "@prisma/client"
-import { FaSalesforce } from "react-icons/fa"
 
 // First, let's define interfaces for our types
 interface EventType {
@@ -201,27 +200,90 @@ export const typeRouter = router({
         name: TYPE_NAME_VALIDATOR,
         page: z.number(),
         limit: z.number().max(50),
-        timeRange: z.enum(["today", "week", "month", "year"]),
+        timeRange: z.enum(["today", "week", "month", "year", "custom"]),
+        startDate: z.string().datetime().optional(),
+        endDate: z.string().datetime().optional(),
       })
     )
     .query(async ({ c, ctx, input }) => {
-      const { name, page, limit, timeRange } = input
+      const { name, page, limit, timeRange, startDate, endDate } = input
 
       const now = new Date()
-      let startDate: Date
+      let startDateFilter: Date
+
+      if (timeRange === "custom" && startDate && endDate) {
+        startDateFilter = new Date(startDate)
+        const endDateFilter = new Date(endDate)
+
+        const [events, eventsCount, uniqueFieldCount] = await Promise.all([
+          db.event.findMany({
+            where: {
+              EventType: { name, userId: ctx.user.id },
+              createdAt: {
+                gte: startDateFilter,
+                lte: endDateFilter,
+              },
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: { createdAt: "desc" },
+          }),
+          db.event.count({
+            where: {
+              EventType: { name, userId: ctx.user.id },
+              createdAt: {
+                gte: startDateFilter,
+                lte: endDateFilter,
+              },
+            },
+          }),
+          db.event
+            .findMany({
+              where: {
+                EventType: { name, userId: ctx.user.id },
+                createdAt: {
+                  gte: startDateFilter,
+                  lte: endDateFilter,
+                },
+              },
+              select: {
+                fields: true,
+              },
+              distinct: ["fields"],
+            })
+            .then((events: Event[]) => {
+              const fieldNames = new Set<string>()
+              events.forEach((event) => {
+                Object.keys(event.fields as object).forEach((fieldName) => {
+                  fieldNames.add(fieldName)
+                })
+              })
+              return fieldNames.size
+            }),
+        ])
+
+        return c.superjson({
+          events,
+          eventsCount,
+          uniqueFieldCount,
+        })
+      }
 
       switch (timeRange) {
         case "today":
-          startDate = startOfDay(now)
+          startDateFilter = startOfDay(now)
           break
         case "week":
-          startDate = startOfWeek(now, { weekStartsOn: 0 })
+          startDateFilter = startOfWeek(now, { weekStartsOn: 0 })
           break
         case "month":
-          startDate = startOfMonth(now)
+          startDateFilter = startOfMonth(now)
           break
         case "year":
-          startDate = startOfYear(now)
+          startDateFilter = startOfYear(now)
+          break
+        default:
+          startDateFilter = startOfDay(now)
       }
 
       const [events, eventsCount, uniqueFieldCount] = await Promise.all([

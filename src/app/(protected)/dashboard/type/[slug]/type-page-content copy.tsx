@@ -17,6 +17,7 @@ import {
   startOfYear,
   startOfMonth,
   startOfWeek,
+  format,
 } from "date-fns"
 
 import {
@@ -32,6 +33,15 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
+import {
+  Calendar,
+  Calendar as CalendarComponent,
+} from "@/components/ui/calendar"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { cn } from "@/utils"
 import { Heading } from "@/components/heading"
 import {
@@ -57,8 +67,16 @@ export const TypePageContent = ({
   const router = useRouter()
 
   const [activeTab, setActiveTab] = useState<
-    "today" | "week" | "month" | "year"
+    "today" | "week" | "month" | "year" | "custom"
   >("today")
+
+  const [dateRange, setDateRange] = useState<{
+    from: Date | undefined
+    to: Date | undefined
+  }>({
+    from: undefined,
+    to: undefined,
+  })
 
   const page = parseInt(searchParams.get("page") || "1", 10)
   const limit = parseInt(searchParams.get("limit") || "30", 10)
@@ -81,6 +99,8 @@ export const TypePageContent = ({
       pagination.pageIndex,
       pagination.pageSize,
       activeTab,
+      dateRange.from,
+      dateRange.to,
     ],
     queryFn: async () => {
       const res = await client.type.getEventsByTypeName.$get({
@@ -88,6 +108,12 @@ export const TypePageContent = ({
         page: pagination.pageIndex + 1,
         limit: pagination.pageSize,
         timeRange: activeTab,
+        ...(activeTab === "custom" && dateRange.from && dateRange.to
+          ? {
+              startDate: dateRange.from.toISOString(),
+              endDate: dateRange.to.toISOString(),
+            }
+          : {}),
       })
 
       return await res.json()
@@ -271,6 +297,62 @@ export const TypePageContent = ({
     return sums
   }, [data?.events])
 
+  // Add this new component for the date range picker
+  const DateRangePicker = () => {
+    return (
+      <div className="relative">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-[300px] justify-start text-left font-normal",
+                !dateRange.from && "text-muted-foreground"
+              )}
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              {dateRange.from ? (
+                dateRange.to ? (
+                  <>
+                    {format(dateRange.from, "LLL dd, y")} -{" "}
+                    {format(dateRange.to, "LLL dd, y")}
+                  </>
+                ) : (
+                  format(dateRange.from, "LLL dd, y")
+                )
+              ) : (
+                <span>Pick a date range</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0 z-50" align="start">
+            <CalendarComponent
+              initialFocus
+              mode="range"
+              defaultMonth={dateRange.from}
+              selected={dateRange}
+              onSelect={(range) => {
+                if (range) {
+                  setDateRange({
+                    from: range.from,
+                    to: range.to || range.from,
+                  })
+                  if (range.from && range.to) {
+                    setActiveTab("custom")
+                  }
+                } else {
+                  setDateRange({ from: undefined, to: undefined })
+                }
+              }}
+              numberOfMonths={2}
+              className="rounded-md border shadow-md"
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+    )
+  }
+
   const NumericFieldSumCards = () => {
     if (Object.keys(numericFieldSums).length === 0) return null
 
@@ -317,8 +399,12 @@ export const TypePageContent = ({
       <Tabs
         value={activeTab}
         onValueChange={(value) => {
-          setActiveTab(value as "today" | "week" | "month" | "year")
+          setActiveTab(value as "today" | "week" | "month" | "year" | "custom")
+          if (value !== "custom") {
+            setDateRange({ from: undefined, to: undefined })
+          }
         }}
+        className="flex-1"
       >
         <TabsList className="mb-2 text-gray-200 bg-brand-600 dark:bg-brand-900">
           <TabsTrigger
@@ -345,34 +431,46 @@ export const TypePageContent = ({
           >
             This Year
           </TabsTrigger>
+          <TabsTrigger
+            value="custom"
+            className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
+          >
+            Custom
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value={activeTab}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-            <Card>
-              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <p className="text-sm/6 font-medium">Total Events</p>
-                <ChartNoAxesCombined className="size-4 text-muted-foreground" />
-              </div>
-
-              <div>
-                <p className="text-2xl font-bold">{data?.eventsCount || 0}</p>
-                <p className="text-xs/5 text-muted-foreground">
-                  Events{" "}
-                  {activeTab === "today"
-                    ? "today"
-                    : activeTab === "week"
-                    ? "this week"
-                    : activeTab === "month"
-                    ? "this month"
-                    : "this year"}
-                </p>
-              </div>
-            </Card>
-
-            <NumericFieldSumCards />
+        {activeTab === "custom" && (
+          <div className="mb-6">
+            <DateRangePicker />
           </div>
-        </TabsContent>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className="p-4">
+            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <p className="text-sm font-medium">Total Events</p>
+              <ChartNoAxesCombined className="size-4 text-muted-foreground" />
+            </div>
+
+            <div>
+              <p className="text-2xl font-bold">{data?.eventsCount || 0}</p>
+              <p className="text-xs text-muted-foreground">
+                Events{" "}
+                {activeTab === "custom"
+                  ? "in selected range"
+                  : activeTab === "today"
+                  ? "today"
+                  : activeTab === "week"
+                  ? "this week"
+                  : activeTab === "month"
+                  ? "this month"
+                  : "this year"}
+              </p>
+            </div>
+          </Card>
+
+          <NumericFieldSumCards />
+        </div>
       </Tabs>
 
       <div className="flex flex-col gap-4">

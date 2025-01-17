@@ -14,6 +14,6 @@ export async function signInWithGoogle(callbackUrl?: string) {
 export async function logOut(currentPath: string) {
   const isPublicRoute = publicRoutes.has(currentPath) // Changed from includes() to has()
   await signOut({
-    redirectTo: isPublicRoute ? currentPath : "/auth/login",
+    redirectTo: isPublicRoute ? currentPath : "/",
   })
 }

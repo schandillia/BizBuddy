@@ -70,7 +70,7 @@ export const NewPasswordForm = () => {
                     <Input
                       disabled={isPending}
                       {...field}
-                      placeholder="********"
+                      placeholder="Password"
                       type="password"
                     />
                   </FormControl>

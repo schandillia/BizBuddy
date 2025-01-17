@@ -14,7 +14,7 @@ export const Header = ({ formState }: HeaderProps) => (
       {formState === "reset" && "Reset Password"}
       {formState === "2fa" && "Two-Factor Authentication"}
     </Heading>
-    <p className="text-sm text-gray-500">
+    <p className="text-sm text-gray-500 dark:text-gray-400">
       {formState === "register" && "Create your account to get started"}
       {formState === "login" && "Please enter your credentials to continue"}
       {formState === "reset" && "Enter your email to reset your password"}
