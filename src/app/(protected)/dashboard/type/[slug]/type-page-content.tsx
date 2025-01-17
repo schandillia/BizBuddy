@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { client } from "@/lib/client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { ArrowUpDown, ChartNoAxesCombined } from "lucide-react"
 import {
   isAfter,
@@ -51,14 +52,15 @@ export const TypePageContent = ({
   type,
 }: TypePageContentProps) => {
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   const [activeTab, setActiveTab] = useState<
     "today" | "week" | "month" | "year"
   >("today")
 
-  // https://localhost:3000/dashboard/type/sale?page=5&limit=30
   const page = parseInt(searchParams.get("page") || "1", 10)
   const limit = parseInt(searchParams.get("limit") || "30", 10)
+  const [limitInput, setLimitInput] = useState(limit.toString())
 
   const [pagination, setPagination] = useState({
     pageIndex: page - 1,
@@ -92,6 +94,25 @@ export const TypePageContent = ({
     enabled: pollingData.hasEvents,
   })
 
+  const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setLimitInput(value)
+
+    // Only update if the value is a valid number and between 1 and 100
+    const numValue = parseInt(value)
+    if (!isNaN(numValue) && numValue > 0 && numValue <= 100) {
+      const searchParams = new URLSearchParams(window.location.search)
+      searchParams.set("limit", numValue.toString())
+      searchParams.set("page", "1") // Reset to first page when changing limit
+      router.push(`?${searchParams.toString()}`, { scroll: false })
+
+      setPagination((prev) => ({
+        pageIndex: 0, // Reset to first page
+        pageSize: numValue,
+      }))
+    }
+  }
+
   const columns: ColumnDef<Event>[] = useMemo(
     () => [
       {
@@ -118,12 +139,12 @@ export const TypePageContent = ({
           return new Date(row.getValue("createdAt")).toLocaleDateString(
             "en-US",
             {
-              year: "numeric", // full year (e.g., 2024)
-              month: "short", // full month name (e.g., December)
-              day: "numeric", // day of the month (e.g., 31)
-              hour: "numeric", // hour (e.g., 12)
-              minute: "numeric", // minute (e.g., 34)
-              second: "numeric", // second (e.g., 21)
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              second: "numeric",
             }
           )
         },
@@ -156,7 +177,6 @@ export const TypePageContent = ({
         ),
       },
     ],
-
     [type.name, data?.events]
   )
 
@@ -182,22 +202,12 @@ export const TypePageContent = ({
     },
   })
 
-  /**
-   * I FORGOT THIS IN THE VIDEO
-   * Update URL when pagination changes
-   */
-  const router = useRouter()
-
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
     searchParams.set("page", (pagination.pageIndex + 1).toString())
     searchParams.set("limit", pagination.pageSize.toString())
     router.push(`?${searchParams.toString()}`, { scroll: false })
   }, [pagination, router])
-
-  /**
-   * END OF WHAT I FORGOT IN THE VIDEO
-   */
 
   const numericFieldSums = useMemo(() => {
     if (!data?.events || data.events.length === 0) return {}
@@ -345,8 +355,21 @@ export const TypePageContent = ({
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <div className="w-full flex flex-col gap-4">
-            <Heading className="text-3xl">Event overview</Heading>
+          <div className="flex items-center gap-4">
+            <Heading className="text-3xl">Event Overview</Heading>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                Rows per page:
+              </span>
+              <Input
+                type="number"
+                min="1"
+                max="100"
+                value={limitInput}
+                onChange={handleLimitChange}
+                className="w-20 dark:text-gray-300"
+              />
+            </div>
           </div>
         </div>
 
