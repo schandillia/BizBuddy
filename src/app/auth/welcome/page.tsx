@@ -1,4 +1,4 @@
-// src/app/(auth)/welcome/page.tsx
+// src/app/auth/welcome/page.tsx
 "use client"
 
 import { useQuery, useMutation } from "@tanstack/react-query"
@@ -9,7 +9,7 @@ import { Heading } from "@/components/heading"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { BackgroundPattern } from "@/components/background-pattern"
 
-const WelcomePage = () => {
+const Page = () => {
   const router = useRouter()
 
   // Query to check user status
@@ -57,4 +57,4 @@ const WelcomePage = () => {
   )
 }
 
-export default WelcomePage
+export default Page

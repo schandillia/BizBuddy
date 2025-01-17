@@ -38,7 +38,7 @@ const Page = () => {
       <section
         className="relative py-24 sm:py-32 sm:pt-12 bg-brand-25 dark:bg-brand-950"
         style={{
-          backgroundImage: `url('/landing.svg')`,
+          backgroundImage: `url('/images/landing.svg')`,
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
           backgroundSize: "cover",
@@ -113,7 +113,7 @@ const Page = () => {
               <MockDiscordUI>
                 <AnimatedList>
                   <DiscordMessage
-                    avatarSrc="/brand-asset-profile-picture.png"
+                    avatarSrc="/images/brand-asset-profile-picture.png"
                     avatarAlt={`${brand.BRAND} Avatar`}
                     username={`${brand.BRAND}`}
                     timestamp="Today at 12:35PM"
@@ -126,7 +126,7 @@ const Page = () => {
                     }}
                   />
                   <DiscordMessage
-                    avatarSrc="/brand-asset-profile-picture.png"
+                    avatarSrc="/images/brand-asset-profile-picture.png"
                     avatarAlt={`${brand.BRAND} Avatar`}
                     username={`${brand.BRAND}`}
                     timestamp="Today at 12:35PM"
@@ -140,7 +140,7 @@ const Page = () => {
                     }}
                   />
                   <DiscordMessage
-                    avatarSrc="/brand-asset-profile-picture.png"
+                    avatarSrc="/images/brand-asset-profile-picture.png"
                     avatarAlt={`${brand.BRAND} Avatar`}
                     username={`${brand.BRAND}`}
                     timestamp="Today at 5:11AM"
@@ -189,7 +189,7 @@ const Page = () => {
                   <div className="absolute inset-x-10 bottom-0 top-10 overflow-hidden rounded-t-[12cqw] border-x-[3cqw] border-t-[3cqw] border-gray-700 bg-gray-900 shadow-2xl">
                     <Image
                       className="size-full object-cover object-top"
-                      src="/phone-screen.png"
+                      src="/images/phone-screen.png"
                       alt="Phone screen displaying app interface"
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
@@ -217,7 +217,7 @@ const Page = () => {
                 <div className="flex flex-1 items-center justify-center px-8 max-lg:pb-12 max-lg:pt-10 sm:px-10 lg:pb-2">
                   <Image
                     className="w-full max-lg:max-w-xs"
-                    src="/bento-any-event.png"
+                    src="/images/bento-any-event.png"
                     alt="Bento box illustrating event tracking"
                     width={500}
                     height={300}
@@ -245,7 +245,7 @@ const Page = () => {
                 <div className="flex flex-1 items-center justify-center px-8 max-lg:pb-12 max-lg:pt-10 sm:px-10 lg:pb-2">
                   <Image
                     className="w-full max-lg:max-w-xs"
-                    src="/bento-custom-data.png"
+                    src="/images/bento-custom-data.png"
                     alt="Bento box illustrating custom data tracking"
                     width={500}
                     height={300}

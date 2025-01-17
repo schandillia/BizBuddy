@@ -1,12 +1,12 @@
 [
   {
-    "imageSrc": "/user-2.png",
+    "imageSrc": "/images/user-2.png",
     "name": "Freya Larsson",
     "handle": "itsfreya",
     "feedback": "BizBuddy has been a game-changer for me. I've been using it for two months now and seeing sales pop up in real-time is super satisfying."
   },
   {
-    "imageSrc": "/user-1.png",
+    "imageSrc": "/images/user-1.png",
     "name": "Kai Durant",
     "handle": "kdurant_",
     "feedback": "BizBuddy’s been paying off for our SaaS. Nice to have simple way to see how we're doing day-to-day. Definitely makes our lives easier."

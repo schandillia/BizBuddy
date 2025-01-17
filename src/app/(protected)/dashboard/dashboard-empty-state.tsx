@@ -21,7 +21,7 @@ export const DashboardEmptyState = () => {
     <Card className="flex flex-col items-center justify-center rounded-2xl flex-1 text-center p-6 dark:bg-brand-950">
       <div className="flex justify-center w-full">
         <img
-          src="/brand-asset-wave.png"
+          src="/images/brand-asset-wave.png"
           alt="No types"
           className="size-48 -mt-24"
         />

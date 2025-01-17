@@ -51,7 +51,6 @@ export const Navbar = async () => {
                   </Link>
                 ))}
                 <div className="h-8 w-px bg-gray-200" />
-                {/* <SignInButton /> */}
                 <AuthButton />
               </>
             )}
