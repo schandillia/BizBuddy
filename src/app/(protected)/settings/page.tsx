@@ -52,7 +52,7 @@ const Page = async ({ searchParams }: PageProps) => {
       {success ? <PaymentSuccessModal /> : null}
 
       <UserPage title="Profile">
-        <div>settings home</div>
+        <p>settings home</p>
       </UserPage>
     </>
   )

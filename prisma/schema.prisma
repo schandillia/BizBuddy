@@ -23,9 +23,7 @@ enum Channel {
   DISCORD
   EMAIL
   WEBEX
-  WHATSAPP
   SLACK
-  TEAMS
   NONE
 }
 
@@ -51,9 +49,7 @@ model User {
   discordId      String?
   emailId        String?
   webexId        String?
-  whatsappId     String?
   slackId        String?
-  teamsId        String?
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

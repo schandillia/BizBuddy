@@ -61,14 +61,7 @@ const Page = () => {
               </div>
               <div className="text-center">
                 <CyclingText
-                  words={[
-                    "Email",
-                    "Discord",
-                    "Slack",
-                    "Teams",
-                    "Webex",
-                    "WhatsApp",
-                  ]}
+                  words={["Email", "Discord", "Slack", "Webex"]}
                   interval={1000}
                 />
               </div>

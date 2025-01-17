@@ -17,14 +17,7 @@ import { Button } from "@/components/ui/button"
 import InstructionsBox from "./instructions/instructions-box"
 import { Loader2 } from "lucide-react"
 
-type ServiceName =
-  | "DISCORD"
-  | "EMAIL"
-  | "WEBEX"
-  | "WHATSAPP"
-  | "SLACK"
-  | "TEAMS"
-  | "NONE"
+type ServiceName = "DISCORD" | "EMAIL" | "WEBEX" | "SLACK" | "NONE"
 
 type ChannelIds = {
   [K in Exclude<ServiceName, "NONE">]: string
@@ -35,9 +28,7 @@ type ChannelsPageContentProps = {
   discordId: string
   emailId: string
   webexId: string
-  whatsappId: string
   slackId: string
-  teamsId: string
 }
 
 export const ChannelsPageContent = ({
@@ -45,9 +36,7 @@ export const ChannelsPageContent = ({
   discordId: initialDiscordId,
   emailId: initialEmailId,
   webexId: initialWebexId,
-  whatsappId: initialWhatsappId,
   slackId: initialSlackId,
-  teamsId: initialTeamsId,
 }: ChannelsPageContentProps) => {
   const [activeChannel, setActiveChannel] =
     useState<ServiceName>(initialActiveChannel)
@@ -56,9 +45,7 @@ export const ChannelsPageContent = ({
     DISCORD: initialDiscordId,
     EMAIL: initialEmailId,
     WEBEX: initialWebexId,
-    WHATSAPP: initialWhatsappId,
     SLACK: initialSlackId,
-    TEAMS: initialTeamsId,
   })
 
   const { mutate, isPending } = useMutation({
@@ -67,26 +54,20 @@ export const ChannelsPageContent = ({
       discordId,
       emailId,
       webexId,
-      whatsappId,
       slackId,
-      teamsId,
     }: {
       activeChannel: ServiceName
       discordId?: string
       emailId?: string
       webexId?: string
-      whatsappId?: string
       slackId?: string
-      teamsId?: string
     }) => {
       const res = await client.project.setChannel.$post({
         activeChannel,
         discordId,
         emailId,
         webexId,
-        whatsappId,
         slackId,
-        teamsId,
       })
       return await res.json()
     },
@@ -105,12 +86,6 @@ export const ChannelsPageContent = ({
     },
     { name: "WEBEX", displayName: "Webex", placeholder: "Enter your Webex ID" },
     { name: "SLACK", displayName: "Slack", placeholder: "Enter your Slack ID" },
-    {
-      name: "WHATSAPP",
-      displayName: "WhatsApp",
-      placeholder: "Enter your WhatsApp ID",
-    },
-    { name: "TEAMS", displayName: "Teams", placeholder: "Enter your Teams ID" },
   ]
 
   const handleInputChange = (
@@ -133,9 +108,7 @@ export const ChannelsPageContent = ({
     DISCORD: 20,
     EMAIL: 254,
     WEBEX: 100,
-    WHATSAPP: 50,
     SLACK: 20,
-    TEAMS: 100,
   } as const
 
   const handleSave = () => {
@@ -148,9 +121,7 @@ export const ChannelsPageContent = ({
       discordId: channelIds.DISCORD?.trim() || undefined,
       emailId: channelIds.EMAIL?.trim() || undefined,
       webexId: channelIds.WEBEX?.trim() || undefined,
-      whatsappId: channelIds.WHATSAPP?.trim() || undefined,
       slackId: channelIds.SLACK?.trim() || undefined,
-      teamsId: channelIds.TEAMS?.trim() || undefined,
     }
 
     // Service-specific length validation
@@ -242,8 +213,6 @@ export const ChannelsPageContent = ({
       {activeChannel === "DISCORD" && <InstructionsBox channel="discord" />}
       {activeChannel === "WEBEX" && <InstructionsBox channel="webex" />}
       {activeChannel === "SLACK" && <InstructionsBox channel="slack" />}
-      {activeChannel === "WHATSAPP" && <InstructionsBox channel="whatsapp" />}
-      {activeChannel === "TEAMS" && <InstructionsBox channel="teams" />}
       {activeChannel === "EMAIL" && <InstructionsBox channel="email" />}
     </div>
   )

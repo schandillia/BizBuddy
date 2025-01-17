@@ -49,12 +49,10 @@ export const UserPage = ({
           <Heading>{title}</Heading>
         </div>
 
-        {/* Right: DashboardNavButton */}
         <div className="hidden md:block">
           <DashboardNavButton />
         </div>
       </div>
-
       {/* Content */}
       <div className="flex-1 p-6 sm:p-8 flex flex-col overflow-y-auto">
         {children}

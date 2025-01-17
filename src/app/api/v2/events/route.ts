@@ -3,7 +3,6 @@ import { FREE_QUOTA, PRO_QUOTA } from "@/config"
 import { db } from "@/prisma"
 import { sendToDiscord } from "@/lib/api/channels/discord"
 import { sendToSlack } from "@/lib/api/channels/slack"
-import { sendToTeams } from "@/lib/api/channels/teams"
 import { sendToWebex } from "@/lib/api/channels/webex"
 import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
@@ -60,14 +59,6 @@ const validateChannelConfig = (
         }
       }
       break
-    case "WHATSAPP":
-      if (!user.whatsappId) {
-        return {
-          isValid: false,
-          message: "Please enter your WhatsApp number in your account settings",
-        }
-      }
-      break
     case "NONE":
       return {
         isValid: false,
@@ -100,11 +91,6 @@ const sendEventToChannel = async (
     case "SLACK":
       return await sendToSlack({
         slackId: user.slackId,
-        eventData,
-      })
-    case "TEAMS":
-      return await sendToTeams({
-        teamsId: user.teamsId,
         eventData,
       })
     default:

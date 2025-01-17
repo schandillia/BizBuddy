@@ -20,7 +20,7 @@ export const Navbar = async () => {
       | "secondary"
       | "ghost"
       | "link"
-  }[] = [{ href: "/pricing", label: "Pricing", variant: "ghost" }]
+  }[] = [{ href: "/pricing", label: "Pricing", variant: "link" }]
 
   return (
     <nav className="sticky z-10 h-16 inset-x-0 top-0 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-brand-900/75 backdrop-blur-lg transition-all">

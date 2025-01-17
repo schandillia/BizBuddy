@@ -41,21 +41,11 @@ export const projectRouter = router({
   setChannel: privateProcedure
     .input(
       z.object({
-        activeChannel: z.enum([
-          "DISCORD",
-          "EMAIL",
-          "WEBEX",
-          "WHATSAPP",
-          "SLACK",
-          "TEAMS",
-          "NONE",
-        ]),
+        activeChannel: z.enum(["DISCORD", "EMAIL", "WEBEX", "SLACK", "NONE"]),
         discordId: z.string().max(20).optional(), // Discord uses snowflake IDs, always 17-19 digits
         emailId: z.string().max(254).optional(), // Max email length per RFC 5321
         webexId: z.string().max(100).optional(), // WebEx uses emails or room IDs
-        whatsappId: z.string().max(50).optional(), // WhatsApp numbers with country code
         slackId: z.string().max(20).optional(), // Slack user IDs are usually 9-11 chars
-        teamsId: z.string().max(100).optional(), // Teams uses UPNs or chat IDs
       })
     )
     .mutation(async ({ ctx, input, c }) => {
@@ -68,9 +58,7 @@ export const projectRouter = router({
           discordId: input.discordId?.trim() || null,
           emailId: input.emailId?.trim() || null,
           webexId: input.webexId?.trim() || null,
-          whatsappId: input.whatsappId?.trim() || null,
           slackId: input.slackId?.trim() || null,
-          teamsId: input.teamsId?.trim() || null,
         },
       })
 
