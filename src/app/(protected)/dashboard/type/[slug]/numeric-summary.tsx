@@ -8,13 +8,17 @@ import {
   startOfYear,
 } from "date-fns"
 import { useMemo } from "react"
-import { StatsTabs, TimeRange } from "./stats-tabs"
+import { StatsTabs } from "@/app/(protected)/dashboard/type/[slug]/stats-tabs"
+import {
+  type TimeRange,
+  type DateRange,
+} from "@/app/(protected)/dashboard/type/[slug]/types"
 
 interface NumericSummaryProps {
   events: Event[]
   eventsCount: number
   activeTab: TimeRange
-  onTabChange: (value: TimeRange) => void
+  onTabChange: (value: TimeRange, dateRange?: DateRange) => void
 }
 
 export const NumericSummary = ({

@@ -1,5 +1,6 @@
 // @/app/(protected)/dashboard/type/[slug]/numeric-field-sum-cards.tsx
 
+import { type TimeRange } from "@/app/(protected)/dashboard/type/[slug]/types"
 import { Card } from "@/components/ui/card"
 import { ChartNoAxesCombined } from "lucide-react"
 
@@ -14,7 +15,7 @@ interface NumericFieldSumCardsProps {
       today: number
     }
   >
-  activeTab: "today" | "week" | "month" | "year"
+  activeTab: TimeRange
 }
 
 export const NumericFieldSumCards = ({

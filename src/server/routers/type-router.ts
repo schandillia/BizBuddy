@@ -195,21 +195,86 @@ export const typeRouter = router({
       return c.json({ hasEvents })
     }),
 
+  // In type-router.ts, update the input validation and query handler:
+
   getEventsByTypeName: privateProcedure
     .input(
       z.object({
         name: TYPE_NAME_VALIDATOR,
         page: z.number(),
         limit: z.number().max(50),
-        timeRange: z.enum(["today", "week", "month", "year"]),
+        timeRange: z.enum(["today", "week", "month", "year", "custom"]),
+        // Add optional from and to dates for custom range
+        from: z.string().datetime().optional(),
+        to: z.string().datetime().optional(),
       })
     )
     .query(async ({ c, ctx, input }) => {
-      const { name, page, limit, timeRange } = input
+      const { name, page, limit, timeRange, from, to } = input
 
       const now = new Date()
       let startDate: Date
 
+      if (timeRange === "custom" && from && to) {
+        // Use the custom date range if provided
+        startDate = new Date(from)
+        const endDate = new Date(to)
+
+        const [events, eventsCount, uniqueFieldCount] = await Promise.all([
+          db.event.findMany({
+            where: {
+              EventType: { name, userId: ctx.user.id },
+              createdAt: {
+                gte: startDate,
+                lte: endDate,
+              },
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: { createdAt: "desc" },
+          }),
+          db.event.count({
+            where: {
+              EventType: { name, userId: ctx.user.id },
+              createdAt: {
+                gte: startDate,
+                lte: endDate,
+              },
+            },
+          }),
+          db.event
+            .findMany({
+              where: {
+                EventType: { name, userId: ctx.user.id },
+                createdAt: {
+                  gte: startDate,
+                  lte: endDate,
+                },
+              },
+              select: {
+                fields: true,
+              },
+              distinct: ["fields"],
+            })
+            .then((events: Event[]) => {
+              const fieldNames = new Set<string>()
+              events.forEach((event) => {
+                Object.keys(event.fields as object).forEach((fieldName) => {
+                  fieldNames.add(fieldName)
+                })
+              })
+              return fieldNames.size
+            }),
+        ])
+
+        return c.superjson({
+          events,
+          eventsCount,
+          uniqueFieldCount,
+        })
+      }
+
+      // Existing code for other time ranges
       switch (timeRange) {
         case "today":
           startDate = startOfDay(now)
@@ -222,6 +287,9 @@ export const typeRouter = router({
           break
         case "year":
           startDate = startOfYear(now)
+          break
+        default:
+          startDate = startOfDay(now)
       }
 
       const [events, eventsCount, uniqueFieldCount] = await Promise.all([

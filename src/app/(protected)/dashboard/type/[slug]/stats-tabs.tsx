@@ -1,15 +1,25 @@
-// @/app/(protected)/dashboard/type/[slug]/stats-tabs.tsx
-
 import { NumericFieldSumCards } from "@/app/(protected)/dashboard/type/[slug]/numeric-field-sum-cards"
+import {
+  type TimeRange,
+  type DateRange,
+} from "@/app/(protected)/dashboard/type/[slug]/types"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import { Card } from "@/components/ui/card"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChartNoAxesCombined } from "lucide-react"
-
-export type TimeRange = "today" | "week" | "month" | "year"
+import { cn } from "@/utils"
+import { format } from "date-fns"
+import { Calendar as CalendarIcon, ChartNoAxesCombined } from "lucide-react"
+import { useState } from "react"
 
 interface StatsTabsProps {
   activeTab: TimeRange
-  onTabChange: (value: TimeRange) => void
+  onTabChange: (value: TimeRange, dateRange?: DateRange) => void
   eventsCount: number
   numericFieldSums: Record<
     string,
@@ -29,11 +39,31 @@ export const StatsTabs = ({
   eventsCount,
   numericFieldSums,
 }: StatsTabsProps) => {
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: undefined,
+    to: undefined,
+  })
+
+  const handleTabChange = (value: TimeRange) => {
+    if (value === "custom") {
+      onTabChange(value, dateRange)
+    } else {
+      onTabChange(value)
+    }
+  }
+
+  const handleDateSelect = (newDateRange: DateRange) => {
+    setDateRange(newDateRange)
+    if (newDateRange.from && newDateRange.to) {
+      onTabChange("custom", newDateRange)
+    }
+  }
+
   return (
     <Tabs
       value={activeTab}
       onValueChange={(value) => {
-        onTabChange(value as TimeRange)
+        handleTabChange(value as TimeRange)
       }}
     >
       <TabsList className="mb-2 text-gray-200 bg-brand-600 dark:bg-brand-900">
@@ -61,7 +91,78 @@ export const StatsTabs = ({
         >
           This Year
         </TabsTrigger>
+        <TabsTrigger
+          value="custom"
+          className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
+        >
+          Custom
+        </TabsTrigger>
       </TabsList>
+
+      {activeTab === "custom" && (
+        <div className="flex gap-4 mb-4">
+          <div className="grid gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-[240px] justify-start text-left font-normal",
+                    !dateRange.from && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 size-4" />
+                  {dateRange.from ? (
+                    format(dateRange.from, "PPP")
+                  ) : (
+                    <span>Pick a start date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dateRange.from}
+                  onSelect={(date: Date | undefined) =>
+                    handleDateSelect({ ...dateRange, from: date })
+                  }
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div className="grid gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-[240px] justify-start text-left font-normal",
+                    !dateRange.to && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 size-4" />
+                  {dateRange.to ? (
+                    format(dateRange.to, "PPP")
+                  ) : (
+                    <span>Pick an end date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dateRange.to}
+                  onSelect={(date: Date | undefined) =>
+                    handleDateSelect({ ...dateRange, to: date })
+                  }
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+      )}
 
       <TabsContent value={activeTab}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
@@ -75,7 +176,9 @@ export const StatsTabs = ({
               <p className="text-2xl font-bold">{eventsCount || 0}</p>
               <p className="text-xs/5 text-muted-foreground">
                 Events{" "}
-                {activeTab === "today"
+                {activeTab === "custom"
+                  ? "in selected range"
+                  : activeTab === "today"
                   ? "today"
                   : activeTab === "week"
                   ? "this week"

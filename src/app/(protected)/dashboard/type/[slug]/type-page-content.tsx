@@ -20,7 +20,10 @@ import { useEffect, useMemo, useState } from "react"
 import { EmptyTypeState } from "@/app/(protected)/dashboard/type/[slug]/empty-type-state"
 import { EventTable } from "@/app/(protected)/dashboard/type/[slug]/event-table"
 import { NumericSummary } from "@/app/(protected)/dashboard/type/[slug]/numeric-summary"
-import { TimeRange } from "@/app/(protected)/dashboard/type/[slug]/stats-tabs"
+import {
+  type TimeRange,
+  type DateRange,
+} from "@/app/(protected)/dashboard/type/[slug]/types"
 import { Heading } from "@/components/heading"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/utils"
@@ -50,6 +53,10 @@ export const TypePageContent = ({
   const router = useRouter()
 
   const [activeTab, setActiveTab] = useState<TimeRange>("today")
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: undefined,
+    to: undefined,
+  })
 
   const page = parseInt(searchParams.get("page") || "1", 10)
   const limit = parseInt(searchParams.get("limit") || "30", 10)
@@ -72,15 +79,23 @@ export const TypePageContent = ({
       pagination.pageIndex,
       pagination.pageSize,
       activeTab,
+      dateRange.from,
+      dateRange.to,
     ],
     queryFn: async () => {
-      const res = await client.type.getEventsByTypeName.$get({
+      const params: any = {
         name: type.name,
         page: pagination.pageIndex + 1,
         limit: pagination.pageSize,
         timeRange: activeTab,
-      })
+      }
 
+      if (activeTab === "custom" && dateRange.from && dateRange.to) {
+        params.from = dateRange.from.toISOString()
+        params.to = dateRange.to.toISOString()
+      }
+
+      const res = await client.type.getEventsByTypeName.$get(params)
       return await res.json()
     },
     refetchOnWindowFocus: false,
@@ -291,7 +306,12 @@ export const TypePageContent = ({
         events={data?.events || []}
         eventsCount={data?.eventsCount || 0}
         activeTab={activeTab}
-        onTabChange={(value) => setActiveTab(value)}
+        onTabChange={(value: TimeRange, newDateRange?: DateRange) => {
+          setActiveTab(value)
+          if (newDateRange) {
+            setDateRange(newDateRange)
+          }
+        }}
       />
 
       <div className="flex flex-col gap-4">
