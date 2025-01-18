@@ -20,6 +20,7 @@ import {
 } from "date-fns"
 
 import {
+  Column,
   ColumnDef,
   ColumnFiltersState,
   flexRender,
@@ -118,25 +119,17 @@ export const TypePageContent = ({
   const columns: ColumnDef<Event>[] = useMemo(
     () => [
       {
-        accessorKey: "type",
-        header: "Type",
-        cell: () => <span>{type.name || "Uncategorized"}</span>,
-      },
-      {
+        id: "createdAt",
         accessorKey: "createdAt",
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Date
-              <ArrowUpDown className="ml-2 size-4" />
-            </Button>
-          )
-        },
+        header: ({ column }: { column: Column<Event, unknown> }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Date
+            <ArrowUpDown className="ml-2 size-4" />
+          </Button>
+        ),
         cell: ({ row }) => {
           return new Date(row.getValue("createdAt")).toLocaleDateString(
             "en-US",
@@ -153,16 +146,36 @@ export const TypePageContent = ({
       },
       ...(data?.events[0]
         ? Object.keys(data.events[0].fields as object).map((field) => ({
+            id: field,
             accessorFn: (row: Event) =>
               (row.fields as Record<string, any>)[field],
-            header: field,
+            header: ({ column }: { column: Column<Event, unknown> }) => (
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  column.toggleSorting(column.getIsSorted() === "asc")
+                }
+              >
+                {field}
+                <ArrowUpDown className="ml-2 size-4" />
+              </Button>
+            ),
             cell: ({ row }: { row: Row<Event> }) =>
               (row.original.fields as Record<string, any>)[field] || "-",
           }))
         : []),
       {
+        id: "deliveryStatus",
         accessorKey: "deliveryStatus",
-        header: "Delivery Status",
+        header: ({ column }: { column: Column<Event, unknown> }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Delivery Status
+            <ArrowUpDown className="ml-2 size-4" />
+          </Button>
+        ),
         cell: ({ row }) => (
           <span
             className={cn("px-2 py-1 rounded-full text-xs font-semibold", {
@@ -179,7 +192,7 @@ export const TypePageContent = ({
         ),
       },
     ],
-    [type.name, data?.events]
+    [data?.events]
   )
 
   const [sorting, setSorting] = useState<SortingState>([])
