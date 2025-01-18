@@ -2,28 +2,32 @@
 
 "use client"
 
+import { Input } from "@/components/ui/input"
+import { client } from "@/lib/client"
 import { Event, EventType } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
-import { useEffect, useMemo, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { client } from "@/lib/client"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ArrowUpDown, ChartNoAxesCombined } from "lucide-react"
 import {
   isAfter,
   isToday,
-  startOfYear,
   startOfMonth,
   startOfWeek,
+  startOfYear,
 } from "date-fns"
+import { ArrowUpDown } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
 
+import { EmptyTypeState } from "@/app/(protected)/dashboard/type/[slug]/empty-type-state"
+import { EventTable } from "@/app/(protected)/dashboard/type/[slug]/event-table"
+import { NumericSummary } from "@/app/(protected)/dashboard/type/[slug]/numeric-summary"
+import { TimeRange } from "@/app/(protected)/dashboard/type/[slug]/stats-tabs"
+import { Heading } from "@/components/heading"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/utils"
 import {
   Column,
   ColumnDef,
   ColumnFiltersState,
-  flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
@@ -32,11 +36,6 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/utils"
-import { Heading } from "@/components/heading"
-import { EmptyTypeState } from "@/app/(protected)/dashboard/type/[slug]/empty-type-state"
-import { EventTable } from "@/app/(protected)/dashboard/type/[slug]/event-table"
 
 interface TypePageContentProps {
   hasEvents: boolean
@@ -50,9 +49,7 @@ export const TypePageContent = ({
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const [activeTab, setActiveTab] = useState<
-    "today" | "week" | "month" | "year"
-  >("today")
+  const [activeTab, setActiveTab] = useState<TimeRange>("today")
 
   const page = parseInt(searchParams.get("page") || "1", 10)
   const limit = parseInt(searchParams.get("limit") || "30", 10)
@@ -267,6 +264,13 @@ export const TypePageContent = ({
             sums[field].thisMonth += value
           }
 
+          if (
+            isAfter(eventDate, yearStart) ||
+            eventDate.getTime() === yearStart.getTime()
+          ) {
+            sums[field].thisYear += value
+          }
+
           if (isToday(eventDate)) {
             sums[field].today += value
           }
@@ -277,107 +281,18 @@ export const TypePageContent = ({
     return sums
   }, [data?.events])
 
-  const NumericFieldSumCards = () => {
-    if (Object.keys(numericFieldSums).length === 0) return null
-
-    return Object.entries(numericFieldSums).map(([field, sums]) => {
-      const relevantSum =
-        activeTab === "today"
-          ? sums.today
-          : activeTab === "week"
-          ? sums.thisWeek
-          : sums.thisMonth
-
-      return (
-        <Card key={field}>
-          <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <p className="text-sm/6 font-medium">{field}</p>
-            <ChartNoAxesCombined className="size-4 text-muted-foreground" />
-          </div>
-
-          <div>
-            <p className="text-2xl font-bold">{relevantSum.toFixed(0)}</p>
-            <p className="text-xs/5 text-muted-foreground">
-              {activeTab === "today"
-                ? "today"
-                : activeTab === "week"
-                ? "this week"
-                : activeTab === "month"
-                ? "this month"
-                : "this year"}
-            </p>
-          </div>
-        </Card>
-      )
-    })
-  }
-
   if (!pollingData.hasEvents) {
     return <EmptyTypeState typeName={type.name} />
   }
 
   return (
     <div className="space-y-6">
-      <Tabs
-        value={activeTab}
-        onValueChange={(value) => {
-          setActiveTab(value as "today" | "week" | "month" | "year")
-        }}
-      >
-        <TabsList className="mb-2 text-gray-200 bg-brand-600 dark:bg-brand-900">
-          <TabsTrigger
-            value="today"
-            className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-          >
-            Today
-          </TabsTrigger>
-          <TabsTrigger
-            value="week"
-            className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-          >
-            This Week
-          </TabsTrigger>
-          <TabsTrigger
-            value="month"
-            className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-          >
-            This Month
-          </TabsTrigger>
-          <TabsTrigger
-            value="year"
-            className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-          >
-            This Year
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value={activeTab}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-            <Card>
-              <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <p className="text-sm/6 font-medium">Total Events</p>
-                <ChartNoAxesCombined className="size-4 text-muted-foreground" />
-              </div>
-
-              <div>
-                <p className="text-2xl font-bold">{data?.eventsCount || 0}</p>
-                <p className="text-xs/5 text-muted-foreground">
-                  Events{" "}
-                  {activeTab === "today"
-                    ? "today"
-                    : activeTab === "week"
-                    ? "this week"
-                    : activeTab === "month"
-                    ? "this month"
-                    : "this year"}
-                </p>
-              </div>
-            </Card>
-
-            <NumericFieldSumCards />
-          </div>
-        </TabsContent>
-      </Tabs>
+      <NumericSummary
+        events={data?.events || []}
+        eventsCount={data?.eventsCount || 0}
+        activeTab={activeTab}
+        onTabChange={(value) => setActiveTab(value)}
+      />
 
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
