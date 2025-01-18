@@ -54,18 +54,19 @@ export const Sidebar = ({
         if (!open) closeSidebar()
       }}
     >
-      {/* Invisible backdrop - only handles clicks */}
+      {/* Visible backdrop with blur and dark overlay */}
       <div
         onClick={closeSidebar}
         className={cn(
-          "fixed inset-0 z-40",
-          showSidebar ? "pointer-events-auto" : "pointer-events-none"
+          "fixed inset-0 z-40 bg-black/50 backdrop-blur-sm",
+          "transition-opacity duration-300",
+          showSidebar ? "opacity-100" : "opacity-0"
         )}
       />
 
       <div
         className={cn(
-          "fixed inset-y-0 flex flex-col",
+          "fixed inset-y-0 flex",
           slideFrom === "right" ? "right-0" : "left-0",
           width,
           "max-w-xs z-50",
@@ -77,30 +78,32 @@ export const Sidebar = ({
           mounted && !isClosing && "translate-x-0",
           isClosing && slideFrom === "right" && "translate-x-full",
           isClosing && slideFrom === "left" && "-translate-x-full",
-          "shadow-lg", // Added shadow to make sidebar stand out without backdrop
+          "shadow-lg",
           className
         )}
       >
-        <div className="relative flex items-center justify-between h-16 px-4">
-          <div className="flex items-center">
-            <BrandLogo />
+        <div className="flex flex-col w-full h-full">
+          <div className="relative flex items-center justify-between h-16 px-4">
+            <div className="flex items-center">
+              <BrandLogo />
+            </div>
+            <button
+              onClick={closeSidebar}
+              className="absolute right-4 p-2 rounded-full transition-colors duration-200"
+            >
+              <X className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            </button>
           </div>
-          <button
-            onClick={closeSidebar}
-            className="absolute right-4 p-2 rounded-full transition-colors duration-200"
-          >
-            <X className="w-6 h-6 text-gray-600 dark:text-gray-300" />
-          </button>
-        </div>
 
-        <div
-          className={cn(
-            "flex-1 overflow-y-auto px-4 pb-4",
-            "transition-opacity duration-300 ease-in-out",
-            showSidebar ? "opacity-100" : "opacity-0"
-          )}
-        >
-          {children}
+          <div
+            className={cn(
+              "flex-1 flex flex-col overflow-y-auto min-h-0",
+              "transition-opacity duration-300 ease-in-out",
+              showSidebar ? "opacity-100" : "opacity-0"
+            )}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </Dialog>

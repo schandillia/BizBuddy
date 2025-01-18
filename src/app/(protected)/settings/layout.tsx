@@ -84,14 +84,14 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
       </Link>
 
       {/* navigation section */}
-      <nav className="flex-1 mb-6">
+      <nav className="flex-1 overflow-y-auto">
         <ul>
           {SIDEBAR_ITEMS.map(({ type, items }) => (
             <li key={type} className="mb-4 md:mb-8">
               <p className="text-xs font-medium leading-6 text-zinc-500 dark:text-zinc-400 ml-4">
                 {type}
               </p>
-              <div className="-mx-2 flex flex-1 flex-col">
+              <div className="flex flex-1 flex-col">
                 {items.map((item, i) => {
                   const isActive = pathname === item.href
                   return (
@@ -100,7 +100,7 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
                       href={item.href}
                       className={cn(
                         buttonVariants({ variant: "ghost" }),
-                        "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-2 py-1.5 text-sm font-medium leading-6 cursor-pointer",
+                        "w-full justify-start group flex items-center gap-x-2.5 rounded-md px-4 py-1.5 text-sm font-medium leading-6 cursor-pointer",
                         isActive
                           ? "bg-gray-50 dark:bg-brand-900 text-brand-900 dark:text-brand-200"
                           : "text-zinc-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-brand-900 transition"
@@ -109,7 +109,7 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
                     >
                       <item.icon
                         className={cn(
-                          "size-4 ml-4",
+                          "size-4",
                           isActive
                             ? "text-brand-900 dark:text-brand-200"
                             : "text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200"
@@ -126,7 +126,7 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
       </nav>
 
       {/* footer section */}
-      <footer className="mt-auto pt-4">
+      <footer className="mt-auto pt-4 shrink-0">
         <hr className="mb-4 w-full h-px bg-gray-100 dark:bg-brand-700 dark:border-brand-950" />
         <div className="flex justify-between items-center pr-4 ml-4">
           <Button className="flex-row-reverse dark:text-gray-400">user</Button>
