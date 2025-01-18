@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { FaFileCsv } from "react-icons/fa"
+import { FaFileCsv } from "react-icons/fa6"
 import { RiFileExcel2Fill } from "react-icons/ri"
 import { Event } from "@prisma/client"
 import * as XLSX from "xlsx"
@@ -91,14 +91,9 @@ const Export = ({ data, filename = "export" }: ExportProps) => {
 
     const formattedData = getFormattedData()
 
-    // Create a new workbook and worksheet
     const wb = XLSX.utils.book_new()
     const ws = XLSX.utils.json_to_sheet(formattedData)
-
-    // Add the worksheet to the workbook
     XLSX.utils.book_append_sheet(wb, ws, "Events")
-
-    // Generate Excel file and trigger download
     XLSX.writeFile(
       wb,
       `${filename}_${new Date().toISOString().split("T")[0]}.xlsx`
@@ -106,24 +101,31 @@ const Export = ({ data, filename = "export" }: ExportProps) => {
   }
 
   return (
-    <div className="gap-y-2">
+    <div className="flex gap-3">
       <Button
-        size="sm"
-        variant="ghost"
-        className="text-gray-600 dark:text-gray-300"
+        size="lg"
+        variant="outline"
+        className="relative group flex items-center justify-center p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-blue-500/50 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-300"
         onClick={downloadCSV}
         disabled={!data || data.length === 0}
       >
-        <FaFileCsv className="size-6" />
+        <FaFileCsv className="size-5 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-200" />
+        <span className="absolute -bottom-8 scale-0 group-hover:scale-100 transition-all duration-200 text-xs text-gray-600 dark:text-gray-300">
+          CSV
+        </span>
       </Button>
+
       <Button
-        size="sm"
-        variant="ghost"
-        className="text-gray-600 dark:text-gray-300"
+        size="lg"
+        variant="outline"
+        className="relative group flex items-center justify-center p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-green-500/50 hover:bg-green-50 dark:hover:bg-green-950/30 transition-all duration-300"
         onClick={downloadExcel}
         disabled={!data || data.length === 0}
       >
-        <RiFileExcel2Fill className="size-6" />
+        <RiFileExcel2Fill className="size-5 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform duration-200" />
+        <span className="absolute -bottom-8 scale-0 group-hover:scale-100 transition-all duration-200 text-xs text-gray-600 dark:text-gray-300">
+          Excel
+        </span>
       </Button>
     </div>
   )
