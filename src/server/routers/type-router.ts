@@ -218,7 +218,9 @@ export const typeRouter = router({
       if (timeRange === "custom" && from && to) {
         // Use the custom date range if provided
         startDate = new Date(from)
-        const endDate = new Date(to)
+        const endDate = new Date(
+          new Date(to).setDate(new Date(to).getDate() + 1)
+        )
 
         const [events, eventsCount, uniqueFieldCount] = await Promise.all([
           db.event.findMany({

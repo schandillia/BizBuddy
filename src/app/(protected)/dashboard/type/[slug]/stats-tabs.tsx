@@ -102,71 +102,81 @@ export const StatsTabs = ({
       {activeTab === "custom" && (
         <div className="flex gap-4 mb-4">
           <div className="grid gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-[240px] justify-start text-left font-normal",
-                    !dateRange.from && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 size-4" />
-                  {dateRange.from ? (
-                    format(dateRange.from, "PPP")
-                  ) : (
-                    <span>Pick a start date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={dateRange.from}
-                  onSelect={(date: Date | undefined) =>
-                    handleDateSelect({ ...dateRange, from: date })
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="flex items-center gap-x-2">
+              <span className="text-xs text-gray-600 dark:text-gray-300">
+                FROM
+              </span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "justify-start text-left font-normal",
+                      !dateRange.from && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 size-4" />
+                    {dateRange.from ? (
+                      format(dateRange.from, "PP")
+                    ) : (
+                      <span>Pick a start date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dateRange.from}
+                    onSelect={(date: Date | undefined) =>
+                      handleDateSelect({ ...dateRange, from: date })
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
           <div className="grid gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-[240px] justify-start text-left font-normal",
-                    !dateRange.to && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 size-4" />
-                  {dateRange.to ? (
-                    format(dateRange.to, "PPP")
-                  ) : (
-                    <span>Pick an end date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={dateRange.to}
-                  onSelect={(date: Date | undefined) =>
-                    handleDateSelect({ ...dateRange, to: date })
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <div className="flex items-center gap-x-2">
+              <span className="text-xs text-gray-600 dark:text-gray-300">
+                TO
+              </span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "justify-start text-left font-normal",
+                      !dateRange.to && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 size-4" />
+                    {dateRange.to ? (
+                      format(dateRange.to, "PP")
+                    ) : (
+                      <span>Pick an end date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dateRange.to}
+                    onSelect={(date: Date | undefined) =>
+                      handleDateSelect({ ...dateRange, to: date })
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
         </div>
       )}
 
       <TabsContent value={activeTab}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-          <Card>
+          <Card className="relative z-0">
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
               <p className="text-sm/6 font-medium">Total Events</p>
               <ChartNoAxesCombined className="size-4 text-muted-foreground" />

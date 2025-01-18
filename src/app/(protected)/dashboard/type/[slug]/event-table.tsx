@@ -23,7 +23,7 @@ interface EventTableProps {
 
 export const EventTable = ({ table, columns, isFetching }: EventTableProps) => {
   return (
-    <Card contentClassName="px-6 py-4">
+    <Card className="relative z-0" contentClassName="px-6 py-4">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

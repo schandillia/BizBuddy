@@ -301,59 +301,61 @@ export const TypePageContent = ({
   }
 
   return (
-    <div className="space-y-6">
-      <NumericSummary
-        events={data?.events || []}
-        eventsCount={data?.eventsCount || 0}
-        activeTab={activeTab}
-        onTabChange={(value: TimeRange, newDateRange?: DateRange) => {
-          setActiveTab(value)
-          if (newDateRange) {
-            setDateRange(newDateRange)
-          }
-        }}
-      />
+    <div className="relative z-0">
+      <div className="space-y-6">
+        <NumericSummary
+          events={data?.events || []}
+          eventsCount={data?.eventsCount || 0}
+          activeTab={activeTab}
+          onTabChange={(value: TimeRange, newDateRange?: DateRange) => {
+            setActiveTab(value)
+            if (newDateRange) {
+              setDateRange(newDateRange)
+            }
+          }}
+        />
 
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Heading className="text-3xl">Event Overview</Heading>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">
-                Rows per page:
-              </span>
-              <Input
-                type="number"
-                min="1"
-                max="100"
-                value={limitInput}
-                onChange={handleLimitChange}
-                className="w-20 dark:text-gray-300"
-              />
+        <div className="flex flex-col gap-4 relative z-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Heading className="text-3xl">Event Overview</Heading>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  Rows per page:
+                </span>
+                <Input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={limitInput}
+                  onChange={handleLimitChange}
+                  className="w-20 dark:text-gray-300"
+                />
+              </div>
             </div>
           </div>
+
+          <EventTable table={table} columns={columns} isFetching={isFetching} />
         </div>
 
-        <EventTable table={table} columns={columns} isFetching={isFetching} />
-      </div>
-
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage() || isFetching}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage() || isFetching}
-        >
-          Next
-        </Button>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage() || isFetching}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage() || isFetching}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   )

@@ -53,7 +53,7 @@ export default function Footer() {
               {links.map((link, index) => (
                 <React.Fragment key={link.id}>
                   <Link
-                    href={link.id}
+                    href={`/${link.id}`}
                     className={buttonVariants({
                       variant: "link", // Use the "link" variant for button-like links
                       size: "sm", // Set to small size
