@@ -74,18 +74,21 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
   const pathname = usePathname()
 
   return (
-    <div className="space-y-4 md:space-y-6 relative z-20 flex flex-col h-full">
-      {/* logo */}
-      <Link href="/" className="hidden lg:block text-lg/7 font-semibold">
+    <div className="flex flex-col h-full">
+      {/* logo section */}
+      <Link
+        href="/"
+        className="hidden lg:block text-lg/7 font-semibold mb-6 ml-6"
+      >
         <BrandLogo />
       </Link>
 
-      {/* navigation items */}
-      <div className="flex-grow">
+      {/* navigation section */}
+      <nav className="flex-1 mb-6">
         <ul>
           {SIDEBAR_ITEMS.map(({ type, items }) => (
             <li key={type} className="mb-4 md:mb-8">
-              <p className="text-xs font-medium leading-6 text-zinc-500 dark:text-zinc-400">
+              <p className="text-xs font-medium leading-6 text-zinc-500 dark:text-zinc-400 ml-4">
                 {type}
               </p>
               <div className="-mx-2 flex flex-1 flex-col">
@@ -106,7 +109,7 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
                     >
                       <item.icon
                         className={cn(
-                          "size-4",
+                          "size-4 ml-4",
                           isActive
                             ? "text-brand-900 dark:text-brand-200"
                             : "text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200"
@@ -120,15 +123,16 @@ const SidebarContent = ({ onClose }: { onClose?: () => void }) => {
             </li>
           ))}
         </ul>
-      </div>
+      </nav>
 
-      <div className="flex flex-col">
-        <hr className="my-4 md:my-6 w-full h-px bg-gray-100 dark:bg-brand-700 dark:border-brand-950" />
-        <div className="flex justify-between items-center pr-6">
+      {/* footer section */}
+      <footer className="mt-auto pt-4">
+        <hr className="mb-4 w-full h-px bg-gray-100 dark:bg-brand-700 dark:border-brand-950" />
+        <div className="flex justify-between items-center pr-4 ml-4">
           <Button className="flex-row-reverse dark:text-gray-400">user</Button>
           <ThemeToggle />
         </div>
-      </div>
+      </footer>
     </div>
   )
 }
@@ -137,9 +141,9 @@ const Layout = ({ children }: PropsWithChildren) => {
   const [showSidebar, setShowSidebar] = useState(false)
 
   return (
-    <div className="relative h-screen flex flex-col md:flex-row bg-white dark:bg-brand-900/75 overflow-hidden">
+    <div className="relative h-screen flex flex-col md:flex-row bg-white dark:bg-brand-900/75">
       {/* sidebar for desktop */}
-      <div className="hidden md:block w-64 lg:w-80 border-r border-gray-100 dark:border-brand-900 p-6 pr-0 h-full text-brand-900 relative z-10">
+      <div className="hidden md:block w-64 lg:w-80 border-r border-gray-100 dark:border-brand-900 py-6">
         <SidebarContent />
       </div>
 
@@ -175,10 +179,13 @@ const Layout = ({ children }: PropsWithChildren) => {
             showSidebar={showSidebar}
             setShowSidebar={setShowSidebar}
             slideFrom="left"
-            className="p-4 block md:hidden"
+            className="block md:hidden"
             width="w-80"
           >
-            <SidebarContent onClose={() => setShowSidebar(false)} />
+            {/* Add a wrapper div inside the Sidebar */}
+            <div className="flex flex-col h-full py-4">
+              <SidebarContent onClose={() => setShowSidebar(false)} />
+            </div>
           </Sidebar>
         )}
       </div>

@@ -39,6 +39,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table"
+import Export from "@/app/(protected)/dashboard/type/[slug]/export"
 
 interface TypePageContentProps {
   hasEvents: boolean
@@ -332,6 +333,7 @@ export const TypePageContent = ({
                   className="w-20 dark:text-gray-300"
                 />
               </div>
+              <Export />
             </div>
           </div>
 
