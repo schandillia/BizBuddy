@@ -125,6 +125,21 @@ export const TypePageContent = ({
   const columns: ColumnDef<Event>[] = useMemo(
     () => [
       {
+        id: "serialNumber",
+        header: "#",
+        cell: ({ row }) => {
+          return (
+            <div>
+              {row.index +
+                1 +
+                table.getState().pagination.pageIndex *
+                  table.getState().pagination.pageSize}
+            </div>
+          )
+        },
+        size: 50,
+      },
+      {
         id: "createdAt",
         accessorKey: "createdAt",
         header: ({ column }: { column: Column<Event, unknown> }) => (
@@ -230,72 +245,72 @@ export const TypePageContent = ({
     router.push(`?${searchParams.toString()}`, { scroll: false })
   }, [pagination, router])
 
-  const numericFieldSums = useMemo(() => {
-    if (!data?.events || data.events.length === 0) return {}
+  // const numericFieldSums = useMemo(() => {
+  //   if (!data?.events || data.events.length === 0) return {}
 
-    const sums: Record<
-      string,
-      {
-        total: number
-        thisWeek: number
-        thisMonth: number
-        thisYear: number
-        today: number
-      }
-    > = {}
+  //   const sums: Record<
+  //     string,
+  //     {
+  //       total: number
+  //       thisWeek: number
+  //       thisMonth: number
+  //       thisYear: number
+  //       today: number
+  //     }
+  //   > = {}
 
-    const now = new Date()
-    const weekStart = startOfWeek(now, { weekStartsOn: 0 })
-    const monthStart = startOfMonth(now)
-    const yearStart = startOfYear(now)
+  //   const now = new Date()
+  //   const weekStart = startOfWeek(now, { weekStartsOn: 0 })
+  //   const monthStart = startOfMonth(now)
+  //   const yearStart = startOfYear(now)
 
-    data.events.forEach((event) => {
-      const eventDate = event.createdAt
+  //   data.events.forEach((event) => {
+  //     const eventDate = event.createdAt
 
-      Object.entries(event.fields as object).forEach(([field, value]) => {
-        if (typeof value === "number") {
-          if (!sums[field]) {
-            sums[field] = {
-              total: 0,
-              thisWeek: 0,
-              thisMonth: 0,
-              thisYear: 0,
-              today: 0,
-            }
-          }
+  //     Object.entries(event.fields as object).forEach(([field, value]) => {
+  //       if (typeof value === "number") {
+  //         if (!sums[field]) {
+  //           sums[field] = {
+  //             total: 0,
+  //             thisWeek: 0,
+  //             thisMonth: 0,
+  //             thisYear: 0,
+  //             today: 0,
+  //           }
+  //         }
 
-          sums[field].total += value
+  //         sums[field].total += value
 
-          if (
-            isAfter(eventDate, weekStart) ||
-            eventDate.getTime() === weekStart.getTime()
-          ) {
-            sums[field].thisWeek += value
-          }
+  //         if (
+  //           isAfter(eventDate, weekStart) ||
+  //           eventDate.getTime() === weekStart.getTime()
+  //         ) {
+  //           sums[field].thisWeek += value
+  //         }
 
-          if (
-            isAfter(eventDate, monthStart) ||
-            eventDate.getTime() === monthStart.getTime()
-          ) {
-            sums[field].thisMonth += value
-          }
+  //         if (
+  //           isAfter(eventDate, monthStart) ||
+  //           eventDate.getTime() === monthStart.getTime()
+  //         ) {
+  //           sums[field].thisMonth += value
+  //         }
 
-          if (
-            isAfter(eventDate, yearStart) ||
-            eventDate.getTime() === yearStart.getTime()
-          ) {
-            sums[field].thisYear += value
-          }
+  //         if (
+  //           isAfter(eventDate, yearStart) ||
+  //           eventDate.getTime() === yearStart.getTime()
+  //         ) {
+  //           sums[field].thisYear += value
+  //         }
 
-          if (isToday(eventDate)) {
-            sums[field].today += value
-          }
-        }
-      })
-    })
+  //         if (isToday(eventDate)) {
+  //           sums[field].today += value
+  //         }
+  //       }
+  //     })
+  //   })
 
-    return sums
-  }, [data?.events])
+  //   return sums
+  // }, [data?.events])
 
   if (!pollingData.hasEvents) {
     return <EmptyTypeState typeName={type.name} />
