@@ -333,7 +333,10 @@ export const TypePageContent = ({
                   className="w-20 dark:text-gray-300"
                 />
               </div>
-              <Export />
+              <Export
+                data={data?.events || []}
+                filename={`${type.name}_events`}
+              />
             </div>
           </div>
 
