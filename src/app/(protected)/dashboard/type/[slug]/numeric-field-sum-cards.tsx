@@ -42,7 +42,12 @@ export const NumericFieldSumCards = ({
             </div>
 
             <div>
-              <p className="text-2xl font-bold">{relevantSum.toFixed(0)}</p>
+              <p className="text-2xl font-bold">
+                {new Intl.NumberFormat("en-US", {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                }).format(relevantSum)}
+              </p>
               <p className="text-xs/5 text-muted-foreground">
                 {activeTab === "today"
                   ? "today"

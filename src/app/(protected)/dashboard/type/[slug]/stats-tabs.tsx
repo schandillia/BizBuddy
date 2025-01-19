@@ -230,14 +230,13 @@ export const StatsTabs = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
           <Card className="relative z-0">
             <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <p className="text-sm/6 font-medium">Total Events</p>
+              <p className="text-sm/6 font-medium">Events</p>
               <ChartNoAxesCombined className="size-4 text-muted-foreground" />
             </div>
 
             <div>
               <p className="text-2xl font-bold">{eventsCount || 0}</p>
               <p className="text-xs/5 text-muted-foreground">
-                Events{" "}
                 {activeTab === "custom"
                   ? "in selected range"
                   : activeTab === "today"

@@ -254,7 +254,7 @@ export const TypePageContent = ({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage() || isFetching}
           >
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="size-4 text-gray-600 dark:text-gray-300" />
           </Button>
           <Button
             variant="outline"
@@ -262,7 +262,7 @@ export const TypePageContent = ({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage() || isFetching}
           >
-            <ChevronRight className="size-4" />
+            <ChevronRight className="size-4 text-gray-600 dark:text-gray-300" />
           </Button>
         </div>
       </div>

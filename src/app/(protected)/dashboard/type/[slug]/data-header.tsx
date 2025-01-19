@@ -112,7 +112,7 @@ const DataHeader = ({
               value={showCustomInput ? "custom" : limitInput}
               onValueChange={handleSelectChange}
             >
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-32 text-gray-600 dark:text-gray-300">
                 <SelectValue placeholder="Rows per page" />
               </SelectTrigger>
               <SelectContent>
@@ -145,7 +145,7 @@ const DataHeader = ({
               className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-blue-500/50 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-300"
             >
               <FaFileCsv className="size-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-200 mr-2" />
-              CSV
+              <span className="text-gray-600 dark:text-gray-300">CSV</span>
             </Button>
             <Button
               variant="outline"
@@ -154,7 +154,7 @@ const DataHeader = ({
               className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-green-500/50 hover:bg-green-50 dark:hover:bg-green-950/30 transition-all duration-300"
             >
               <RiFileExcel2Fill className="size-4 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform duration-200 mr-2" />
-              Excel
+              <span className="text-gray-600 dark:text-gray-300">Excel</span>
             </Button>
           </div>
         </div>
@@ -166,7 +166,7 @@ const DataHeader = ({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage() || isFetching}
           >
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="size-4 text-gray-600 dark:text-gray-300" />
           </Button>
           <Button
             variant="outline"
@@ -174,7 +174,7 @@ const DataHeader = ({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage() || isFetching}
           >
-            <ChevronRight className="size-4" />
+            <ChevronRight className="size-4 text-gray-600 dark:text-gray-300" />
           </Button>
         </div>
       </div>
