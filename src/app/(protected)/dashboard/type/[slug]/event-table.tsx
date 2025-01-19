@@ -47,7 +47,7 @@ export const EventTable = ({ table, columns, isFetching }: EventTableProps) => {
             [...Array(5)].map((_, rowIndex) => (
               <TableRow key={rowIndex}>
                 {columns.map((_, cellIndex) => (
-                  <TableCell key={cellIndex}>
+                  <TableCell key={cellIndex} className="whitespace-nowrap">
                     <div className="h-4 w-full bg-gray-200 animate-pulse rounded" />
                   </TableCell>
                 ))}
@@ -57,7 +57,7 @@ export const EventTable = ({ table, columns, isFetching }: EventTableProps) => {
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <TableCell key={cell.id} className="whitespace-nowrap">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
