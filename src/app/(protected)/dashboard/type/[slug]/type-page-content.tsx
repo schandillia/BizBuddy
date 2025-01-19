@@ -6,23 +6,17 @@ import { Input } from "@/components/ui/input"
 import { client } from "@/lib/client"
 import { Event, EventType } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
-import {
-  isAfter,
-  isToday,
-  startOfMonth,
-  startOfWeek,
-  startOfYear,
-} from "date-fns"
 import { ArrowUpDown } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
 import { EmptyTypeState } from "@/app/(protected)/dashboard/type/[slug]/empty-type-state"
 import { EventTable } from "@/app/(protected)/dashboard/type/[slug]/event-table"
+import Export from "@/app/(protected)/dashboard/type/[slug]/export"
 import { NumericSummary } from "@/app/(protected)/dashboard/type/[slug]/numeric-summary"
 import {
-  type TimeRange,
   type DateRange,
+  type TimeRange,
 } from "@/app/(protected)/dashboard/type/[slug]/types"
 import { Heading } from "@/components/heading"
 import { Button } from "@/components/ui/button"
@@ -39,7 +33,6 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table"
-import Export from "@/app/(protected)/dashboard/type/[slug]/export"
 
 interface TypePageContentProps {
   hasEvents: boolean
@@ -143,13 +136,13 @@ export const TypePageContent = ({
         id: "createdAt",
         accessorKey: "createdAt",
         header: ({ column }: { column: Column<Event, unknown> }) => (
-          <Button
-            variant="ghost"
+          <div
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="flex items-center cursor-pointer hover:text-accent-foreground"
           >
             Date
             <ArrowUpDown className="ml-2 size-4" />
-          </Button>
+          </div>
         ),
         cell: ({ row }) => {
           return new Date(row.getValue("createdAt")).toLocaleDateString(
@@ -171,15 +164,15 @@ export const TypePageContent = ({
             accessorFn: (row: Event) =>
               (row.fields as Record<string, any>)[field],
             header: ({ column }: { column: Column<Event, unknown> }) => (
-              <Button
-                variant="ghost"
+              <div
                 onClick={() =>
                   column.toggleSorting(column.getIsSorted() === "asc")
                 }
+                className="flex items-center cursor-pointer hover:text-accent-foreground"
               >
                 {field}
                 <ArrowUpDown className="ml-2 size-4" />
-              </Button>
+              </div>
             ),
             cell: ({ row }: { row: Row<Event> }) =>
               (row.original.fields as Record<string, any>)[field] || "-",
@@ -189,13 +182,13 @@ export const TypePageContent = ({
         id: "deliveryStatus",
         accessorKey: "deliveryStatus",
         header: ({ column }: { column: Column<Event, unknown> }) => (
-          <Button
-            variant="ghost"
+          <div
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="flex items-center cursor-pointer hover:text-accent-foreground"
           >
             Delivery Status
             <ArrowUpDown className="ml-2 size-4" />
-          </Button>
+          </div>
         ),
         cell: ({ row }) => (
           <span
