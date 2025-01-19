@@ -11,6 +11,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/utils"
 import { format } from "date-fns"
@@ -43,6 +50,8 @@ export const StatsTabs = ({
     from: undefined,
     to: undefined,
   })
+  const [startDateOpen, setStartDateOpen] = useState(false)
+  const [endDateOpen, setEndDateOpen] = useState(false)
 
   const handleTabChange = (value: TimeRange) => {
     if (value === "custom") {
@@ -52,12 +61,78 @@ export const StatsTabs = ({
     }
   }
 
-  const handleDateSelect = (newDateRange: DateRange) => {
-    setDateRange(newDateRange)
-    if (newDateRange.from && newDateRange.to) {
-      onTabChange("custom", newDateRange)
+  const handleStartDateSelect = (date: Date | undefined) => {
+    const newRange = { ...dateRange, from: date }
+    setDateRange(newRange)
+    setStartDateOpen(false)
+    if (newRange.from && newRange.to) {
+      onTabChange("custom", newRange)
     }
   }
+
+  const handleEndDateSelect = (date: Date | undefined) => {
+    const newRange = { ...dateRange, to: date }
+    setDateRange(newRange)
+    setEndDateOpen(false)
+    if (newRange.from && newRange.to) {
+      onTabChange("custom", newRange)
+    }
+  }
+
+  // Mobile dropdown for time range selection
+  const MobileTimeRangeSelect = () => (
+    <Select
+      value={activeTab}
+      onValueChange={(value) => handleTabChange(value as TimeRange)}
+    >
+      <SelectTrigger className="w-full mb-4">
+        <SelectValue placeholder="Select time range" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="today">Today</SelectItem>
+        <SelectItem value="week">This Week</SelectItem>
+        <SelectItem value="month">This Month</SelectItem>
+        <SelectItem value="year">This Year</SelectItem>
+        <SelectItem value="custom">Custom Range</SelectItem>
+      </SelectContent>
+    </Select>
+  )
+
+  // Desktop tabs for time range selection
+  const DesktopTabs = () => (
+    <TabsList className="mb-2 text-gray-200 bg-brand-600 dark:bg-brand-900">
+      <TabsTrigger
+        value="today"
+        className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
+      >
+        Today
+      </TabsTrigger>
+      <TabsTrigger
+        value="week"
+        className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
+      >
+        This Week
+      </TabsTrigger>
+      <TabsTrigger
+        value="month"
+        className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
+      >
+        This Month
+      </TabsTrigger>
+      <TabsTrigger
+        value="year"
+        className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
+      >
+        This Year
+      </TabsTrigger>
+      <TabsTrigger
+        value="custom"
+        className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
+      >
+        Custom
+      </TabsTrigger>
+    </TabsList>
+  )
 
   return (
     <Tabs
@@ -66,52 +141,26 @@ export const StatsTabs = ({
         handleTabChange(value as TimeRange)
       }}
     >
-      <TabsList className="mb-2 text-gray-200 bg-brand-600 dark:bg-brand-900">
-        <TabsTrigger
-          value="today"
-          className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-        >
-          Today
-        </TabsTrigger>
-        <TabsTrigger
-          value="week"
-          className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-        >
-          This Week
-        </TabsTrigger>
-        <TabsTrigger
-          value="month"
-          className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-        >
-          This Month
-        </TabsTrigger>
-        <TabsTrigger
-          value="year"
-          className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-        >
-          This Year
-        </TabsTrigger>
-        <TabsTrigger
-          value="custom"
-          className="data-[state=active]:bg-brand-200 data-[state=active]:text-brand-900"
-        >
-          Custom
-        </TabsTrigger>
-      </TabsList>
+      <div className="md:hidden">
+        <MobileTimeRangeSelect />
+      </div>
+      <div className="hidden md:block">
+        <DesktopTabs />
+      </div>
 
       {activeTab === "custom" && (
-        <div className="flex gap-4 mb-4">
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="grid gap-2">
             <div className="flex items-center gap-x-2">
-              <span className="text-xs text-gray-600 dark:text-gray-300">
-                FROM
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                Start date
               </span>
-              <Popover>
+              <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
-                      "justify-start text-left font-normal",
+                      "w-full md:w-auto justify-start text-left font-normal",
                       !dateRange.from && "text-muted-foreground"
                     )}
                   >
@@ -127,9 +176,7 @@ export const StatsTabs = ({
                   <Calendar
                     mode="single"
                     selected={dateRange.from}
-                    onSelect={(date: Date | undefined) =>
-                      handleDateSelect({ ...dateRange, from: date })
-                    }
+                    onSelect={handleStartDateSelect}
                     initialFocus
                   />
                 </PopoverContent>
@@ -138,15 +185,15 @@ export const StatsTabs = ({
           </div>
           <div className="grid gap-2">
             <div className="flex items-center gap-x-2">
-              <span className="text-xs text-gray-600 dark:text-gray-300">
-                TO
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                End date
               </span>
-              <Popover>
+              <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     className={cn(
-                      "justify-start text-left font-normal",
+                      "w-full md:w-auto justify-start text-left font-normal",
                       !dateRange.to && "text-muted-foreground"
                     )}
                   >
@@ -162,9 +209,7 @@ export const StatsTabs = ({
                   <Calendar
                     mode="single"
                     selected={dateRange.to}
-                    onSelect={(date: Date | undefined) =>
-                      handleDateSelect({ ...dateRange, to: date })
-                    }
+                    onSelect={handleEndDateSelect}
                     initialFocus
                   />
                 </PopoverContent>
