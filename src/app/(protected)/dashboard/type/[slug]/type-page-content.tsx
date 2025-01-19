@@ -2,23 +2,21 @@
 
 "use client"
 
-import { Input } from "@/components/ui/input"
 import { client } from "@/lib/client"
 import { Event, EventType } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
-import { ArrowUpDown } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 
+import DataHeader from "@/app/(protected)/dashboard/type/[slug]/data-header"
 import { EmptyTypeState } from "@/app/(protected)/dashboard/type/[slug]/empty-type-state"
 import { EventTable } from "@/app/(protected)/dashboard/type/[slug]/event-table"
-import Export from "@/app/(protected)/dashboard/type/[slug]/export"
 import { NumericSummary } from "@/app/(protected)/dashboard/type/[slug]/numeric-summary"
+import SortableHeader from "@/app/(protected)/dashboard/type/[slug]/sortable-header"
 import {
   type DateRange,
   type TimeRange,
 } from "@/app/(protected)/dashboard/type/[slug]/types"
-import { Heading } from "@/components/heading"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/utils"
 import {
@@ -33,6 +31,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface TypePageContentProps {
   hasEvents: boolean
@@ -120,7 +119,7 @@ export const TypePageContent = ({
       {
         id: "serialNumber",
         header: "#",
-        cell: ({ row }) => {
+        cell: ({ row }: { row: Row<Event> }) => {
           return (
             <div>
               {row.index +
@@ -135,16 +134,10 @@ export const TypePageContent = ({
       {
         id: "createdAt",
         accessorKey: "createdAt",
-        header: ({ column }: { column: Column<Event, unknown> }) => (
-          <div
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="flex items-center cursor-pointer hover:text-accent-foreground"
-          >
-            Date
-            <ArrowUpDown className="ml-2 size-4" />
-          </div>
+        header: ({ column }: { column: Column<Event> }) => (
+          <SortableHeader column={column} title="Date" />
         ),
-        cell: ({ row }) => {
+        cell: ({ row }: { row: Row<Event> }) => {
           return new Date(row.getValue("createdAt")).toLocaleDateString(
             "en-US",
             {
@@ -163,16 +156,8 @@ export const TypePageContent = ({
             id: field,
             accessorFn: (row: Event) =>
               (row.fields as Record<string, any>)[field],
-            header: ({ column }: { column: Column<Event, unknown> }) => (
-              <div
-                onClick={() =>
-                  column.toggleSorting(column.getIsSorted() === "asc")
-                }
-                className="flex items-center cursor-pointer hover:text-accent-foreground"
-              >
-                {field}
-                <ArrowUpDown className="ml-2 size-4" />
-              </div>
+            header: ({ column }: { column: Column<Event> }) => (
+              <SortableHeader column={column} title={field} />
             ),
             cell: ({ row }: { row: Row<Event> }) =>
               (row.original.fields as Record<string, any>)[field] || "-",
@@ -181,16 +166,10 @@ export const TypePageContent = ({
       {
         id: "deliveryStatus",
         accessorKey: "deliveryStatus",
-        header: ({ column }: { column: Column<Event, unknown> }) => (
-          <div
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="flex items-center cursor-pointer hover:text-accent-foreground"
-          >
-            Delivery Status
-            <ArrowUpDown className="ml-2 size-4" />
-          </div>
+        header: ({ column }: { column: Column<Event> }) => (
+          <SortableHeader column={column} title="Delivery Status" />
         ),
-        cell: ({ row }) => (
+        cell: ({ row }: { row: Row<Event> }) => (
           <span
             className={cn("px-2 py-1 rounded-full text-xs font-semibold", {
               "bg-green-100 text-green-800":
@@ -238,73 +217,6 @@ export const TypePageContent = ({
     router.push(`?${searchParams.toString()}`, { scroll: false })
   }, [pagination, router])
 
-  // const numericFieldSums = useMemo(() => {
-  //   if (!data?.events || data.events.length === 0) return {}
-
-  //   const sums: Record<
-  //     string,
-  //     {
-  //       total: number
-  //       thisWeek: number
-  //       thisMonth: number
-  //       thisYear: number
-  //       today: number
-  //     }
-  //   > = {}
-
-  //   const now = new Date()
-  //   const weekStart = startOfWeek(now, { weekStartsOn: 0 })
-  //   const monthStart = startOfMonth(now)
-  //   const yearStart = startOfYear(now)
-
-  //   data.events.forEach((event) => {
-  //     const eventDate = event.createdAt
-
-  //     Object.entries(event.fields as object).forEach(([field, value]) => {
-  //       if (typeof value === "number") {
-  //         if (!sums[field]) {
-  //           sums[field] = {
-  //             total: 0,
-  //             thisWeek: 0,
-  //             thisMonth: 0,
-  //             thisYear: 0,
-  //             today: 0,
-  //           }
-  //         }
-
-  //         sums[field].total += value
-
-  //         if (
-  //           isAfter(eventDate, weekStart) ||
-  //           eventDate.getTime() === weekStart.getTime()
-  //         ) {
-  //           sums[field].thisWeek += value
-  //         }
-
-  //         if (
-  //           isAfter(eventDate, monthStart) ||
-  //           eventDate.getTime() === monthStart.getTime()
-  //         ) {
-  //           sums[field].thisMonth += value
-  //         }
-
-  //         if (
-  //           isAfter(eventDate, yearStart) ||
-  //           eventDate.getTime() === yearStart.getTime()
-  //         ) {
-  //           sums[field].thisYear += value
-  //         }
-
-  //         if (isToday(eventDate)) {
-  //           sums[field].today += value
-  //         }
-  //       }
-  //     })
-  //   })
-
-  //   return sums
-  // }, [data?.events])
-
   if (!pollingData.hasEvents) {
     return <EmptyTypeState typeName={type.name} />
   }
@@ -324,32 +236,16 @@ export const TypePageContent = ({
           }}
         />
 
-        <div className="flex flex-col gap-4 relative z-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Heading className="text-3xl">Event Overview</Heading>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Rows per page:
-                </span>
-                <Input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={limitInput}
-                  onChange={handleLimitChange}
-                  className="w-20 dark:text-gray-300"
-                />
-              </div>
-              <Export
-                data={data?.events || []}
-                filename={`${type.name}_events`}
-              />
-            </div>
-          </div>
+        <DataHeader
+          limitInput={limitInput}
+          handleLimitChange={handleLimitChange}
+          table={table}
+          isFetching={isFetching}
+          type={type}
+          data={data?.events || []}
+        />
 
-          <EventTable table={table} columns={columns} isFetching={isFetching} />
-        </div>
+        <EventTable table={table} columns={columns} isFetching={isFetching} />
 
         <div className="flex items-center justify-end space-x-2 py-4">
           <Button
@@ -358,7 +254,7 @@ export const TypePageContent = ({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage() || isFetching}
           >
-            Previous
+            <ChevronLeft className="size-4" />
           </Button>
           <Button
             variant="outline"
@@ -366,7 +262,7 @@ export const TypePageContent = ({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage() || isFetching}
           >
-            Next
+            <ChevronRight className="size-4" />
           </Button>
         </div>
       </div>
