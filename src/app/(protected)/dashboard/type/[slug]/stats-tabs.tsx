@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/utils"
-import { format } from "date-fns"
+import { format, isAfter, startOfTomorrow } from "date-fns"
 import { Calendar as CalendarIcon, ChartNoAxesCombined } from "lucide-react"
 import { useState } from "react"
 
@@ -52,6 +52,11 @@ export const StatsTabs = ({
   })
   const [startDateOpen, setStartDateOpen] = useState(false)
   const [endDateOpen, setEndDateOpen] = useState(false)
+
+  // Function to check if a date is in the future
+  const isDateDisabled = (date: Date) => {
+    return isAfter(date, startOfTomorrow())
+  }
 
   const handleTabChange = (value: TimeRange) => {
     if (value === "custom") {
@@ -153,7 +158,7 @@ export const StatsTabs = ({
           <div className="grid gap-2">
             <div className="flex items-center gap-x-2">
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Start date
+                From
               </span>
               <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
                 <PopoverTrigger asChild>
@@ -177,6 +182,7 @@ export const StatsTabs = ({
                     mode="single"
                     selected={dateRange.from}
                     onSelect={handleStartDateSelect}
+                    disabled={isDateDisabled}
                     initialFocus
                   />
                 </PopoverContent>
@@ -186,7 +192,7 @@ export const StatsTabs = ({
           <div className="grid gap-2">
             <div className="flex items-center gap-x-2">
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                End date
+                To
               </span>
               <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
                 <PopoverTrigger asChild>
@@ -210,6 +216,7 @@ export const StatsTabs = ({
                     mode="single"
                     selected={dateRange.to}
                     onSelect={handleEndDateSelect}
+                    disabled={isDateDisabled}
                     initialFocus
                   />
                 </PopoverContent>
