@@ -55,7 +55,9 @@ export const NumericFieldSumCards = ({
                   ? "this week"
                   : activeTab === "month"
                   ? "this month"
-                  : "this year"}
+                  : activeTab === "year"
+                  ? "this year"
+                  : "this period"}
               </p>
             </div>
           </Card>
