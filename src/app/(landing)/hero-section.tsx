@@ -24,7 +24,7 @@ const HeroSection = () => {
       <MaxWidthWrapper>
         <div className="relative mx-auto flex flex-col items-center sm:items-start gap-8 sm:gap-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-500/30">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-300/30 dark:bg-brand-500/5">
             <Sparkles className="size-4 text-brand-600 dark:text-brand-300" />
             <span className="text-sm font-medium text-brand-600 dark:text-brand-300">
               Now with enhanced analytics
