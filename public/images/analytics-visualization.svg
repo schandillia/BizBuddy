@@ -1,0 +1,64 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradFlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFB800" />
+      <stop offset="100%" style="stop-color:#F59E0B" />
+    </linearGradient>
+    
+    <!-- Pulse animation -->
+    <radialGradient id="pulse" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(245,158,11,0.1)">
+        <animate attributeName="stop-color" 
+          values="rgba(245,158,11,0.1); rgba(245,158,11,0.3); rgba(245,158,11,0.1)"
+          dur="2s" repeatCount="indefinite" />
+      </stop>
+      <stop offset="100%" stop-color="rgba(245,158,11,0)">
+        <animate attributeName="stop-color"
+          values="rgba(245,158,11,0); rgba(245,158,11,0.1); rgba(245,158,11,0)"
+          dur="2s" repeatCount="indefinite" />
+      </stop>
+    </radialGradient>
+  </defs>
+
+  <!-- Background circles -->
+  <circle cx="200" cy="200" r="160" fill="url(#pulse)" />
+  
+  <!-- Data flow lines -->
+  <g stroke="url(#gradFlow)" stroke-width="2" fill="none">
+    <!-- Animated paths -->
+    <path d="M80,200 Q200,80 320,200">
+      <animate attributeName="d" 
+        values="M80,200 Q200,80 320,200; M80,200 Q200,320 320,200; M80,200 Q200,80 320,200"
+        dur="4s" repeatCount="indefinite" />
+    </path>
+    <path d="M200,80 Q320,200 200,320">
+      <animate attributeName="d"
+        values="M200,80 Q320,200 200,320; M200,80 Q80,200 200,320; M200,80 Q320,200 200,320"
+        dur="4s" repeatCount="indefinite" />
+    </path>
+  </g>
+
+  <!-- Data points -->
+  <g fill="#F59E0B">
+    <circle cx="80" cy="200" r="8">
+      <animate attributeName="r"
+        values="8;10;8"
+        dur="2s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="200" cy="80" r="8">
+      <animate attributeName="r"
+        values="8;10;8"
+        dur="2s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="320" cy="200" r="8">
+      <animate attributeName="r"
+        values="8;10;8"
+        dur="2s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="200" cy="320" r="8">
+      <animate attributeName="r"
+        values="8;10;8"
+        dur="2s" repeatCount="indefinite" />
+    </circle>
+  </g>
+</svg>
