@@ -2,7 +2,7 @@ import React from "react"
 import { Heading } from "@/components/heading"
 import { MaxWidthWrapper } from "@/components/max-width-wrapper"
 import { Star } from "lucide-react"
-import { ShinyButton } from "@/components/shiny-button"
+import { CTAButton } from "@/components/cta-button"
 import Image from "next/image"
 import { Icons } from "@/components/icons"
 import testimonialsData from "@/lib/constants/testimonials.json"
@@ -81,12 +81,12 @@ const Testimonials = () => {
         </div>
 
         <div className="flex justify-center">
-          <ShinyButton
+          <CTAButton
             href="/sign-up"
-            className="h-14 w-full sm:max-w-80 text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
+            className="h-14 w-full max-w-80 text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
           >
             Start for free today
-          </ShinyButton>
+          </CTAButton>
         </div>
       </MaxWidthWrapper>
     </section>
