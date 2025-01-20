@@ -9,7 +9,7 @@ import { CircleCheck, Sparkles } from "lucide-react"
 const HeroSection = () => {
   return (
     <section
-      className="relative py-12 sm:py-32 bg-brand-25 dark:bg-brand-950"
+      className="relative py-24 sm:py-32 sm:pt-12 bg-brand-25 dark:bg-brand-950"
       // To add a background animation, uncomment the following
       // style={{
       //   backgroundImage: `url('/images/landing.svg')`,
