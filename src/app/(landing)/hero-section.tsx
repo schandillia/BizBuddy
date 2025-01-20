@@ -6,17 +6,21 @@ import { Check, Sparkles } from "lucide-react"
 import brand from "@/lib/constants/brand.json"
 import features from "@/lib/constants/features.json"
 
-const AboveTheFold = () => {
+const HeroSection = () => {
   return (
     <section
       className="relative py-24 sm:py-32 sm:pt-12 bg-brand-25 dark:bg-brand-950"
-      style={{
-        backgroundImage: `url('/images/landing.svg')`,
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-      }}
+      // To add a background animation, uncomment the following
+      // style={{
+      //   backgroundImage: `url('/images/landing.svg')`,
+      //   backgroundRepeat: "no-repeat",
+      //   backgroundPosition: "center",
+      //   backgroundSize: "cover",
+      // }}
     >
+      {/* Background Grid Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000,transparent)]" />
+
       <MaxWidthWrapper className="text-center">
         <div className="relative mx-auto text-center flex flex-col items-center gap-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/30">
@@ -72,4 +76,4 @@ const AboveTheFold = () => {
   )
 }
 
-export default AboveTheFold
+export default HeroSection

@@ -1,12 +1,12 @@
 import Testimonials from "@/app/(landing)/testimonials"
-import AboveTheFold from "@/app/(landing)/above-the-fold"
+import HeroSection from "@/app/(landing)/hero-section"
 import ChannelDemo from "@/app/(landing)/channel-demo"
 import BentoSection from "@/app/(landing)/bento-section"
 
 const Page = () => {
   return (
     <>
-      <AboveTheFold />
+      <HeroSection />
       <ChannelDemo />
       <BentoSection />
       <Testimonials />
