@@ -1,11 +1,11 @@
-// testimonials.tsx
+import React from "react"
 import { Heading } from "@/components/heading"
 import { MaxWidthWrapper } from "@/components/max-width-wrapper"
 import { Star } from "lucide-react"
 import { ShinyButton } from "@/components/shiny-button"
 import Image from "next/image"
 import { Icons } from "@/components/icons"
-import testimonialsData from "@/lib/constants/testimonials.json" // Import testimonial data
+import testimonialsData from "@/lib/constants/testimonials.json"
 
 interface Testimonial {
   imageSrc: string
@@ -14,68 +14,80 @@ interface Testimonial {
   feedback: string
 }
 
+const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
+  <div className="group flex flex-col gap-6 p-8 rounded-2xl bg-gradient-to-br from-brand-50 to-brand-100 dark:from-brand-900 dark:to-brand-950 shadow-md transition-all duration-500 hover:scale-105">
+    <div className="flex gap-1">
+      {[...Array(5)].map((_, i) => (
+        <Star
+          key={i}
+          className="size-5 text-yellow-400 fill-yellow-400 dark:text-yellow-300 dark:fill-yellow-300"
+        />
+      ))}
+    </div>
+
+    <p className="text-lg font-medium text-gray-800 dark:text-gray-200 leading-relaxed">
+      "{testimonial.feedback}"
+    </p>
+
+    <div className="flex items-center gap-4 mt-auto">
+      <div className="relative">
+        <Image
+          src={`/images/${testimonial.imageSrc}`}
+          className="rounded-full object-cover ring-2 ring-brand-500/20"
+          alt={testimonial.name}
+          width={56}
+          height={56}
+        />
+        <Icons.verificationBadge className="size-5 absolute -bottom-1 -right-1 text-brand-500" />
+      </div>
+
+      <div>
+        <p className="font-semibold text-gray-900 dark:text-white">
+          {testimonial.name}
+        </p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          @{testimonial.handle}
+        </p>
+      </div>
+    </div>
+  </div>
+)
+
 const Testimonials = () => {
+  // Get 3 random testimonials
+  const getRandomTestimonials = (count: number) => {
+    const shuffled = [...testimonialsData].sort(() => 0.5 - Math.random())
+    return shuffled.slice(0, count)
+  }
+
+  const randomTestimonials = getRandomTestimonials(3)
+
   return (
-    <section className="relative py-24 sm:py-32 bg-white dark:bg-black">
+    <section className="relative py-24 sm:py-32 overflow-hidden bg-gray-50 dark:bg-gray-950">
+      <div className="absolute inset-0 bg-grid-gray-900/5 dark:bg-grid-white/5" />
+
       <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-20">
         <div>
-          <h2 className="text-center text-base/7 font-semibold text-brand-600">
+          <h2 className="text-center text-base/7 font-semibold text-brand-600 dark:text-brand-300 uppercase">
             Real-World Experiences
           </h2>
-          <Heading className="text-center">What our customers say</Heading>
+          <Heading>What they’re saying</Heading>
         </div>
 
-        <div className="mx-auto grid max-w-2xl grid-cols-1 px-4 lg:mx-0 lg:max-w-none lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-200 dark:divide-brand-900">
-          {testimonialsData.map((testimonial: Testimonial, index: number) => (
-            <div
-              key={index}
-              className={`flex flex-auto flex-col gap-4 bg-brand-100 dark:bg-brand-800 shadow-md p-6 sm:p-8 lg:p-16 ${
-                index === 0
-                  ? "rounded-t-[2rem] lg:rounded-tr-none lg:rounded-l-[2rem]"
-                  : "rounded-b-[2rem] lg:rounded-bl-none lg:rounded-r-[2rem]"
-              }`}
-            >
-              <div className="flex gap-0.5 mb-2 justify-center lg:justify-start">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="size-5 text-brand-600 fill-brand-600 dark:text-brand-200 dark:fill-brand-200"
-                  />
-                ))}
-              </div>
-
-              <p className="text-base sm:text-lg lg:text-lg/8 font-medium tracking-tight text-brand-950 dark:text-gray-300 text-center lg:text-left text-pretty">
-                {testimonial.feedback}
-              </p>
-
-              <div className="flex flex-col justify-center lg:justify-start sm:flex-row items-center sm:items-start gap-4 mt-2">
-                <Image
-                  src={testimonial.imageSrc}
-                  className="rounded-full object-cover"
-                  alt={testimonial.name}
-                  width={48}
-                  height={48}
-                />
-                <div className="flex flex-col items-center sm:items-start">
-                  <p className="font-semibold flex items-center text-gray-950 dark:text-white">
-                    {testimonial.name}
-                    <Icons.verificationBadge className="size-4 inline-block ml-1.5" />
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    @{testimonial.handle}
-                  </p>
-                </div>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 px-4">
+          {randomTestimonials.map((testimonial, index) => (
+            <TestimonialCard key={index} testimonial={testimonial} />
           ))}
         </div>
 
-        <ShinyButton
-          href="/sign-up"
-          className="relative z-10 h-14 w-full max-w-xs text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
-        >
-          Start for free today
-        </ShinyButton>
+        <div className="flex justify-center">
+          <ShinyButton
+            href="/sign-up"
+            className="h-14 w-full sm:max-w-80 text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
+          >
+            Start for free today
+          </ShinyButton>
+        </div>
       </MaxWidthWrapper>
     </section>
   )

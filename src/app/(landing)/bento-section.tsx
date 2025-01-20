@@ -25,7 +25,7 @@ const BentoSection = () => {
     <section className="relative py-24 sm:py-32 bg-brand-25 dark:bg-brand-950">
       <MaxWidthWrapper className="flex flex-col items-center gap-16 sm:gap-20">
         <div>
-          <h2 className="text-center text-base/7 font-semibold text-brand-600">
+          <h2 className="text-center text-base/7 font-semibold text-brand-600 dark:text-brand-300 uppercase">
             Intuitive Monitoring
           </h2>
           <Heading>Stay ahead with real-time insights</Heading>

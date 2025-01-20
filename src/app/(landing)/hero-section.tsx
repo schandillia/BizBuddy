@@ -24,9 +24,9 @@ const HeroSection = () => {
       <MaxWidthWrapper>
         <div className="relative mx-auto flex flex-col items-center sm:items-start gap-8 sm:gap-10">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-900/30">
-            <Sparkles className="size-4 text-brand-600 dark:text-brand-400" />
-            <span className="text-sm font-medium text-brand-600 dark:text-brand-400">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 dark:bg-brand-500/30">
+            <Sparkles className="size-4 text-brand-600 dark:text-brand-300" />
+            <span className="text-sm font-medium text-brand-600 dark:text-brand-300">
               Now with enhanced analytics
             </span>
           </div>
@@ -37,12 +37,12 @@ const HeroSection = () => {
               Real-Time Business Insights,
             </span>
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-center sm:items-baseline">
-              <span className="text-2xl sm:text-5xl bg-gradient-to-r from-brand-500 to-brand-800 text-transparent bg-clip-text pb-1">
+              <span className="text-2xl sm:text-5xl bg-gradient-to-r from-brand-500 to-brand-800 dark:from-brand-200 dark:to-brand-400 text-transparent bg-clip-text pb-1">
                 Delivered Straight to Your
               </span>
               <CyclingText
                 words={["Email", "Discord", "Slack", "Webex"]}
-                interval={100}
+                interval={1000}
                 className="text-2xl sm:text-5xl"
               />
             </div>
@@ -65,7 +65,7 @@ const HeroSection = () => {
                 key={index}
                 className="flex items-start gap-3 sm:justify-start"
               >
-                <CircleCheck className="size-5 shrink-0 text-brand-700 mt-1" />
+                <CircleCheck className="size-5 shrink-0 text-brand-700 dark:text-brand-300 mt-1" />
                 <span>{item}</span>
               </li>
             ))}

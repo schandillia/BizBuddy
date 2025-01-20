@@ -18,7 +18,9 @@ export const BrandLogo: React.FC = () => {
       {isTwoPartBrand ? (
         <>
           {brandData.BRAND_FIRST_PART}
-          <span className="text-brand-600">{brandData.BRAND_LAST_PART}</span>
+          <span className="text-brand-600 dark:text-brand-400">
+            {brandData.BRAND_LAST_PART}
+          </span>
         </>
       ) : (
         brandData.BRAND
