@@ -8,7 +8,16 @@ import { CircleCheck, Sparkles } from "lucide-react"
 
 const HeroSection = () => {
   return (
-    <section className="relative py-12 sm:py-32 bg-brand-25 dark:bg-brand-950">
+    <section
+      className="relative py-12 sm:py-32 bg-brand-25 dark:bg-brand-950"
+      // To add a background animation, uncomment the following
+      // style={{
+      //   backgroundImage: `url('/images/landing.svg')`,
+      //   backgroundRepeat: "no-repeat",
+      //   backgroundPosition: "center",
+      //   backgroundSize: "cover",
+      // }}
+    >
       {/* Background Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000,transparent)]" />
 
@@ -41,7 +50,7 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className="text-base/7 text-gray-600 dark:text-gray-300 max-w-prose text-center sm:text-left">
-            Stay on top of your business with {brand.BRAND}'s instant
+            Stay on top of your business with {brand.BRAND}’s instant
             notifications for key events like{" "}
             <span className="font-semibold text-gray-700 dark:text-gray-100">
               sales and new sign-ups
