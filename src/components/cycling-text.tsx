@@ -1,15 +1,20 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
+import { cn } from "@/utils" // Make sure you have this utility function
 
 interface CyclingTextProps {
   words: string[] // Array of words to cycle through
   interval?: number // Optional: Interval in milliseconds (default is 1000ms)
+  className?: string // Optional: Custom className
+  containerClassName?: string // Optional: Custom className for the outer container
 }
 
 const CyclingText: React.FC<CyclingTextProps> = ({
   words,
   interval = 1000,
+  className,
+  containerClassName,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -22,8 +27,13 @@ const CyclingText: React.FC<CyclingTextProps> = ({
   }, [words, interval])
 
   return (
-    <span className="inline-flex h-8">
-      <span className="h-8 flex items-center text-gray-600 dark:text-gray-400">
+    <span className={cn("inline-flex h-8", containerClassName)}>
+      <span
+        className={cn(
+          "h-8 flex items-center text-gray-600 dark:text-gray-400",
+          className
+        )}
+      >
         {words[currentIndex]}
       </span>
     </span>
