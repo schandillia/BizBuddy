@@ -16,7 +16,7 @@ export const CTAButton = ({
       <Link
         href={href ?? "#"}
         className={cn(
-          "group relative flex transform items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-md border border-white bg-brand-700 px-8 h-14 w-full max-w-80 text-base shadow-md hover:shadow-sm font-medium text-white transition-all duration-300 ring-2 ring-brand-700 ring-offset-2 focus:outline-none focus:ring-2 focus:ring-offset-2",
+          "group relative flex transform items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-md border border-white bg-brand-700 px-8 h-14 w-full max-w-80 text-base shadow-md hover:shadow-sm font-medium text-white transition-all duration-300 ring-2 ring-brand-700 ring-offset-2 focus:outline-none focus:ring-brand-700 focus:ring-offset-brand-700",
           className
         )}
         {...props}
@@ -28,8 +28,8 @@ export const CTAButton = ({
 
         <div className="custom-ease absolute -left-[75px] -top-[50px] -z-10 h-[155px] w-8 rotate-[135deg] bg-white opacity-20 transition-all duration-500 group-hover:left-[120%]" />
       </Link>
-      <p className="text-gray-600 dark:text-gray-300">
-        Cancel anytime · No credit card needed
+      <p className="text-sm text-gray-500 dark:text-gray-400 tracking-tight opacity-80">
+        Flexible commitment · Zero upfront costs
       </p>
     </div>
   )

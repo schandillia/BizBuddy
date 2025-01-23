@@ -31,7 +31,7 @@ const UserNavMenu: FC<UserNavMenuProps> = ({ user }) => {
       <DropdownMenuTrigger className="focus:outline-none">
         <Avatar className="h-8 w-8 cursor-pointer">
           <AvatarImage src={user.image ?? ""} alt={user.name ?? ""} />
-          <AvatarFallback>
+          <AvatarFallback className="bg-gray-200 dark:bg-brand-100">
             {user.name
               ?.split(" ")
               .map((n) => n[0])
