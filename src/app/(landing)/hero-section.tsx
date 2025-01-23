@@ -76,10 +76,7 @@ const HeroSection = () => {
               </ul>
 
               {/* CTA Button */}
-              <CTAButton
-                href="/sign-up"
-                className="relative z-10 h-14 w-full max-w-80 text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
-              >
+              <CTAButton href="/sign-up" className="relative z-10">
                 Start for free today
               </CTAButton>
             </div>

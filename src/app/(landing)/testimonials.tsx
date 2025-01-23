@@ -81,12 +81,7 @@ const Testimonials = () => {
         </div>
 
         <div className="flex justify-center">
-          <CTAButton
-            href="/sign-up"
-            className="h-14 w-full max-w-80 text-base shadow-lg transition-shadow duration-300 hover:shadow-xl"
-          >
-            Start for free today
-          </CTAButton>
+          <CTAButton href="/sign-up">Start for free today</CTAButton>
         </div>
       </MaxWidthWrapper>
     </section>

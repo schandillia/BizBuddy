@@ -16,7 +16,7 @@ export const CTAButton = ({
       <Link
         href={href ?? "#"}
         className={cn(
-          "group relative flex transform items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-md border border-white bg-brand-700 px-8 text-base/7 font-medium text-white transition-all duration-300 hover:ring-2 hover:ring-brand-700 hover:ring-offset-2 focus:outline-none focus:ring-2 focus:ring-offset-2",
+          "group relative flex transform items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-md border border-white bg-brand-700 px-8 h-14 w-full max-w-80 text-base shadow-md hover:shadow-sm font-medium text-white transition-all duration-300 ring-2 ring-brand-700 ring-offset-2 focus:outline-none focus:ring-2 focus:ring-offset-2",
           className
         )}
         {...props}
