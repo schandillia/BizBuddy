@@ -2,7 +2,7 @@
 "use client"
 
 import { useQuery, useMutation } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 import { client } from "@/lib/client"
 import { Heading } from "@/components/heading"
@@ -11,6 +11,7 @@ import { BackgroundPattern } from "@/components/background-pattern"
 
 const Page = () => {
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   // Query to check user status
   const { data: statusData } = useQuery({
@@ -31,6 +32,13 @@ const Page = () => {
       return await res.json()
     },
   })
+
+  useEffect(() => {
+    if (searchParams.get("code")) {
+      createUserMutation.mutate()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   useEffect(() => {
     if (!statusData?.userExists && !statusData?.isSynced) {

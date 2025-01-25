@@ -6,7 +6,7 @@ import { getSlackVerificationTokenByToken } from "@/data/slack-verification-toke
 import { sendToWebex } from "@/lib/api/channels/webex"
 import { generateWebexVerificationToken } from "@/lib/tokens"
 import { generateSlackVerificationToken } from "@/lib/tokens"
-import { sendToSlack } from "@/lib/api/channels/slack"
+import { sendToSlack, sendSlackOTP } from "@/lib/api/channels/slack"
 
 export const sendChannelVerification = async (
   serviceName: string,
@@ -58,10 +58,7 @@ export const sendChannelVerification = async (
         const slackVerificationToken = await generateSlackVerificationToken(
           channelId
         )
-        await sendToSlack({
-          slackId: channelId,
-          message: `Your verification code is: ${slackVerificationToken.token}`,
-        })
+        await sendSlackOTP(channelId, slackVerificationToken.token)
         return { success: true, message: "Verification code sent" }
       }
     }
