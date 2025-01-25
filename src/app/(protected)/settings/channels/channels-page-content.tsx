@@ -260,18 +260,6 @@ export const ChannelsPageContent = ({
                 <TableCell className="font-medium">
                   <div className="flex flex-row items-center gap-2 text-gray-600 dark:text-gray-300">
                     {displayName}
-                    {hasValidId &&
-                      (name === "WEBEX" ? (
-                        webexVerified && (
-                          <MdVerified className="size-4 text-green-500" />
-                        )
-                      ) : name === "SLACK" ? (
-                        slackVerified && (
-                          <MdVerified className="size-4 text-green-500" />
-                        )
-                      ) : (
-                        <MdVerified className="size-4 text-green-500" />
-                      ))}
                   </div>
                 </TableCell>
                 <TableCell>
