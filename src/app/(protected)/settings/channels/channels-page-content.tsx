@@ -14,8 +14,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
-import InstructionsBox from "./instructions/instructions-box"
 import { Loader2 } from "lucide-react"
+import { MdVerified } from "react-icons/md"
+import { sendChannelVerification } from "@/app/actions/send-channel-verification"
+import { useForm } from "react-hook-form"
+import { Modal } from "@/components/ui/modal"
+import { ChannelVerificationForm } from "./channel-verification-form"
+import InstructionsBox from "./instructions/instructions-box"
+import { useSession } from "next-auth/react"
 
 type ServiceName = "DISCORD" | "EMAIL" | "WEBEX" | "SLACK" | "NONE"
 
@@ -29,6 +35,8 @@ type ChannelsPageContentProps = {
   emailId: string
   webexId: string
   slackId: string
+  webexVerified: boolean
+  slackVerified: boolean
 }
 
 export const ChannelsPageContent = ({
@@ -37,6 +45,8 @@ export const ChannelsPageContent = ({
   emailId: initialEmailId,
   webexId: initialWebexId,
   slackId: initialSlackId,
+  webexVerified: initialWebexVerified,
+  slackVerified: initialSlackVerified,
 }: ChannelsPageContentProps) => {
   const [activeChannel, setActiveChannel] =
     useState<ServiceName>(initialActiveChannel)
@@ -48,28 +58,62 @@ export const ChannelsPageContent = ({
     SLACK: initialSlackId,
   })
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: async ({
-      activeChannel,
-      discordId,
-      emailId,
-      webexId,
-      slackId,
-    }: {
-      activeChannel: ServiceName
-      discordId?: string
-      emailId?: string
-      webexId?: string
-      slackId?: string
+  // State for verification modal
+  const [showVerificationModal, setShowVerificationModal] = useState(false)
+  const [verificationError, setVerificationError] = useState<string>()
+  const [verificationSuccess, setVerificationSuccess] = useState<string>()
+  const [currentVerifyingService, setCurrentVerifyingService] =
+    useState<Exclude<ServiceName, "NONE">>()
+  const [verificationStep, setVerificationStep] = useState<
+    "sending" | "verifying"
+  >("sending")
+
+  // Two-factor form setup
+  const form = useForm<{ code: string }>({
+    defaultValues: {
+      code: "",
+    },
+  })
+
+  const { data: session } = useSession()
+
+  // Verification mutation
+  const verificationMutation = useMutation({
+    mutationFn: async (params: {
+      serviceName: Exclude<ServiceName, "NONE">
+      serviceId: string
+      code?: string
+      userId?: string
     }) => {
-      const res = await client.project.setChannel.$post({
-        activeChannel,
-        discordId,
-        emailId,
-        webexId,
-        slackId,
-      })
-      return await res.json()
+      setVerificationStep(params.code ? "verifying" : "sending")
+      return sendChannelVerification(
+        params.serviceName,
+        params.serviceId,
+        params.code,
+        params.userId
+      )
+    },
+    onSuccess: (data) => {
+      if (!data.success) {
+        setVerificationStep("sending")
+        setVerificationError(data.message || "Verification failed")
+        setVerificationSuccess(undefined)
+        return
+      }
+      setVerificationSuccess(data.message)
+      setVerificationError(undefined)
+
+      // Only close modal if verification was successful and included a code
+      if (form.getValues().code) {
+        setShowVerificationModal(false)
+        // Refresh the page to update the UI
+        window.location.reload()
+      }
+    },
+    onError: (error: any) => {
+      setVerificationError(error.message || "Verification failed")
+      setVerificationSuccess(undefined)
+      setVerificationStep("sending")
     },
   })
 
@@ -98,9 +142,32 @@ export const ChannelsPageContent = ({
     }))
   }
 
-  const handleServiceToggle = (serviceName: Exclude<ServiceName, "NONE">) => {
+  const [isUpdating, setIsUpdating] = useState(false)
+
+  const handleServiceToggle = async (
+    serviceName: Exclude<ServiceName, "NONE">
+  ) => {
     if (channelIds[serviceName]?.trim()) {
-      setActiveChannel((prev) => (prev === serviceName ? "NONE" : serviceName))
+      try {
+        setIsUpdating(true)
+        const newActiveChannel =
+          activeChannel === serviceName ? "NONE" : serviceName
+
+        const response = await fetch("/api/user/active-channel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ activeChannel: newActiveChannel }),
+        })
+
+        if (!response.ok) throw new Error("Failed to update active channel")
+
+        setActiveChannel(newActiveChannel)
+      } catch (error) {
+        console.error("Failed to update active channel:", error)
+        // Optionally show an error toast/message
+      } finally {
+        setIsUpdating(false)
+      }
     }
   }
 
@@ -111,42 +178,30 @@ export const ChannelsPageContent = ({
     SLACK: 20,
   } as const
 
-  const handleSave = () => {
-    if (activeChannel === "NONE") {
-      return
-    }
+  const handleVerify = async (serviceName: Exclude<ServiceName, "NONE">) => {
+    if (!session?.user?.id) return
 
-    const payload = {
-      activeChannel,
-      discordId: channelIds.DISCORD?.trim() || undefined,
-      emailId: channelIds.EMAIL?.trim() || undefined,
-      webexId: channelIds.WEBEX?.trim() || undefined,
-      slackId: channelIds.SLACK?.trim() || undefined,
-    }
-
-    // Service-specific length validation
-    const hasInvalidLength = Object.entries(channelIds).some(
-      ([service, value]) => {
-        if (!value?.trim()) return false
-        const maxLength = MAX_LENGTHS[service as keyof typeof MAX_LENGTHS]
-        return value.trim().length > maxLength
-      }
-    )
-
-    if (hasInvalidLength) {
-      alert("One or more IDs exceed their maximum length")
-      return
-    }
-
-    mutate(payload)
+    verificationMutation.mutate({
+      serviceName,
+      serviceId: channelIds[serviceName],
+      userId: session.user.id,
+    })
+    setCurrentVerifyingService(serviceName)
+    setShowVerificationModal(true)
+    // Reset previous verification states
+    setVerificationError(undefined)
+    setVerificationSuccess(undefined)
+    form.reset()
   }
+
   return (
-    <div className="max-w-3xl flex flex-col gap-8">
+    <div className="space-y-6">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
             <TableHead>Service</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead></TableHead>
             <TableHead>Identifier</TableHead>
           </TableRow>
         </TableHeader>
@@ -157,7 +212,23 @@ export const ChannelsPageContent = ({
 
             return (
               <TableRow key={name} className="dark:hover:bg-brand-950/40">
-                <TableCell className="font-medium">{displayName}</TableCell>
+                <TableCell className="font-medium">
+                  <div className="flex flex-row items-center gap-2 text-gray-600 dark:text-gray-300">
+                    {displayName}
+                    {hasValidId &&
+                      (name === "WEBEX" ? (
+                        initialWebexVerified && (
+                          <MdVerified className="size-4 text-green-500" />
+                        )
+                      ) : name === "SLACK" ? (
+                        initialSlackVerified && (
+                          <MdVerified className="size-4 text-green-500" />
+                        )
+                      ) : (
+                        <MdVerified className="size-4 text-green-500" />
+                      ))}
+                  </div>
+                </TableCell>
                 <TableCell>
                   {hasValidId && (
                     <Switch
@@ -167,9 +238,33 @@ export const ChannelsPageContent = ({
                           name as Exclude<ServiceName, "NONE">
                         )
                       }
+                      disabled={isUpdating}
                       className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
                     />
                   )}
+                </TableCell>
+                <TableCell>
+                  {hasValidId &&
+                    ((name === "WEBEX" && !initialWebexVerified) ||
+                      (name === "SLACK" && !initialSlackVerified)) && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          handleVerify(name as Exclude<ServiceName, "NONE">)
+                        }
+                        disabled={verificationMutation.isPending}
+                      >
+                        {verificationMutation.isPending ? (
+                          <>
+                            Verifying
+                            <Loader2 className="size-4 ml-2 animate-spin" />
+                          </>
+                        ) : (
+                          "Verify"
+                        )}
+                      </Button>
+                    )}
                 </TableCell>
                 <TableCell className="text-right">
                   <Input
@@ -189,31 +284,41 @@ export const ChannelsPageContent = ({
           })}
         </TableBody>
       </Table>
-      <div className="pt-4">
-        <Button
-          onClick={handleSave}
-          disabled={
-            isPending ||
-            activeChannel === "NONE" ||
-            !channelIds[activeChannel as Exclude<ServiceName, "NONE">]?.trim()
-          }
-        >
-          {isPending ? (
-            <>
-              Updating channel
-              <Loader2 className="size-4 ml-2 animate-spin" />{" "}
-              {/* Add the loader here */}
-            </>
-          ) : (
-            "Update channel"
-          )}
-        </Button>
-      </div>
       {/* Render instructions for active service */}
       {activeChannel === "DISCORD" && <InstructionsBox channel="discord" />}
       {activeChannel === "WEBEX" && <InstructionsBox channel="webex" />}
       {activeChannel === "SLACK" && <InstructionsBox channel="slack" />}
       {activeChannel === "EMAIL" && <InstructionsBox channel="email" />}
+
+      {/* Verification Modal */}
+      <Modal
+        showModal={showVerificationModal}
+        setShowModal={setShowVerificationModal}
+      >
+        <div className="p-6 space-y-4">
+          <h2 className="text-xl font-semibold text-center">
+            Verify {currentVerifyingService} Channel
+          </h2>
+
+          <ChannelVerificationForm
+            form={form}
+            onSubmit={(values) => {
+              if (!session?.user?.id) return
+              verificationMutation.mutate({
+                serviceName: currentVerifyingService!,
+                serviceId: channelIds[currentVerifyingService!],
+                code: values.code,
+                userId: session.user.id,
+              })
+            }}
+            error={verificationError}
+            success={verificationSuccess}
+            isPending={verificationMutation.isPending}
+            serviceName={currentVerifyingService?.toLowerCase()}
+            verificationStep={verificationStep}
+          />
+        </div>
+      </Modal>
     </div>
   )
 }

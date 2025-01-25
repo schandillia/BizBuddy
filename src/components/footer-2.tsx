@@ -40,7 +40,7 @@ export default function Footer() {
           >
             {/* Copyright Section */}
             <div className="flex py-2 sm:py-0">
-              <span className="text-gray-600 dark:text-gray-300">
+              <span>
                 &copy; {d.getFullYear()} {brand.COMPANY}
               </span>
             </div>

@@ -48,8 +48,8 @@ model User {
   activeChannel  Channel @default(NONE)
   discordId      String?
   emailId        String?
-  webexId        String?
-  slackId        String?
+  webexId        String?   @unique
+  slackId        String?   @unique
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -65,6 +65,9 @@ model User {
 
   isTwoFactorEnabled  Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+
+  webexVerified        Boolean   @default(false)
+  slackVerified        Boolean   @default(false)
 
   @@index([email, apiKey])
 }
@@ -179,7 +182,6 @@ model PasswordResetToken {
   @@unique([email, token])
 }
 
-// PasswordResetToken model for token-based password reset
 model TwoFactorToken {
   id         String @id @default(cuid())
   email      String
@@ -198,6 +200,15 @@ model TwoFactorConfirmation {
   @@unique([userId])
 }
 
+model WebexVerificationToken {
+  id         String   @id @default(cuid())
+  webexId    String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([webexId, token])
+}
+
 // Authenticator model for WebAuthn (Optional)
 model Authenticator {
   credentialID        String   @unique
@@ -212,4 +223,13 @@ model Authenticator {
   user                User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
+}
+
+model SlackVerificationToken {
+  id         String   @id @default(cuid())
+  slackId    String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([slackId, token])
 }

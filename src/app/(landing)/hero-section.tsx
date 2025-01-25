@@ -73,7 +73,7 @@ const HeroSection = () => {
             </div>
           </div>
           {/* Right */}
-          <div className="hidden md:flex md:basis-1/3 h-full w-full items-center justify-center">
+          <div className="hidden md:flex h-full items-center justify-center">
             <HeroIllustration className="max-w-full max-h-[400px] w-full" />
           </div>
         </div>

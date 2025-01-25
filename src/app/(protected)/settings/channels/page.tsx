@@ -1,21 +1,27 @@
+import { redirect } from "next/navigation"
 import { UserPage } from "@/components/user-page"
 import { db } from "@/prisma"
 import { auth } from "@/auth"
-import { redirect } from "next/navigation"
-import { ChannelsPageContent } from "@/app/(protected)/settings/channels/channels-page-content"
+import { ChannelsPageContent } from "./channels-page-content"
 
 const Page = async () => {
   const session = await auth()
 
-  if (!session) {
-    redirect("/sign-in")
-  }
-  if (!session.user) {
+  if (!session?.user) {
     redirect("/sign-in")
   }
 
   const user = await db.user.findUnique({
     where: { id: session.user.id },
+    select: {
+      activeChannel: true,
+      discordId: true,
+      emailId: true,
+      webexId: true,
+      slackId: true,
+      webexVerified: true,
+      slackVerified: true,
+    },
   })
 
   if (!user) {
@@ -23,13 +29,15 @@ const Page = async () => {
   }
 
   return (
-    <UserPage title="Channels">
+    <UserPage title="Notification Channels">
       <ChannelsPageContent
         activeChannel={user.activeChannel}
         discordId={user.discordId ?? ""}
         emailId={user.emailId ?? ""}
         webexId={user.webexId ?? ""}
         slackId={user.slackId ?? ""}
+        webexVerified={user.webexVerified}
+        slackVerified={user.slackVerified}
       />
     </UserPage>
   )
