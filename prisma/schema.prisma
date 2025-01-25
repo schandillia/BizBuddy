@@ -66,8 +66,8 @@ model User {
   isTwoFactorEnabled  Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 
-  webexVerified        Boolean   @default(false)
-  slackVerified        Boolean   @default(false)
+  webexVerified        DateTime?
+  slackVerified        DateTime?
 
   @@index([email, apiKey])
 }

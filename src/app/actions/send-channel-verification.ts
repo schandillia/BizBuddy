@@ -85,8 +85,8 @@ export const sendChannelVerification = async (
       // Check if the token matches the ID
       const matchesId =
         serviceName === "WEBEX"
-          ? existingToken.webexId === channelId
-          : existingToken.slackId === channelId
+          ? "webexId" in existingToken && existingToken.webexId === channelId
+          : "slackId" in existingToken && existingToken.slackId === channelId
 
       if (!matchesId) {
         return {
@@ -105,15 +105,20 @@ export const sendChannelVerification = async (
         where: { id: userId },
         data: {
           [`${serviceName.toLowerCase()}Id`]: channelId,
-          [`${serviceName.toLowerCase()}Verified`]: true,
-          activeChannel: serviceName,
+          [`${serviceName.toLowerCase()}Verified`]: new Date(),
         },
       })
 
       // Delete the used token
-      await db[`${serviceName.toLowerCase()}VerificationToken`].delete({
-        where: { token: code },
-      })
+      if (serviceName === "WEBEX") {
+        await db.webexVerificationToken.delete({
+          where: { token: code },
+        })
+      } else {
+        await db.slackVerificationToken.delete({
+          where: { token: code },
+        })
+      }
 
       return {
         success: true,

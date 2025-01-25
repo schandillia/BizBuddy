@@ -35,8 +35,8 @@ type ChannelsPageContentProps = {
   emailId: string
   webexId: string
   slackId: string
-  webexVerified: boolean
-  slackVerified: boolean
+  webexVerified: Date | null
+  slackVerified: Date | null
 }
 
 export const ChannelsPageContent = ({
@@ -103,11 +103,13 @@ export const ChannelsPageContent = ({
       setVerificationSuccess(data.message)
       setVerificationError(undefined)
 
-      // Only close modal if verification was successful and included a code
       if (form.getValues().code) {
         setShowVerificationModal(false)
-        // Refresh the page to update the UI
-        window.location.reload()
+        if (currentVerifyingService === "WEBEX") {
+          setWebexVerified(new Date())
+        } else if (currentVerifyingService === "SLACK") {
+          setSlackVerified(new Date())
+        }
       }
     },
     onError: (error: any) => {
@@ -132,14 +134,50 @@ export const ChannelsPageContent = ({
     { name: "SLACK", displayName: "Slack", placeholder: "Enter your Slack ID" },
   ]
 
-  const handleInputChange = (
+  const handleInputChange = async (
     serviceName: Exclude<ServiceName, "NONE">,
     value: string
   ) => {
+    // Update local state immediately
     setChannelIds((prev) => ({
       ...prev,
       [serviceName]: value,
     }))
+
+    // Reset verification status when ID changes
+    if (serviceName === "WEBEX") {
+      setWebexVerified(null)
+    } else if (serviceName === "SLACK") {
+      setSlackVerified(null)
+    }
+
+    // If the value is empty, delete the ID from database
+    if (!value.trim()) {
+      try {
+        const response = await fetch("/api/user/channel-id", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ serviceName }),
+        })
+
+        if (!response.ok) {
+          console.error("Server responded with:", await response.text())
+          throw new Error("Failed to delete channel ID")
+        }
+
+        // If this was the active channel, reset local state
+        if (activeChannel === serviceName) {
+          setActiveChannel("NONE")
+        }
+      } catch (error) {
+        console.error("Failed to delete channel ID:", error)
+        // Revert local state on error
+        setChannelIds((prev) => ({
+          ...prev,
+          [serviceName]: value,
+        }))
+      }
+    }
   }
 
   const [isUpdating, setIsUpdating] = useState(false)
@@ -194,6 +232,13 @@ export const ChannelsPageContent = ({
     form.reset()
   }
 
+  const [webexVerified, setWebexVerified] = useState<Date | null>(
+    initialWebexVerified
+  )
+  const [slackVerified, setSlackVerified] = useState<Date | null>(
+    initialSlackVerified
+  )
+
   return (
     <div className="space-y-6">
       <Table>
@@ -217,11 +262,11 @@ export const ChannelsPageContent = ({
                     {displayName}
                     {hasValidId &&
                       (name === "WEBEX" ? (
-                        initialWebexVerified && (
+                        webexVerified && (
                           <MdVerified className="size-4 text-green-500" />
                         )
                       ) : name === "SLACK" ? (
-                        initialSlackVerified && (
+                        slackVerified && (
                           <MdVerified className="size-4 text-green-500" />
                         )
                       ) : (
@@ -230,23 +275,27 @@ export const ChannelsPageContent = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {hasValidId && (
-                    <Switch
-                      checked={activeChannel === name}
-                      onCheckedChange={() =>
-                        handleServiceToggle(
-                          name as Exclude<ServiceName, "NONE">
-                        )
-                      }
-                      disabled={isUpdating}
-                      className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
-                    />
-                  )}
+                  {hasValidId &&
+                    ((name === "WEBEX" && webexVerified) ||
+                      (name === "SLACK" && slackVerified) ||
+                      name === "DISCORD" ||
+                      name === "EMAIL") && (
+                      <Switch
+                        checked={activeChannel === name}
+                        onCheckedChange={() =>
+                          handleServiceToggle(
+                            name as Exclude<ServiceName, "NONE">
+                          )
+                        }
+                        disabled={isUpdating}
+                        className="data-[state=checked]:bg-green-600 dark:data-[state=unchecked]:bg-gray-600"
+                      />
+                    )}
                 </TableCell>
                 <TableCell>
                   {hasValidId &&
-                    ((name === "WEBEX" && !initialWebexVerified) ||
-                      (name === "SLACK" && !initialSlackVerified)) && (
+                    ((name === "WEBEX" && !webexVerified) ||
+                      (name === "SLACK" && !slackVerified)) && (
                       <Button
                         variant="outline"
                         size="sm"
