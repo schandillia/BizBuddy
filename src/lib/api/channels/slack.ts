@@ -1,3 +1,5 @@
+import { type EventData } from "@/types"
+
 type SendToSlackParams = {
   slackId: string
   message?: string

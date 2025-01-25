@@ -76,7 +76,15 @@ export const Modal = ({
       }}
     >
       <DialogTitle className="sr-only">Dialog</DialogTitle>
-      <DialogContent>{children}</DialogContent>
+      <DialogContent
+        className="sm:max-w-[425px]"
+        autoFocus={false}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault()
+        }}
+      >
+        {children}
+      </DialogContent>
     </Dialog>
   )
 }

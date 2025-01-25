@@ -76,26 +76,34 @@ export const generateVerificationToken = async (email: string) => {
   return verificationToken
 }
 
-export const generateWebexVerificationToken = async (webexId: string) => {
-  const token = crypto.randomInt(100_000, 1_000_000).toString()
-  const expires = new Date(Date.now() + 5 * 60 * 1000)
-  const existingToken = await getWebexVerificationTokenByWebexId(webexId)
-  if (existingToken)
-    await db.webexVerificationToken.delete({ where: { id: existingToken.id } })
-  return await db.webexVerificationToken.create({
-    data: { webexId, token, expires },
-  })
+function generateRandomString(length: number): string {
+  return crypto.randomInt(100_000, 1_000_000).toString()
 }
 
-export const generateSlackVerificationToken = async (slackId: string) => {
-  const token = crypto.randomInt(100_000, 1_000_000).toString()
-  const expires = new Date(Date.now() + 5 * 60 * 1000)
+export async function generateWebexVerificationToken(webexId: string) {
+  const expires = new Date(Date.now() + 10 * 60 * 1000)
 
-  const existingToken = await getSlackVerificationTokenBySlackId(slackId)
-  if (existingToken)
-    await db.slackVerificationToken.delete({ where: { id: existingToken.id } })
-
-  return await db.slackVerificationToken.create({
-    data: { slackId, token, expires },
+  const token = await db.webexVerificationToken.create({
+    data: {
+      webexId,
+      token: crypto.randomInt(100_000, 1_000_000).toString(),
+      expires,
+    },
   })
+
+  return token
+}
+
+export async function generateSlackVerificationToken(slackId: string) {
+  const expires = new Date(Date.now() + 10 * 60 * 1000) // 10 minutes from now
+
+  const token = await db.slackVerificationToken.create({
+    data: {
+      slackId,
+      token: generateRandomString(6),
+      expires,
+    },
+  })
+
+  return token
 }

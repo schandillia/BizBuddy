@@ -15,6 +15,7 @@ import { UseFormReturn } from "react-hook-form"
 import { FormError } from "@/components/form-error"
 import { FormSuccess } from "@/components/form-success"
 import { Loader2 } from "lucide-react"
+import { SERVICE_NAMES } from "./config"
 
 // Modified type to match the current use case
 interface ChannelVerificationFormProps {
@@ -23,7 +24,7 @@ interface ChannelVerificationFormProps {
   error?: string
   success?: string
   isPending: boolean
-  serviceName?: string
+  serviceName?: keyof typeof SERVICE_NAMES
   verificationStep: "sending" | "verifying"
 }
 
@@ -47,26 +48,25 @@ export const ChannelVerificationForm = ({
             <FormControl>
               <InputOTP
                 maxLength={6}
-                disabled={isPending}
                 value={field.value}
-                onChange={(value) => {
+                onChange={(value: string) => {
                   field.onChange(value)
-                  // Automatically submit form once all OTP slots are filled
                   if (value.length === 6) {
                     form.handleSubmit(onSubmit)()
                   }
                 }}
-                aria-label="One-time password input"
+                disabled={isPending}
+                className="gap-2"
               >
                 <InputOTPGroup
                   className="flex justify-center gap-2"
                   aria-labelledby="otp-input-label"
                 >
-                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                  {Array.from({ length: 6 }).map((_, i) => (
                     <InputOTPSlot
-                      key={index}
-                      index={index}
-                      aria-label={`OTP digit ${index + 1}`}
+                      key={i}
+                      index={i}
+                      className="dark:bg-brand-500/20 dark:border-brand-500/20 dark:text-white"
                     />
                   ))}
                 </InputOTPGroup>
@@ -79,14 +79,16 @@ export const ChannelVerificationForm = ({
 
       {/* Informational text for users */}
       <p className="text-sm text-gray-500 text-center">
-        Please enter the verification code sent to your {serviceName} channel
+        Please enter the verification code sent to your{" "}
+        {serviceName
+          ? SERVICE_NAMES[
+              serviceName.toUpperCase() as keyof typeof SERVICE_NAMES
+            ]
+          : ""}
       </p>
 
       {/* Display any form errors */}
       <FormError message={error} />
-
-      {/* Display success message if applicable */}
-      <FormSuccess message={success} />
 
       {/* Submit button */}
       <Button

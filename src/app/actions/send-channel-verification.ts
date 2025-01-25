@@ -7,6 +7,7 @@ import { sendToWebex } from "@/lib/api/channels/webex"
 import { generateWebexVerificationToken } from "@/lib/tokens"
 import { generateSlackVerificationToken } from "@/lib/tokens"
 import { sendToSlack, sendSlackOTP } from "@/lib/api/channels/slack"
+import { type ServiceName, type ApiResponse } from "@/types"
 
 export const sendChannelVerification = async (
   serviceName: string,
