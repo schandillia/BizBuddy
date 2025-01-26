@@ -54,30 +54,57 @@ export async function DELETE(req: Request) {
     console.log("Deleting service:", serviceName)
 
     // Get current state
-    const beforeUser = await db.user.findUnique({
+    const user = await db.user.findUnique({
       where: { id: session.user.id },
       select: {
         activeChannel: true,
         discordId: true,
         discordVerified: true,
+        webexId: true,
+        webexVerified: true,
+        slackId: true,
+        slackVerified: true,
       },
     })
-    console.log("Before update:", beforeUser)
+    console.log("Before update:", user)
 
     // Prepare update data
     let updateData = {}
 
-    if (serviceName === "DISCORD") {
-      updateData = {
-        discordId: null,
-        discordVerified: null,
-        activeChannel:
-          beforeUser?.activeChannel === "DISCORD"
-            ? "NONE"
-            : beforeUser?.activeChannel,
-      }
-    } else if (serviceName === "WEBEX") {
-      // ... other cases
+    switch (serviceName) {
+      case "DISCORD":
+        updateData = {
+          discordId: null,
+          discordVerified: null,
+          activeChannel:
+            user?.activeChannel === "DISCORD" ? "NONE" : user?.activeChannel,
+        }
+        break
+      case "WEBEX":
+        updateData = {
+          webexId: null,
+          webexVerified: null,
+          activeChannel:
+            user?.activeChannel === "WEBEX" ? "NONE" : user?.activeChannel,
+        }
+        break
+      case "SLACK":
+        updateData = {
+          slackId: null,
+          slackVerified: null,
+          activeChannel:
+            user?.activeChannel === "SLACK" ? "NONE" : user?.activeChannel,
+        }
+        break
+      case "EMAIL":
+        updateData = {
+          emailId: null,
+          activeChannel:
+            user?.activeChannel === "EMAIL" ? "NONE" : user?.activeChannel,
+        }
+        break
+      default:
+        return new NextResponse("Invalid service name", { status: 400 })
     }
 
     console.log("Update data:", updateData)
@@ -87,17 +114,6 @@ export async function DELETE(req: Request) {
       where: { id: session.user.id },
       data: updateData,
     })
-
-    // Verify the update
-    const afterUser = await db.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        activeChannel: true,
-        discordId: true,
-        discordVerified: true,
-      },
-    })
-    console.log("After update:", afterUser)
 
     return new NextResponse("Channel ID deleted", { status: 200 })
   } catch (error) {
