@@ -68,6 +68,7 @@ model User {
 
   webexVerified        DateTime?
   slackVerified        DateTime?
+  discordVerified      DateTime?
 
   @@index([email, apiKey])
 }
@@ -232,4 +233,12 @@ model SlackVerificationToken {
   expires    DateTime
 
   @@unique([slackId, token])
+}
+
+model DiscordVerificationToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  discordId String
+  expires   DateTime?
+  createdAt DateTime  @default(now())
 }

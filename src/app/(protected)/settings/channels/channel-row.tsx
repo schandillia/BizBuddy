@@ -45,7 +45,7 @@ export function ChannelRow({
       </TableCell>
       <TableCell>
         {hasValidId &&
-          (isVerified || name === "DISCORD" || name === "EMAIL" ? (
+          (isVerified || name === "EMAIL" ? (
             <Switch
               checked={isActive}
               onCheckedChange={onToggle}

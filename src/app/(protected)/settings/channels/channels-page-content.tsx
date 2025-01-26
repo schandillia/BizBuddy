@@ -18,6 +18,7 @@ type ChannelsPageContentProps = {
   slackId: string
   webexVerified: Date | null
   slackVerified: Date | null
+  discordVerified: Date | null
 }
 
 export function ChannelsPageContent({
@@ -28,6 +29,7 @@ export function ChannelsPageContent({
   slackId: initialSlackId,
   webexVerified: initialWebexVerified,
   slackVerified: initialSlackVerified,
+  discordVerified: initialDiscordVerified,
 }: ChannelsPageContentProps) {
   const [activeChannel, setActiveChannel] =
     useState<ServiceName>(initialActiveChannel)
@@ -36,6 +38,9 @@ export function ChannelsPageContent({
   )
   const [slackVerified, setSlackVerified] = useState<Date | null>(
     initialSlackVerified
+  )
+  const [discordVerified, setDiscordVerified] = useState<Date | null>(
+    initialDiscordVerified
   )
   const [isUpdating, setIsUpdating] = useState(false)
   const [channelIds, setChannelIds] = useState<ChannelIds>({
@@ -59,13 +64,14 @@ export function ChannelsPageContent({
     }))
 
     // Reset verification status when ID changes
-    if (serviceName === "WEBEX") {
+    if (serviceName === "DISCORD") {
+      setDiscordVerified(null)
+    } else if (serviceName === "WEBEX") {
       setWebexVerified(null)
     } else if (serviceName === "SLACK") {
       setSlackVerified(null)
     }
 
-    // If the value is empty, delete the ID from database
     if (!value.trim()) {
       try {
         const response = await fetch("/api/user/channel-id", {
@@ -75,7 +81,6 @@ export function ChannelsPageContent({
         })
 
         if (!response.ok) {
-          console.error("Server responded with:", await response.text())
           throw new Error("Failed to delete channel ID")
         }
 
@@ -85,7 +90,24 @@ export function ChannelsPageContent({
         }
       } catch (error) {
         console.error("Failed to delete channel ID:", error)
-        // Revert local state on error
+        setChannelIds((prev) => ({
+          ...prev,
+          [serviceName]: value,
+        }))
+      }
+    } else {
+      try {
+        const response = await fetch("/api/user/channel-id", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ serviceName, value }),
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to update channel ID")
+        }
+      } catch (error) {
+        console.error("Failed to update channel ID:", error)
         setChannelIds((prev) => ({
           ...prev,
           [serviceName]: value,
@@ -114,7 +136,6 @@ export function ChannelsPageContent({
         setActiveChannel(newActiveChannel)
       } catch (error) {
         console.error("Failed to update active channel:", error)
-        // Optionally show an error toast/message
       } finally {
         setIsUpdating(false)
       }
@@ -147,7 +168,9 @@ export function ChannelsPageContent({
           if (data.success) {
             // Only update verification status and close modal when verifying code
             if (verification.verificationStep === "verifying") {
-              if (serviceName === "WEBEX") {
+              if (serviceName === "DISCORD") {
+                setDiscordVerified(new Date())
+              } else if (serviceName === "WEBEX") {
                 setWebexVerified(new Date())
               } else if (serviceName === "SLACK") {
                 setSlackVerified(new Date())
@@ -176,11 +199,13 @@ export function ChannelsPageContent({
               currentId={currentId}
               hasValidId={hasValidId}
               isVerified={
-                name === "WEBEX"
+                name === "DISCORD"
+                  ? !!discordVerified
+                  : name === "WEBEX"
                   ? !!webexVerified
                   : name === "SLACK"
                   ? !!slackVerified
-                  : true
+                  : name === "EMAIL"
               }
               isActive={activeChannel === name}
               isUpdating={isUpdating}
@@ -231,7 +256,9 @@ export function ChannelsPageContent({
               onSuccess: (data) => {
                 if (data.success) {
                   // Update verification status
-                  if (verification.currentVerifyingService === "WEBEX") {
+                  if (verification.currentVerifyingService === "DISCORD") {
+                    setDiscordVerified(new Date())
+                  } else if (verification.currentVerifyingService === "WEBEX") {
                     setWebexVerified(new Date())
                   } else if (verification.currentVerifyingService === "SLACK") {
                     setSlackVerified(new Date())

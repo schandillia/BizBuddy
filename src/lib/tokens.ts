@@ -107,3 +107,17 @@ export async function generateSlackVerificationToken(slackId: string) {
 
   return token
 }
+
+export async function generateDiscordVerificationToken(discordId: string) {
+  const expires = new Date(Date.now() + 10 * 60 * 1000)
+
+  const token = await db.discordVerificationToken.create({
+    data: {
+      discordId,
+      token: crypto.randomInt(100_000, 1_000_000).toString(),
+      expires,
+    },
+  })
+
+  return token
+}
