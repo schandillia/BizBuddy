@@ -2,6 +2,8 @@ import { auth } from "@/auth"
 import { db } from "@/prisma"
 import { type ServiceName } from "@/types"
 import { NextResponse } from "next/server"
+import { ChannelIdSchema } from "@/schemas/channel"
+import { z } from "zod"
 
 export async function POST(req: Request) {
   try {
@@ -11,6 +13,36 @@ export async function POST(req: Request) {
     }
 
     const { serviceName, value } = await req.json()
+
+    // Server-side validation
+    try {
+      if (serviceName in ChannelIdSchema) {
+        ChannelIdSchema[serviceName as keyof typeof ChannelIdSchema].parse(
+          value
+        )
+      } else {
+        return new NextResponse("Invalid service name", { status: 400 })
+      }
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return new NextResponse(err.errors[0].message, { status: 400 })
+      }
+      return new NextResponse("Invalid channel ID", { status: 400 })
+    }
+
+    // Check for duplicate email if this is an email ID
+    if (serviceName === "EMAIL") {
+      const existingUser = await db.user.findFirst({
+        where: {
+          OR: [{ email: value }, { emailId: value }],
+          NOT: { id: session.user.id },
+        },
+      })
+
+      if (existingUser) {
+        return new NextResponse("Email already in use", { status: 400 })
+      }
+    }
 
     // Update the appropriate field based on service name
     const updateData: Record<string, string> = {}

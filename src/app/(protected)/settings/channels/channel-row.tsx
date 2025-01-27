@@ -1,3 +1,4 @@
+// channel-row.tsx
 "use client"
 
 import { TableCell, TableRow } from "@/components/ui/table"
@@ -6,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Loader2 } from "lucide-react"
 import { type ServiceName } from "@/types"
+import { useState } from "react"
+import { cn } from "@/utils"
 
 type ChannelRowProps = {
   name: string
@@ -17,6 +20,7 @@ type ChannelRowProps = {
   isActive: boolean
   isUpdating: boolean
   isPendingVerification: boolean
+  error?: string
   onVerify: () => void
   onToggle: () => void
   onChange: (value: string) => void
@@ -32,6 +36,7 @@ export function ChannelRow({
   isActive,
   isUpdating,
   isPendingVerification,
+  error,
   onVerify,
   onToggle,
   onChange,
@@ -45,6 +50,7 @@ export function ChannelRow({
       </TableCell>
       <TableCell>
         {hasValidId &&
+          !error &&
           (isVerified ? (
             <Switch
               checked={isActive}
@@ -71,12 +77,18 @@ export function ChannelRow({
           ))}
       </TableCell>
       <TableCell className="text-right">
-        <Input
-          className="mt-1 dark:placeholder:text-gray-600"
-          value={currentId}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-        />
+        <div className="space-y-2">
+          <Input
+            className={cn(
+              "mt-1 dark:placeholder:text-gray-600",
+              error && "border-red-500 focus-visible:ring-red-500"
+            )}
+            value={currentId}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+          />
+          {error && <p className="text-sm text-red-500 text-left">{error}</p>}
+        </div>
       </TableCell>
     </TableRow>
   )
