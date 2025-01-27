@@ -3,7 +3,9 @@ import brand from "@/lib/constants/brand.json"
 import { type ApiResponse } from "@/types"
 
 const baseUrl = brand.SITE
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null
 
 type EmailTemplate = {
   to: string
@@ -18,6 +20,10 @@ async function sendEmail({
   html,
 }: EmailTemplate): Promise<ApiResponse> {
   try {
+    if (!resend) {
+      throw new Error("Resend API key not configured")
+    }
+
     await resend.emails.send({
       from: brand.NOREPLY_EMAIL,
       to,
