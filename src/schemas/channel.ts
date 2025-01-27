@@ -3,8 +3,8 @@ import * as z from "zod"
 export const ChannelIdSchema = {
   DISCORD: z
     .string()
-    .min(17)
-    .max(20)
+    .min(17, "Discord ID must be at least 17 characters")
+    .max(20, "Discord ID cannot exceed 20 characters")
     .regex(/^\d+$/, "Discord ID must contain only numbers"),
 
   EMAIL: z
@@ -19,11 +19,10 @@ export const ChannelIdSchema = {
 
   SLACK: z
     .string()
-    .min(9)
-    .max(11)
-    .regex(/^[UW][A-Z0-9]{8,}$/, "Invalid Slack user ID format"),
-}
-
-export type ChannelIdValidation = {
-  [K in keyof typeof ChannelIdSchema]: z.infer<(typeof ChannelIdSchema)[K]>
+    .min(9, "Slack ID must be at least 9 characters")
+    .max(11, "Slack ID cannot exceed 11 characters")
+    .regex(
+      /^[UW][A-Z0-9]{8,}$/,
+      "Invalid Slack user ID format. Must start with U or W followed by 8+ alphanumeric characters"
+    ),
 }

@@ -157,7 +157,8 @@ export function ChannelsPageContent({
             })
 
             if (!response.ok) {
-              throw new Error(`Failed to delete ${service}`)
+              const errorMessage = await response.text()
+              throw new Error(`${service}: ${errorMessage}`)
             }
 
             // Reset verification status
@@ -190,16 +191,29 @@ export function ChannelsPageContent({
             })
 
             if (!response.ok) {
-              throw new Error(`Failed to update ${service}`)
+              const errorMessage = await response.text()
+              setValidationErrors((prev) => ({
+                ...prev,
+                [service]: errorMessage,
+              }))
+              return
             }
           }
         }
       }
 
+      // Only update local state if all updates succeeded
       setChannelIds(pendingChanges)
       setHasChanges(false)
     } catch (error) {
       console.error("Failed to update channels:", error)
+      if (error instanceof Error) {
+        const [service, message] = error.message.split(": ")
+        setValidationErrors((prev) => ({
+          ...prev,
+          [service]: message,
+        }))
+      }
     } finally {
       setIsUpdating(false)
     }
