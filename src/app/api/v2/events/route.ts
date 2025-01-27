@@ -8,6 +8,7 @@ import { TYPE_NAME_VALIDATOR } from "@/lib/validators/type-validator"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { verifyPasswordHash } from "@/lib/password-hash"
+import { sendNotificationEmail } from "@/lib/mail"
 
 const hasNestedObjects = (obj: Record<string, any>): boolean => {
   return Object.values(obj).some(
@@ -59,6 +60,22 @@ const validateChannelConfig = (
         }
       }
       break
+    case "SLACK":
+      if (!user.slackId) {
+        return {
+          isValid: false,
+          message: "Please enter your Slack ID in your account settings",
+        }
+      }
+      break
+    case "EMAIL":
+      if (!user.emailId) {
+        return {
+          isValid: false,
+          message: "Please enter your email ID in your account settings",
+        }
+      }
+      break
     case "NONE":
       return {
         isValid: false,
@@ -91,6 +108,11 @@ const sendEventToChannel = async (
     case "SLACK":
       return await sendToSlack({
         slackId: user.slackId,
+        eventData,
+      })
+    case "EMAIL":
+      return await sendNotificationEmail({
+        emailId: user.emailId,
         eventData,
       })
     default:

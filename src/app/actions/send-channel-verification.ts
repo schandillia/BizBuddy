@@ -10,6 +10,8 @@ import { sendSlackOTP } from "@/lib/api/channels/slack"
 import { type ServiceName, type ApiResponse } from "@/types"
 import { generateDiscordVerificationToken } from "@/lib/tokens"
 import { sendDiscordOTP } from "@/lib/api/channels/discord"
+import { sendEmailIdOTP } from "@/lib/mail"
+import { generateEmailIdVerificationToken } from "@/lib/tokens"
 
 export async function sendChannelVerification(
   serviceName: Exclude<ServiceName, "NONE">,
@@ -33,6 +35,11 @@ export async function sendChannelVerification(
           break
         case "SLACK":
           existingToken = await getSlackVerificationTokenByToken(code)
+          break
+        case "EMAIL":
+          existingToken = await db.emailIdVerificationToken.findUnique({
+            where: { token: code },
+          })
           break
       }
 
@@ -61,6 +68,11 @@ export async function sendChannelVerification(
             where: { token: code },
           })
           break
+        case "EMAIL":
+          await db.emailIdVerificationToken.delete({
+            where: { token: code },
+          })
+          break
       }
 
       // Update user's verification status
@@ -71,6 +83,7 @@ export async function sendChannelVerification(
             discordVerified: serviceName === "DISCORD" ? new Date() : undefined,
             webexVerified: serviceName === "WEBEX" ? new Date() : undefined,
             slackVerified: serviceName === "SLACK" ? new Date() : undefined,
+            emailIdVerified: serviceName === "EMAIL" ? new Date() : undefined,
           },
         })
       }
@@ -82,16 +95,10 @@ export async function sendChannelVerification(
         case "DISCORD":
           const discordVerificationToken =
             await generateDiscordVerificationToken(serviceId)
-          console.log(
-            "Generated Discord token:",
-            discordVerificationToken.token
-          )
-          console.log("Sending to Discord ID:", serviceId)
           const discordResult = await sendDiscordOTP(
             serviceId,
             discordVerificationToken.token
           )
-          console.log("Discord send result:", discordResult)
           break
         case "WEBEX":
           const webexVerificationToken = await generateWebexVerificationToken(
@@ -118,6 +125,14 @@ export async function sendChannelVerification(
             serviceId
           )
           await sendSlackOTP(serviceId, slackVerificationToken.token)
+          break
+        case "EMAIL":
+          const emailIdVerificationToken =
+            await generateEmailIdVerificationToken(serviceId)
+          const emailResult = await sendEmailIdOTP(
+            serviceId,
+            emailIdVerificationToken.token
+          )
           break
       }
 

@@ -19,6 +19,7 @@ type ChannelsPageContentProps = {
   webexVerified: Date | null
   slackVerified: Date | null
   discordVerified: Date | null
+  emailIdVerified: Date | null
 }
 
 export function ChannelsPageContent({
@@ -30,6 +31,7 @@ export function ChannelsPageContent({
   webexVerified: initialWebexVerified,
   slackVerified: initialSlackVerified,
   discordVerified: initialDiscordVerified,
+  emailIdVerified: initialEmailIdVerified,
 }: ChannelsPageContentProps) {
   const [activeChannel, setActiveChannel] =
     useState<ServiceName>(initialActiveChannel)
@@ -41,6 +43,9 @@ export function ChannelsPageContent({
   )
   const [discordVerified, setDiscordVerified] = useState<Date | null>(
     initialDiscordVerified
+  )
+  const [emailIdVerified, setEmailIdVerified] = useState<Date | null>(
+    initialEmailIdVerified
   )
   const [isUpdating, setIsUpdating] = useState(false)
   const [channelIds, setChannelIds] = useState<ChannelIds>({
@@ -70,6 +75,8 @@ export function ChannelsPageContent({
       setWebexVerified(null)
     } else if (serviceName === "SLACK") {
       setSlackVerified(null)
+    } else if (serviceName === "EMAIL") {
+      setEmailIdVerified(null)
     }
 
     if (!value.trim()) {
@@ -174,6 +181,8 @@ export function ChannelsPageContent({
                 setWebexVerified(new Date())
               } else if (serviceName === "SLACK") {
                 setSlackVerified(new Date())
+              } else if (serviceName === "EMAIL") {
+                setEmailIdVerified(new Date())
               }
               verification.setShowVerificationModal(false)
             }
@@ -206,6 +215,8 @@ export function ChannelsPageContent({
                   : name === "SLACK"
                   ? !!slackVerified
                   : name === "EMAIL"
+                  ? !!emailIdVerified
+                  : false
               }
               isActive={activeChannel === name}
               isUpdating={isUpdating}
@@ -262,6 +273,8 @@ export function ChannelsPageContent({
                     setWebexVerified(new Date())
                   } else if (verification.currentVerifyingService === "SLACK") {
                     setSlackVerified(new Date())
+                  } else if (verification.currentVerifyingService === "EMAIL") {
+                    setEmailIdVerified(new Date())
                   }
                   // Close modal
                   verification.setShowVerificationModal(false)

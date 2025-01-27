@@ -64,6 +64,8 @@ export async function DELETE(req: Request) {
         webexVerified: true,
         slackId: true,
         slackVerified: true,
+        emailId: true,
+        emailIdVerified: true,
       },
     })
     console.log("Before update:", user)
@@ -99,6 +101,7 @@ export async function DELETE(req: Request) {
       case "EMAIL":
         updateData = {
           emailId: null,
+          emailIdVerified: null,
           activeChannel:
             user?.activeChannel === "EMAIL" ? "NONE" : user?.activeChannel,
         }

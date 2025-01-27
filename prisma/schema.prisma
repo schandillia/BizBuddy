@@ -46,8 +46,8 @@ model User {
 
   // Channel fields
   activeChannel  Channel @default(NONE)
-  discordId      String?
-  emailId        String?
+  discordId      String?  @unique
+  emailId        String?  @unique
   webexId        String?   @unique
   slackId        String?   @unique
 
@@ -69,6 +69,7 @@ model User {
   webexVerified        DateTime?
   slackVerified        DateTime?
   discordVerified      DateTime?
+  emailIdVerified      DateTime?
 
   @@index([email, apiKey])
 }
@@ -241,4 +242,14 @@ model DiscordVerificationToken {
   discordId String
   expires   DateTime?
   createdAt DateTime  @default(now())
+}
+
+model EmailIdVerificationToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  emailId   String
+  expires   DateTime?
+  createdAt DateTime  @default(now())
+
+  @@unique([emailId, token])
 }

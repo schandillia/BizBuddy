@@ -22,6 +22,7 @@ const Page = async () => {
       webexVerified: true,
       slackVerified: true,
       discordVerified: true,
+      emailIdVerified: true,
     },
   })
 
@@ -40,6 +41,7 @@ const Page = async () => {
         webexVerified={user.webexVerified}
         slackVerified={user.slackVerified}
         discordVerified={user.discordVerified}
+        emailIdVerified={user.emailIdVerified}
       />
     </UserPage>
   )

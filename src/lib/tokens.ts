@@ -121,3 +121,17 @@ export async function generateDiscordVerificationToken(discordId: string) {
 
   return token
 }
+
+export async function generateEmailIdVerificationToken(emailId: string) {
+  const token = generateRandomString(6)
+
+  const emailIdVerificationToken = await db.emailIdVerificationToken.create({
+    data: {
+      token,
+      emailId,
+      expires: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+    },
+  })
+
+  return emailIdVerificationToken
+}
